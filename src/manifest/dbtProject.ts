@@ -146,6 +146,10 @@ export class DBTProject implements Disposable {
     this.findModelInTargetfolder(modelPath, "compiled");
   }
 
+  previewSQL(modelPath: Uri) {
+    this.previewSQLInTargetfolder(modelPath);
+  }
+
   showRunSQL(modelPath: Uri) {
     this.findModelInTargetfolder(modelPath, "run");
   }
@@ -174,7 +178,7 @@ export class DBTProject implements Disposable {
   private async findModelInTargetfolder(modelPath: Uri, type: string) {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/${type}/**/${baseName}`;
-    console.log(`findModelInTargetfolder: looking for ${pattern}`);
+    // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     const targetModels = await workspace.findFiles(
       new RelativePattern(
         this.projectRoot,
@@ -183,12 +187,33 @@ export class DBTProject implements Disposable {
     );
     if (targetModels.length > 0) {
       const targetModel0 = targetModels[0];
-      console.log(`findModelInTargetfolder: ${targetModel0}`);
+      // console.log(`findModelInTargetfolder: ${targetModel0}`);
       commands.executeCommand("vscode.open", targetModel0, {
         preview: false,
       });
     }
   }
+
+  private async previewSQLInTargetfolder(modelPath: Uri) {
+    const baseName = path.basename(modelPath.fsPath);
+    const pattern = `${this.targetPath}/compiled/**/${baseName}`;
+    console.log(`previewSQLInTargetfolder: looking for ${pattern}`);
+    const targetModels = await workspace.findFiles(
+      new RelativePattern(
+        this.projectRoot,
+        pattern
+      )
+    );
+    if (targetModels.length > 0) {
+      const targetModel0 = targetModels[0];
+      console.log(`previewSQLInTargetfolder: ${targetModel0}`);
+      // add execute sql using targetModels0  
+      // commands.executeCommand("vscode.open", targetModel0, {
+      //   preview: false,
+      // });
+    }
+  }
+
 
   private async refresh() {
     const projectConfig = this.readAndParseProjectConfig();

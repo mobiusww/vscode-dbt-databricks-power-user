@@ -93,6 +93,10 @@ export class DBTProjectContainer implements Disposable {
     this.findDBTProject(modelPath)?.showCompiledSql(modelPath);
   }
 
+  previewSQL(modelPath: Uri) {
+    this.findDBTProject(modelPath)?.previewSQL(modelPath);
+  }
+
   findDBTProject(uri: Uri): DBTProject | undefined {
     return this.findDBTWorkspaceFolder(uri)?.findDBTProject(uri);
   }
