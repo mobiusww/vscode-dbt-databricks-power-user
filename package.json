@@ -106,6 +106,14 @@
         }
       },
       {
+        "command": "dbtPowerUser.previewSQL",
+        "title": "dbt Power User: Preview SQL",
+        "icon": {
+          "light": "./media/source_light.svg",
+          "dark": "./media/source_dark.svg"
+        }
+      },
+      {
         "command": "dbtPowerUser.showCompiledSQL",
         "title": "dbt Power User: Show compiled SQL",
         "icon": {
@@ -120,6 +128,11 @@
           "command": "dbtPowerUser.runCurrentModel",
           "when": "resourceLangId == jinja-sql",
           "group": "navigation@-1"
+        },
+        {
+          "command": "dbtPowerUser.previewSQL",
+          "when": "resourceLangId == jinja-sql",
+          "group": "navigation@-2"
         },
         {
           "command": "dbtPowerUser.compileCurrentModel",

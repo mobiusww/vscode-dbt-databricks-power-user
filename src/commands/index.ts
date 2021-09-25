@@ -21,6 +21,9 @@ export class VSCodeCommands implements Disposable {
       commands.registerCommand("dbtPowerUser.compileCurrentModel", () =>
         this.runModel.compileModelOnActiveWindow()
       ),
+      commands.registerCommand("dbtPowerUser.previewCurrentModel", () =>
+        this.runModel.compileModelOnActiveWindow()
+      ),
       commands.registerCommand("dbtPowerUser.runChildrenModels", (model) =>
         this.runModel.runModelOnNodeTreeItem(RunModelType.CHILDREN)(model)
       ),
@@ -33,6 +36,10 @@ export class VSCodeCommands implements Disposable {
       commands.registerCommand("dbtPowerUser.showCompiledSQL", () =>
         this.runModel.showCompiledSQLOnActiveWindow()
       ),
+      commands.registerCommand("dbtPowerUser.previewSQL", () =>
+        this.runModel.showCompiledSQLOnActiveWindow()
+      ),
+
       commands.registerCommand("dbtPowerUser.installDBT", () =>
         this.installDBT.installDBTCommand()
       ),
