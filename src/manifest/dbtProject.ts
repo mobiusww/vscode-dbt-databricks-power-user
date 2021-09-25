@@ -25,6 +25,9 @@ import {
 } from "../dbt_client/dbtCommandFactory";
 import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 
+import {
+  runAsQuery,
+} from "../bigquery";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
   static DBT_MODULES = "dbt_modules";
@@ -206,7 +209,11 @@ export class DBTProject implements Disposable {
     );
     if (targetModels.length > 0) {
       const targetModel0 = targetModels[0];
-      console.log(`previewSQLInTargetfolder: ${targetModel0}`);
+      const target_path = targetModel0.path;
+      console.log(`previewSQLInTargetfolder: ${target_path}`);
+      const queryText = readFileSync(target_path,"utf8");
+      runAsQuery(queryText);
+      //queryText = readFileSync(targetModel0,"utf-8")''
       // add execute sql using targetModels0  
       // commands.executeCommand("vscode.open", targetModel0, {
       //   preview: false,
