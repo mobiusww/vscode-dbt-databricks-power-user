@@ -3,15 +3,15 @@
   "displayName": "dbt Big Query Power User",
   "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
   "icon": "media/dbt.png",
-  "publisher": "butchland@gmail.com",
+  "publisher": "butchland",
   "license": "MIT",
-  "homepage": "https://github.com/innoverio/vscode-dbt-power-user",
+  "homepage": "https://github.com/butchland/vscode-dbt-bigquery-power-user",
   "repository": {
     "type": "git",
-    "url": "https://github.com/innoverio/vscode-dbt-power-user.git"
+    "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user.git"
   },
   "bugs": {
-    "url": "https://github.com/innoverio/vscode-dbt-power-user/issues"
+    "url": "https://github.com/butchland/vscode-dbt-bigquer-power-user/issues"
   },
   "version": "0.5.8",
   "engines": {
