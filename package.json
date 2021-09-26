@@ -1,9 +1,9 @@
 {
-  "name": "vscode-dbt-power-user",
-  "displayName": "dbt Power User",
-  "description": "This extension makes vscode seamlessly work with dbt",
+  "name": "vscode-dbt-bigquery-power-user",
+  "displayName": "dbt Big Query Power User",
+  "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
   "icon": "media/dbt.png",
-  "publisher": "innoverio",
+  "publisher": "butchland@gmail.com",
   "license": "MIT",
   "homepage": "https://github.com/innoverio/vscode-dbt-power-user",
   "repository": {
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/innoverio/vscode-dbt-power-user/issues"
   },
-  "version": "0.5.7",
+  "version": "0.5.8",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -23,7 +23,8 @@
   "keywords": [
     "dbt",
     "sql",
-    "jinja-sql"
+    "jinja-sql",
+    "bigquery"
   ],
   "activationEvents": [
     "workspaceContains:**/dbt_project.yml"
@@ -46,7 +47,7 @@
       "activitybar": [
         {
           "id": "dbt_view",
-          "title": "dbt Power User",
+          "title": "dbt Big Query Power User",
           "icon": "./media/dbt_icon.svg",
           "contextualTitle": "dbt Power User"
         }
@@ -106,6 +107,14 @@
         }
       },
       {
+        "command": "dbtPowerUser.previewSQL",
+        "title": "dbt Big Query Power User: Preview SQL",
+        "icon": {
+          "light": "./media/source_light.svg",
+          "dark": "./media/source_dark.svg"
+        }
+      },
+      {
         "command": "dbtPowerUser.showCompiledSQL",
         "title": "dbt Power User: Show compiled SQL",
         "icon": {
@@ -120,6 +129,11 @@
           "command": "dbtPowerUser.runCurrentModel",
           "when": "resourceLangId == jinja-sql",
           "group": "navigation@-1"
+        },
+        {
+          "command": "dbtPowerUser.previewSQL",
+          "when": "resourceLangId == jinja-sql",
+          "group": "navigation@-2"
         },
         {
           "command": "dbtPowerUser.compileCurrentModel",
@@ -163,6 +177,8 @@
     "deploy": "vsce publish"
   },
   "devDependencies": {
+    "@types/easy-table": "^0.0.33",
+    "@types/flat": "^5.0.2",
     "@types/glob": "^7.1.1",
     "@types/js-yaml": "^3.12.5",
     "@types/mocha": "^7.0.2",
@@ -187,7 +203,11 @@
     "ms-python.python"
   ],
   "dependencies": {
+    "@google-cloud/bigquery": "^5.9.0",
+    "csv-stringify": "^5.6.5",
     "dayjs": "^1.8.34",
+    "easy-table": "^1.1.1",
+    "flat": "^5.0.2",
     "inversify": "^5.0.5",
     "inversify-binding-decorators": "^4.0.0",
     "js-yaml": "^3.14.0",
