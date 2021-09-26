@@ -1,7 +1,6 @@
 import {
   window,
   workspace,
-  TextEditor,
   ExtensionContext,
   commands as vscode_commands,
   WorkspaceConfiguration,
@@ -19,12 +18,6 @@ const configPrefix = "bigquery";
 let config: WorkspaceConfiguration | undefined;
 let output = window.createOutputChannel("BigQuery");
 
-type CommandMap = Map<string, () => void>;
-let commands: CommandMap = new Map<string, () => void>([
-  ["extension.runAsQuery", runAsQuery]
-  // ["extension.runSelectedAsQuery", runSelectedAsQuery],
-  // ["extension.dryRun", dryRun]
-]);
 
 function readConfig(): WorkspaceConfiguration {
   try {
@@ -37,14 +30,6 @@ function readConfig(): WorkspaceConfiguration {
 }
 export async function activate(ctx: ExtensionContext): Promise<void>  {
   config = readConfig();
-
-  // Register all available commands and their actions.
-  commands.forEach((action, name) => {
-    ctx.subscriptions.push(vscode_commands.registerCommand(name, action));
-  });
-
-  // Listen for configuration changes and trigger an update, so that users don't
-  // have to reload the VS Code environment after a config update.
   ctx.subscriptions.push(
     workspace.onDidChangeConfiguration(event => {
       if (!event.affectsConfiguration(configPrefix)) {
@@ -70,41 +55,6 @@ export function runAsQueryText(queryText: string): void {
   }
 }
 
-function runAsQuery(): void {
-  try {
-    let queryText = getQueryText(window.activeTextEditor);
-    query(queryText);
-  } catch (err) {
-    window.showErrorMessage(`${err}`);
-  }
-}
-
-function getQueryText(
-  editor: TextEditor | undefined,
-  onlySelected?: boolean
-): string {
-  if (!editor) {
-    throw new Error("No active editor window was found");
-  }
-
-  // Only return the selected text
-  if (onlySelected) {
-    let selection = editor.selection;
-    if (selection.isEmpty) {
-      throw new Error("No text is currently selected");
-    }
-
-    return editor.document.getText(selection).trim();
-  }
-
-  let text = editor.document.getText().trim();
-  if (!text) {
-    throw new Error("The editor window is empty");
-  }
-
-  return text;
-}
-
 
 /**
  * @param queryText
@@ -121,7 +71,7 @@ function query(queryText: string, isDryRun?: boolean): Promise<any> {
   // let client = new BigQuery(options);
   let client = new BigQuery();
 
-  let id: string;
+  let id: string | undefined;
   let job = client
     .createQueryJob({
       query: queryText,
@@ -132,7 +82,8 @@ function query(queryText: string, isDryRun?: boolean): Promise<any> {
     })
     .then(data => {
       let job = data[0];
-      let id = job.id;
+      id = job.id;
+      console.log(`running client job id: ${job.id}`);
       const jobIdMessage = `BigQuery job ID: ${job.id}`;
       if (isDryRun) {
         window.showInformationMessage(`${jobIdMessage} (dry run)`);
@@ -162,7 +113,7 @@ function query(queryText: string, isDryRun?: boolean): Promise<any> {
     });
 }
 
-function writeResults(jobId: string, rows: Array<any>): void {
+function writeResults(jobId: string | undefined, rows: Array<any>): void {
   output.show();
   output.appendLine(`Results for job ${jobId}:`);
 
