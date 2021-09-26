@@ -42,14 +42,14 @@ export async function activate(ctx: ExtensionContext): Promise<void>  {
 }
 
 
-export function runAsQueryText(queryText: string): void {
+export async function runAsQueryText(queryText: string): Promise<void> {
   if (!queryText) {
     window.showErrorMessage("Query text is empty");
     return;
   }
   console.log("Invoking run query");
   try {
-    query(queryText, false); // set dry-run to true
+    await query(queryText, false); // set dry-run to true
   } catch (err) {
     window.showErrorMessage(`${err}`);
   }
@@ -63,7 +63,7 @@ export function runAsQueryText(queryText: string): void {
 async function query(queryText: string, isDryRun?: boolean): Promise<any> {
 
   let options: BigQueryOptions = {
-   keyFilename: config?.get("keyFilename"),
+    keyFilename: config?.get("keyFilename"),
     projectId: config?.get("projectId"),
   };
 
