@@ -26,7 +26,7 @@ import {
 import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 
 import {
-  runAsQuery,
+  runAsQueryText,
 } from "../bigquery";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
@@ -212,7 +212,7 @@ export class DBTProject implements Disposable {
       const target_path = targetModel0.path;
       console.log(`previewSQLInTargetfolder: ${target_path}`);
       const queryText = readFileSync(target_path,"utf8");
-      runAsQuery(queryText);
+      runAsQueryText(queryText);
       //queryText = readFileSync(targetModel0,"utf-8")''
       // add execute sql using targetModels0  
       // commands.executeCommand("vscode.open", targetModel0, {
