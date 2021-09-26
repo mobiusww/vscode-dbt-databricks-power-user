@@ -1,9 +1,9 @@
 {
-  "name": "vscode-dbt-power-user",
-  "displayName": "dbt Power User",
-  "description": "This extension makes vscode seamlessly work with dbt",
+  "name": "vscode-dbt-bigquery-power-user",
+  "displayName": "dbt Big Query Power User",
+  "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
   "icon": "media/dbt.png",
-  "publisher": "innoverio",
+  "publisher": "butchland@gmail.com",
   "license": "MIT",
   "homepage": "https://github.com/innoverio/vscode-dbt-power-user",
   "repository": {
@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/innoverio/vscode-dbt-power-user/issues"
   },
-  "version": "0.5.7",
+  "version": "0.5.8",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -23,7 +23,8 @@
   "keywords": [
     "dbt",
     "sql",
-    "jinja-sql"
+    "jinja-sql",
+    "bigquery"
   ],
   "activationEvents": [
     "workspaceContains:**/dbt_project.yml"
@@ -46,7 +47,7 @@
       "activitybar": [
         {
           "id": "dbt_view",
-          "title": "dbt Power User",
+          "title": "dbt Big Query Power User",
           "icon": "./media/dbt_icon.svg",
           "contextualTitle": "dbt Power User"
         }
@@ -107,7 +108,7 @@
       },
       {
         "command": "dbtPowerUser.previewSQL",
-        "title": "dbt Power User: Preview SQL",
+        "title": "dbt Big Query Power User: Preview SQL",
         "icon": {
           "light": "./media/source_light.svg",
           "dark": "./media/source_dark.svg"
