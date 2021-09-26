@@ -60,16 +60,14 @@ export function runAsQueryText(queryText: string): void {
  * @param queryText
  * @param isDryRun Defaults to False.
  */
-function query(queryText: string, isDryRun?: boolean): Promise<any> {
-  let options: BigQueryOptions; 
-  let x = {
+async function query(queryText: string, isDryRun?: boolean): Promise<any> {
+
+  let options: BigQueryOptions = {
    keyFilename: config?.get("keyFilename"),
     projectId: config?.get("projectId"),
-    email: config?.get("email")   
   };
-  // init options here
-  // let client = new BigQuery(options);
-  let client = new BigQuery();
+
+  let client = new BigQuery(options);
 
   let id: string | undefined;
   let job = client
