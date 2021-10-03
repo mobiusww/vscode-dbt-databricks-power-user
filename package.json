@@ -121,7 +121,15 @@
           "light": "./media/file-code_light.svg",
           "dark": "./media/file-code_dark.svg"
         }
-      }
+      },
+    	{
+				"command": "dbtPowerUser.openQueryRunner",
+				"title": "dbt Power User: Open QueryRunner",
+        "icon": {
+          "light": "./media/dashboard_light.svg",
+          "dark": "./media/dashboard_dark.svg"
+        }        
+			}
     ],
     "menus": {
       "editor/title": [
