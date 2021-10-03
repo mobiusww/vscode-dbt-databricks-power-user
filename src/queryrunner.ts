@@ -70,7 +70,7 @@ export class BigQueryRunner {
    */
   private async query(queryText: string, isDryRun?: boolean): Promise<QueryResult> {
     let data;
-    console.log('queryrunner run query: queryText: ${queryText}');
+    console.log(`queryrunner run query: queryText: ${queryText}`);
     try {
       data = await this.client.createQueryJob({
         query: queryText,
@@ -177,7 +177,7 @@ export class BigQueryRunner {
   public async runAsQuery(variables: { [s: string]: any }, onlySelected?: boolean): Promise<QueryResult | QueryResultError> {
     try {
       const queryText = this.getQueryText(variables, onlySelected);
-      console.log('BigQueryRunner.runAsQuery:  ${queryText}');
+      console.log(`BigQueryRunner.runAsQuery:  ${queryText}`);
       let queryResult = await this.query(queryText);
       queryResult.sql = queryText;
       return queryResult;
