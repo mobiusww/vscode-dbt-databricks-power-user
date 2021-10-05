@@ -27,11 +27,7 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 
 	// Send variables to webview.
 	const variables = context.workspaceState.get("variables", {});
-	panel.webview.postMessage({ command: 'setVariables', variables });
-
-	// Set authorize URL.
-	// const authorizeUrl = bigQueryRunner.getAuthorizeUrl();
-	// panel.webview.postMessage({ command: 'setAuthorizeUrl', authorizeUrl });
+	panel.webview.postMessage({ command: 'setVariables', variables: variables });
 
 	panel.webview.onDidReceiveMessage(
 		async message => {
@@ -39,11 +35,6 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 				case 'openExternal':
 						vscode.env.openExternal(message.url);
 					break;
-
-				// case 'setAuthCode':
-				// 		const r = await bigQueryRunner.setRefreshClient(message.authCode);
-				// 		panel.webview.postMessage({ command: 'authSuccessed' });
-				// 	break;
 
 				case 'runAsQuery':
 					const queryResult = await bigQueryRunner.runAsQuery(message.variables, message.onlySelected);
@@ -67,6 +58,16 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 		undefined,
 		context.subscriptions
 	);
+	
+	// start running query upon opening the window
+	console.log(`executing openQueryRunner runAsQuery on open`);
+	const queryResult = await bigQueryRunner.runAsQuery(variables);
+	if (queryResult.status === "error") {
+		panel.webview.postMessage({ command: 'queryError', errorMessage: queryResult.errorMessage });
+	} else {
+		panel.webview.postMessage({ command: 'runAsQuery', result: queryResult });
+	}
+
 }
 
 

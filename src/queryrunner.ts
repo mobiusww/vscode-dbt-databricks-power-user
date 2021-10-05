@@ -2,17 +2,6 @@ import * as vscode from "vscode";
 import { BigQuery, Job, BigQueryOptions } from "@google-cloud/bigquery";
 import * as flatten from "flat";
 
-// import {GoogleAuth} from "./google_auth";
-
-// CommandMap describes a map of extension commands (defined in package.json)
-// and the function they invoke.
-// type CommandMap = Map<string, () => void>;
-// let commands: CommandMap = new Map<string, () => void>([
-//   ["extension.runAsQuery", runAsQuery],
-//   ["extension.runSelectedAsQuery", runSelectedAsQuery],
-//   ["extension.dryRun", dryRun]
-// ]);
-
 interface QueryResult {
   status: "success";
   sql?: string;
@@ -33,13 +22,10 @@ interface TableResult {
 }
 
 export class BigQueryRunner {
-  configPrefix = "queryRunner";
   config: vscode.WorkspaceConfiguration;
   client: BigQuery;
-  output = vscode.window.createOutputChannel("Query Runner");
   job: Job | null = null;
   editor: vscode.TextEditor;
-  //googleAuth: GoogleAuth;
 
   constructor(config: vscode.WorkspaceConfiguration, editor: vscode.TextEditor) {
     this.config = config;
@@ -55,15 +41,7 @@ export class BigQueryRunner {
     this.config = config;
   }
 
-  // getAuthorizeUrl () {
-  //   return this.googleAuth.getAuthorizeUrl();
-  // }
-
-  // async setRefreshClient (authCode: string) {
-  //   const refreshClient = await this.googleAuth.setRefreshClient(authCode);
-  //   this.client.authClient.cachedCredential = refreshClient;
-  // }
-
+  
   /**
    * @param queryText
    * @param isDryRun Defaults to False.
@@ -74,9 +52,6 @@ export class BigQueryRunner {
     try {
       data = await this.client.createQueryJob({
         query: queryText,
-        // location: config.get("location"),
-        // maximumBytesBilled: config.get("maximumBytesBilled"),
-        // useLegacySql: config.get("useLegacySql"),
         dryRun: !!isDryRun
       });
     } catch (err) {
@@ -88,13 +63,6 @@ export class BigQueryRunner {
     if (!this.job) {
       throw new Error("No job was found.");
     }
-
-    // if (isDryRun) {
-    //   vscode.window.showInformationMessage(`${jobIdMessage} (dry run)`);
-    //   let totalBytesProcessed = job.metadata.statistics.totalBytesProcessed;
-    //   writeDryRunSummary(id, totalBytesProcessed);
-    //   return null;
-    // }
 
     vscode.window.showInformationMessage(`BigQuery job ID: ${this.job.metadata.id}`);
 
@@ -167,13 +135,6 @@ export class BigQueryRunner {
     };
   }
 
-  // private writeDryRunSummary(jobId: string, numBytesProcessed: string) {
-  //   this.output.show();
-  //   this.output.appendLine(`Results for job ${jobId} (dry run):`);
-  //   this.output.appendLine(`Total bytes processed: ${numBytesProcessed}`);
-  //   this.output.appendLine(``);
-  // }
-
   public async runAsQuery(variables: { [s: string]: any }, onlySelected?: boolean): Promise<QueryResult | QueryResultError> {
     try {
       const queryText = this.getQueryText(variables, onlySelected);
@@ -232,23 +193,7 @@ export class BigQueryRunner {
     return text;
   }
 
-  // function runSelectedAsQuery(): void {
-  //   try {
-  //     let queryText = getQueryText(vscode.window.activeTextEditor, true);
-  //     query(queryText);
-  //   } catch (err) {
-  //     vscode.window.showErrorMessage(err);
-  //   }
-  // }
 
-  // function dryRun(): void {
-  //   try {
-  //     let queryText = getQueryText(vscode.window.activeTextEditor);
-  //     query(queryText, true);
-  //   } catch(err) {
-  //     vscode.window.showErrorMessage(err);
-  //   }
-  // }
 
 }
 
