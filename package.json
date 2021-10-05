@@ -13,7 +13,7 @@
   "bugs": {
     "url": "https://github.com/butchland/vscode-dbt-bigquer-power-user/issues"
   },
-  "version": "0.5.8",
+  "version": "0.5.9",
   "engines": {
     "vscode": "^1.52.0"
   },
@@ -122,14 +122,14 @@
           "dark": "./media/file-code_dark.svg"
         }
       },
-    	{
-				"command": "dbtPowerUser.openQueryRunner",
-				"title": "dbt Power User: Open QueryRunner",
+      {
+        "command": "dbtPowerUser.openQueryRunner",
+        "title": "dbt Power User: Open QueryRunner",
         "icon": {
           "light": "./media/dashboard_light.svg",
           "dark": "./media/dashboard_dark.svg"
-        }        
-			}
+        }
+      }
     ],
     "menus": {
       "editor/title": [
@@ -200,7 +200,7 @@
     "mocha": "^7.1.2",
     "ts-loader": "^8.0.3",
     "typescript": "^3.8.3",
-    "vsce": "^1.77.0",
+    "vsce": "^1.100.1",
     "vscode-test": "^1.3.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
