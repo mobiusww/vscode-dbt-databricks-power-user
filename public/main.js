@@ -7,9 +7,6 @@ async function call (param) {
 const vueApp = new Vue ({
   el: '#app',
   data: {
-    authNeeded: false,
-    authorizeUrl: '',
-    authCode: '',
     activeTag: 'info',
     queryStatus: 'none',
     sql: null,
@@ -47,17 +44,6 @@ const vueApp = new Vue ({
     }
   },
   methods: {
-    setAuthCode () {
-      call ({
-        command: 'setAuthCode',
-        authCode: this.authCode,
-      });
-    },
-
-    authSuccessed () {
-      this.authNeeded = false;
-    },
-
     _parseVariables () {
       try {
         return JSON.parse(this.variablesString);
@@ -66,27 +52,11 @@ const vueApp = new Vue ({
       }
     },
 
-    openAuthURL () {
-      call ({
-        command: 'openExternal',
-        url: this.authorizeUrl,
-      });
-    },
-
     runAsQuery () {
       this.queryStatus = 'runningAsQuery';
       call ({
         command: 'runAsQuery',
         variables: this._parseVariables() || {},
-      });
-    },
-
-    runAsQuerySelected () {
-      this.queryStatus = 'runningAsQuerySelected';
-      call ({
-        command: 'runAsQuery',
-        variables: this._parseVariables() || {},
-        onlySelected: true,
       });
     },
 
@@ -129,20 +99,12 @@ const vueApp = new Vue ({
       this.variablesString = JSON.stringify(variables, null, "  ");
     },
 
-    setAuthorizeUrl (authorizeUrl) {
-      this.authorizeUrl = authorizeUrl;
-    }
+
   },
 });
 
 window.addEventListener ('message', event => {
   switch (event.data.command) {
-    case 'setAuthorizeUrl':
-      vueApp.setAuthorizeUrl(event.data.authorizeUrl);
-      break;
-    case 'authSuccessed':
-      vueApp.authSuccessed();
-      break;
     case 'runAsQuery':
       vueApp.displayResult(event.data.result);
       break;
