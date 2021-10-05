@@ -8,6 +8,17 @@ import { BigQueryRunner } from './queryrunner';
 const configPrefix = "bigquery";
 let config: vscode.WorkspaceConfiguration;
 // let output = vscode.window.createOutputChannel("QueryRunner");
+let  vscontext: vscode.ExtensionContext;
+let  bigQueryRunner: BigQueryRunner;
+
+export async function runQueryRunner() {
+	console.log('calling runQueryRunner');
+	if (vscontext) {
+		await openQueryRunner(vscontext, 
+			            bigQueryRunner);
+	}
+}
+
 async function openQueryRunner(context: vscode.ExtensionContext, 
 								 bigQueryRunner: BigQueryRunner) {
 	let localResourceRoot = vscode.Uri.file(path.join(context.extensionPath,'public'));
@@ -81,8 +92,8 @@ export function activate(context: vscode.ExtensionContext) {
 		return;
 	}
 
-	const bigQueryRunner = new BigQueryRunner(config, editor);
-
+	bigQueryRunner = new BigQueryRunner(config, editor);
+    vscontext = context;
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration(event => {
 			if (!event.affectsConfiguration(configPrefix)) {
@@ -95,6 +106,7 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 	let disposable = vscode.commands.registerCommand("dbtPowerUser.openQueryRunner", async() => {await openQueryRunner(context, bigQueryRunner);});
 	context.subscriptions.push(disposable);
+
 }
 
 function readConfig(): void {

@@ -4,7 +4,7 @@ import { provideSingleton } from "../utils";
 import { InstallDBT } from "./installDBT";
 import { UpdateDBT } from "./updateDBT";
 import { RunModelType } from "../domain";
-
+import { runQueryRunner } from "../queryrunner_install";
 @provideSingleton(VSCodeCommands)
 export class VSCodeCommands implements Disposable {
   private disposables: Disposable[] = [];
@@ -33,9 +33,11 @@ export class VSCodeCommands implements Disposable {
       commands.registerCommand("dbtPowerUser.showCompiledSQL", () =>
         this.runModel.showCompiledSQLOnActiveWindow()
       ),
-      commands.registerCommand("dbtPowerUser.previewSQL", () =>
-        this.runModel.previewSQLOnActiveWindow()
-      ),
+      commands.registerCommand("dbtPowerUser.previewSQL", async () => {
+        this.runModel.previewSQLOnActiveWindow();
+        //
+        await runQueryRunner();
+      }),
       commands.registerCommand("dbtPowerUser.installDBT", () =>
         this.installDBT.installDBTCommand()
       ),

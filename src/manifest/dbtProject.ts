@@ -153,8 +153,8 @@ export class DBTProject implements Disposable {
     this.findModelInTargetfolder(modelPath, "compiled");
   }
 
-  previewSQL(modelPath: Uri) {
-    this.previewSQLInTargetfolder(modelPath);
+  async previewSQL(modelPath: Uri) {
+    await this.previewSQLInTargetfolder(modelPath);
   }
 
   showRunSQL(modelPath: Uri) {
@@ -240,12 +240,13 @@ export class DBTProject implements Disposable {
         await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
   
       }      
-      const queryText = readFileSync(target_path,"utf8");
+      // const queryText = readFileSync(target_path,"utf8");
 
-      await runAsQueryText(queryText);
+      // await runAsQueryText(queryText);
       commands.executeCommand("vscode.open", targetModel0, {
         preview: false,
       });
+      //invoke query after     
     }
   }
 
