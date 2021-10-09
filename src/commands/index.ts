@@ -34,8 +34,7 @@ export class VSCodeCommands implements Disposable {
         this.runModel.showCompiledSQLOnActiveWindow()
       ),
       commands.registerCommand("dbtPowerUser.previewSQL", async () => {
-        this.runModel.previewSQLOnActiveWindow();
-        //
+        await this.runModel.previewSQLOnActiveWindow();
         await runQueryRunner();
       }),
       commands.registerCommand("dbtPowerUser.installDBT", () =>

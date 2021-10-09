@@ -137,13 +137,16 @@ export class BigQueryRunner {
 
   public async runAsQuery(variables: { [s: string]: any }, onlySelected?: boolean): Promise<QueryResult | QueryResultError> {
     try {
+      console.log(`BigQueryRunner.runAsQuery.variables: ${variables}`);
       const queryText = this.getQueryText(variables, onlySelected);
-      console.log(`BigQueryRunner.runAsQuery:  ${queryText}`);
+      console.log(`BigQueryRunner.runAsQuery.queryText:  ${queryText}`);
       let queryResult = await this.query(queryText);
+      console.log(`BigQueryRunner.runAsQuery.queryResult: ${queryResult}`);
       queryResult.sql = queryText;
       return queryResult;
     } catch (err) {
-      vscode.window.showErrorMessage('$err');
+      console.log(`BiqQueryRunner.runAsQuery.catcherr: ${err}`);
+      vscode.window.showErrorMessage(`${err}`);
       return {
         status: "error",
         errorMessage: (err instanceof Error)? err.message:'',

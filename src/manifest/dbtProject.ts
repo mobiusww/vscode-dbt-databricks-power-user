@@ -236,7 +236,7 @@ export class DBTProject implements Disposable {
           this.projectRoot,
           runModelParams
         );
-        console.log(`executing immediately Command ${runModelCommand.commandAsString} `)
+        console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
         await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
   
       }      
