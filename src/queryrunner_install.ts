@@ -1,6 +1,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import {
+	workspace,
+	RelativePattern
+} from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { BigQueryRunner } from './queryrunner';
@@ -10,45 +14,66 @@ let config: vscode.WorkspaceConfiguration;
 // let output = vscode.window.createOutputChannel("QueryRunner");
 let  vscontext: vscode.ExtensionContext;
 let  bigQueryRunner: BigQueryRunner;
+let  panel: vscode.WebviewPanel; 
 
-export async function runQueryRunner() {
-	console.log('calling runQueryRunner');
-	if (vscontext) {
-		await openQueryRunner(vscontext, 
-			            bigQueryRunner);
+export async function compileAndRunQuery(targetPath: string, projectRoot: vscode.Uri) {
+	console.log('calling runQueryRunnerWithText');
+	if (bigQueryRunner) {
+		if (targetPath){
+			bigQueryRunner.setTargetPath(targetPath);
+		}
+		if (projectRoot) {
+			bigQueryRunner.setProjectRoot(projectRoot);
+		}
 	}
+	if (vscontext) {
+		await openQueryRunner(true);
+	}
+	
 }
 
-async function openQueryRunner(context: vscode.ExtensionContext, 
-								 bigQueryRunner: BigQueryRunner) {
+
+async function openQueryRunner(compile?: boolean) {
+	let context = vscontext;
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		return;
+	}
+	bigQueryRunner.setEditor(editor);
 	let localResourceRoot = vscode.Uri.file(path.join(context.extensionPath,'public'));
 	console.log('localResourceRoot: ' + localResourceRoot);
-	const panel = vscode.window.createWebviewPanel(
-		'queryRunner', // Identifies the type of the webview. Used internally
-		'QueryRunner', // Title of the panel displayed to the user
-		vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
-		{
-			enableScripts: true,
-			retainContextWhenHidden: true,
-			localResourceRoots: [localResourceRoot]
-		}
-	);
+	// check if panel exists and reuse it.
+	if (!panel) {
+		panel = vscode.window.createWebviewPanel(
+			'queryRunner', // Identifies the type of the webview. Used internally
+			'QueryRunner', // Title of the panel displayed to the user
+			vscode.ViewColumn.Beside, // Editor column to show the new webview panel in.
+			{
+				enableScripts: true,
+				retainContextWhenHidden: true,
+				localResourceRoots: [localResourceRoot]
+			}
+		);
+	}
+	else if (!panel.visible) {
+		panel.reveal(vscode.ViewColumn.Beside);
+	}
 
 	panel.webview.html = getWebviewContent(context);
 
 	// Send variables to webview.
-	const variables = context.workspaceState.get("variables", {});
-	panel.webview.postMessage({ command: 'setVariables', variables: variables });
+	// const variables = context.workspaceState.get("variables", {});
+	// panel.webview.postMessage({ command: 'setVariables', variables: variables });
 
 	panel.webview.onDidReceiveMessage(
 		async message => {
 			switch (message.command) {
-				case 'openExternal':
-						vscode.env.openExternal(message.url);
-					break;
+				// case 'openExternal':
+				// 		vscode.env.openExternal(message.url);
+				// 	break;
 
 				case 'runAsQuery':
-					const queryResult = await bigQueryRunner.runAsQuery(message.variables, message.onlySelected);
+					const queryResult = await bigQueryRunner.runAsQuery(compile);
 					if (queryResult.status === "error") {
 						panel.webview.postMessage({ command: 'queryError', errorMessage: queryResult.errorMessage });
 					} else {
@@ -72,7 +97,7 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 	
 	// start running query upon opening the window
 	console.log(`executing openQueryRunner runAsQuery on open`);
-	const queryResult = await bigQueryRunner.runAsQuery(variables);
+	const queryResult = await bigQueryRunner.runAsQuery();
 	if (queryResult.status === "error") {
 		panel.webview.postMessage({ command: 'queryError', errorMessage: queryResult.errorMessage });
 	} else {
@@ -104,7 +129,8 @@ export function activate(context: vscode.ExtensionContext) {
 			bigQueryRunner.setConfig(config);
 		})
 	);
-	let disposable = vscode.commands.registerCommand("dbtPowerUser.openQueryRunner", async() => {await openQueryRunner(context, bigQueryRunner);});
+	// openQueryRunner is when the active text editor is compiled sql
+	let disposable = vscode.commands.registerCommand("dbtPowerUser.openQueryRunner", async() => {await openQueryRunner(false);});
 	context.subscriptions.push(disposable);
 
 }

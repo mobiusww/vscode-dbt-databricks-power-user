@@ -25,9 +25,13 @@ import {
 } from "../dbt_client/dbtCommandFactory";
 import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 
+// import {
+//   runAsQueryText,
+// } from "../bigquery";
+
 import {
-  runAsQueryText,
-} from "../bigquery";
+  compileAndRunQuery
+} from "../queryrunner_install";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
   static DBT_MODULES = "dbt_modules";
@@ -200,7 +204,24 @@ export class DBTProject implements Disposable {
       });
     }
   }
-
+  public async getCompiledTargetPath(modelPath:Uri): Promise<Uri> {
+    const baseName = path.basename(modelPath.fsPath);
+    const pattern = `${this.targetPath}/compiled/**/${baseName}`;
+    // console.log(`getCompiledTargetPath: looking for ${pattern}`);
+    const targetModels = await workspace.findFiles(
+      new RelativePattern(
+        this.projectRoot,
+        pattern
+      )
+    );
+    if (targetModels.length > 0) {
+      const targetModel0 = targetModels[0];
+      console.log(`getCompiledTargetPath: found targetModel0 ${targetModel0}`);
+      return targetModel0;
+    }
+    console.log(`getCompiledTargetPath: returning original modelpath ${modelPath}`);
+    return modelPath;
+  }
   private async previewSQLInTargetfolder(modelPath: Uri) {
     const baseName = path.basename(modelPath.fsPath);
     const modelName = path.basename(modelPath.fsPath, ".sql");
@@ -240,13 +261,9 @@ export class DBTProject implements Disposable {
         await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
   
       }      
-      // const queryText = readFileSync(target_path,"utf8");
 
-      // await runAsQueryText(queryText);
-      commands.executeCommand("vscode.open", targetModel0, {
-        preview: false,
-      });
-      //invoke query after     
+      await compileAndRunQuery(this.targetPath, this.projectRoot);
+   
     }
   }
 

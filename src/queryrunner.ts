@@ -1,6 +1,14 @@
 import * as vscode from "vscode";
+import {
+  workspace,
+  RelativePattern,
+} from "vscode";
+
+
 import { BigQuery, Job, BigQueryOptions } from "@google-cloud/bigquery";
 import * as flatten from "flat";
+import { readFile, readFileSync } from "fs";
+import path = require("path");
 
 interface QueryResult {
   status: "success";
@@ -20,13 +28,36 @@ interface TableResult {
   headers: string[];
   rows: any[];
 }
+async function getCompiledTargetPath(modelPath:vscode.Uri, targetPath?:string, projectRoot?: vscode.Uri): Promise<vscode.Uri> {
+    const baseName = path.basename(modelPath.fsPath);
+    const pattern = `${targetPath}/compiled/**/${baseName}`;
+    // console.log(`getCompiledTargetPath: looking for ${pattern}`);
+    if (!projectRoot) {
+      return modelPath;
+    }
+    const targetModels = await workspace.findFiles(
+      new RelativePattern(
+        projectRoot,
+        pattern
+      )
+    );
+    if (targetModels.length > 0) {
+      const targetModel0 = targetModels[0];
+      console.log(`getCompiledTargetPath: found targetModel0 ${targetModel0}`);
+      return targetModel0;
+    }
+    console.log(`getCompiledTargetPath: returning original modelpath ${modelPath}`);
+    return modelPath;
+  }
 
 export class BigQueryRunner {
   config: vscode.WorkspaceConfiguration;
   client: BigQuery;
+  targetPath: string | null = null;
+  projectRoot : vscode.Uri| null = null;
   job: Job | null = null;
   editor: vscode.TextEditor;
-
+  compiled: boolean = true;
   constructor(config: vscode.WorkspaceConfiguration, editor: vscode.TextEditor) {
     this.config = config;
     this.editor = editor;
@@ -36,12 +67,18 @@ export class BigQueryRunner {
     };
     this.client = new BigQuery(options);
   }
-
+  setEditor(editor: vscode.TextEditor) {
+    this.editor = editor;
+  }
   setConfig(config: vscode.WorkspaceConfiguration) {
     this.config = config;
   }
-
-  
+  setProjectRoot(projectRoot: vscode.Uri) {
+    this.projectRoot = projectRoot;
+  }
+  setTargetPath(targetPath: string) {
+    this.targetPath = targetPath;
+  }
   /**
    * @param queryText
    * @param isDryRun Defaults to False.
@@ -135,10 +172,9 @@ export class BigQueryRunner {
     };
   }
 
-  public async runAsQuery(variables: { [s: string]: any }, onlySelected?: boolean): Promise<QueryResult | QueryResultError> {
+  public async runAsQuery(compile?: boolean): Promise<QueryResult | QueryResultError> {
     try {
-      console.log(`BigQueryRunner.runAsQuery.variables: ${variables}`);
-      const queryText = this.getQueryText(variables, onlySelected);
+      const queryText = await this.getQueryText(compile);
       console.log(`BigQueryRunner.runAsQuery.queryText:  ${queryText}`);
       let queryResult = await this.query(queryText);
       console.log(`BigQueryRunner.runAsQuery.queryResult: ${queryResult}`);
@@ -164,33 +200,31 @@ export class BigQueryRunner {
     return result;
   }
 
-  private getQueryText(variables: { [s: string]: any }, onlySelected?: boolean): string {
+private async getQueryText(compile?: boolean): Promise<string> {
     if (!this.editor) {
       throw new Error("No active editor window was found");
     }
 
     let text: string;
-
-    // Only return the selected text
-    if (onlySelected) {
-      const selection = this.editor.selection;
-      if (selection.isEmpty) {
-        throw new Error("No text is currently selected");
-      }
-
-      text = this.editor.document.getText(selection).trim();
+    if (compile) {
+      // get compiled version
+      // grab from targetPath
+      // this.editor.document.uri;
+      let docUri = this.editor.document.uri;
+      let targetPath = this.targetPath? this.targetPath: "";
+      let projectRoot = this.projectRoot? this.projectRoot: docUri;
+      let compiledTarget = await getCompiledTargetPath(docUri, targetPath, projectRoot);
+      let compiledPath = compiledTarget.path;
+      let querytext = readFileSync(compiledPath);
+      // xlate document uri to compiled version
+      // open file and read text
+      text = querytext.toString();
     } else {
       text = this.editor.document.getText().trim();
     }
 
     if (!text) {
       throw new Error("The editor window is empty");
-    }
-
-    // Replace variables
-    for (let [key, value] of Object.entries(variables)) {
-      const re = new RegExp(key, 'g');
-      text = text.replace(re, value);
     }
 
     return text;
