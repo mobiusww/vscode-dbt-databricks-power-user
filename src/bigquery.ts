@@ -4,6 +4,7 @@ import {
   ExtensionContext,
   commands as vscode_commands,
   WorkspaceConfiguration,
+  TextEditor
 
 } from "vscode";
 
@@ -14,9 +15,15 @@ import {
 import toCSV = require("csv-stringify");
 import EasyTable = require("easy-table");
 import flatten = require("flat");
-const configPrefix = "bigquery";
+const configPrefix = "dbt.bigquery";
 let config: WorkspaceConfiguration | undefined;
 let output = window.createOutputChannel("BigQuery");
+type CommandMap = Map<string, () => void>;
+
+let commands: CommandMap = new Map<string, () => void>([
+  ["dbtPowerUser.querySQLResult", runAsQuery],
+  ["dbtPowerUser.querySQLDryRun", dryRun]
+]);
 
 
 function readConfig(): WorkspaceConfiguration {
@@ -30,6 +37,10 @@ function readConfig(): WorkspaceConfiguration {
 }
 export async function activate(ctx: ExtensionContext): Promise<void>  {
   config = readConfig();
+  // Register all available commands and their actions.
+  commands.forEach((action, name) => {
+    ctx.subscriptions.push(vscode_commands.registerCommand(name, action));
+  });  
   ctx.subscriptions.push(
     workspace.onDidChangeConfiguration(event => {
       if (!event.affectsConfiguration(configPrefix)) {
@@ -39,6 +50,37 @@ export async function activate(ctx: ExtensionContext): Promise<void>  {
       config = readConfig();
     })
   );
+}
+
+function getQueryText( editor: TextEditor| undefined): string {
+  if (!editor) {
+    throw new Error("No active editor window was found");
+  }
+
+  let text = editor.document.getText().trim();
+  if (!text) {
+    throw new Error("The editor window is empty");
+  }
+
+  return text;
+}
+
+async function runAsQuery(): Promise<void> {
+  try {
+    let queryText = getQueryText(window.activeTextEditor);
+    await query(queryText);
+  } catch (err) {
+    window.showErrorMessage(`${err}`);
+  }
+}
+
+async function dryRun(): Promise<void> {
+  try {
+    let queryText = getQueryText(window.activeTextEditor);
+    await query(queryText, true);
+  } catch(err) {
+    window.showErrorMessage(`${err}`);
+  }
 }
 
 
