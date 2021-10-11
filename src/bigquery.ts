@@ -56,7 +56,7 @@ function getQueryText( editor: TextEditor| undefined): string {
   if (!editor) {
     throw new Error("No active editor window was found");
   }
-
+  console.log(`bigquery.getQueryText.docURI.path: ${editor.document.uri.path}`);
   let text = editor.document.getText().trim();
   if (!text) {
     throw new Error("The editor window is empty");

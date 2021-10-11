@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { BigQuery, Job, BigQueryOptions } from "@google-cloud/bigquery";
 import * as flatten from "flat";
-
+import { DBTProjectContainer } from "./manifest/dbtProjectContainer";
 interface QueryResult {
   status: "success";
   sql?: string;
@@ -26,7 +26,7 @@ export class BigQueryRunner {
   client: BigQuery;
   job: Job | null = null;
   editor: vscode.TextEditor;
-
+  dbtProjectContainer: DBTProjectContainer | undefined;
   constructor(config: vscode.WorkspaceConfiguration, editor: vscode.TextEditor) {
     this.config = config;
     this.editor = editor;
@@ -35,8 +35,34 @@ export class BigQueryRunner {
       projectId: this.config?.get("projectId"),
     };
     this.client = new BigQuery(options);
-  }
+    // get project root and target path
+    // const dbtPowerUserExtension = container.get(DBTPowerUserExtension);
+    // this.dbtProjectContainer = dbtPowerUserExtension.getDbtProjectContainer();
 
+  }
+  setDbtProjectContainer(dbtProjectContainer: DBTProjectContainer) {
+    this.dbtProjectContainer = dbtProjectContainer;
+  }
+  findTargetPath(docUri: vscode.Uri):string {
+    if (!this.dbtProjectContainer) {
+      throw new Error("dbtProjectContainer not initialized for runner!");
+    }
+    const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
+    if (!dbtProject) {
+      throw new Error(`couldn't find DBT Project for ${docUri}`);
+    }
+    return dbtProject.getTargetPath();
+  }
+  findProjectRoot(docUri: vscode.Uri): vscode.Uri {
+    if (!this.dbtProjectContainer) {
+      throw new Error("dbtProjectContainer not initialized for runner!");
+    }
+    const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
+    if (!dbtProject) {
+      throw new Error(`couldn't find DBT Project for ${docUri}`);
+    } 
+    return dbtProject.projectRoot;   
+  }
   setConfig(config: vscode.WorkspaceConfiguration) {
     this.config = config;
   }
@@ -135,10 +161,10 @@ export class BigQueryRunner {
     };
   }
 
-  public async runAsQuery(variables: { [s: string]: any }, onlySelected?: boolean): Promise<QueryResult | QueryResultError> {
+  public async runAsQuery(): Promise<QueryResult | QueryResultError> {
     try {
-      console.log(`BigQueryRunner.runAsQuery.variables: ${variables}`);
-      const queryText = this.getQueryText(variables, onlySelected);
+      console.log(`BigQueryRunner.runAsQuery`);
+      const queryText = await this.getQueryText();
       console.log(`BigQueryRunner.runAsQuery.queryText:  ${queryText}`);
       let queryResult = await this.query(queryText);
       console.log(`BigQueryRunner.runAsQuery.queryResult: ${queryResult}`);
@@ -163,36 +189,48 @@ export class BigQueryRunner {
     const result = await this.job.cancel();
     return result;
   }
-
-  private getQueryText(variables: { [s: string]: any }, onlySelected?: boolean): string {
+  private isCompiled(docUri: vscode.Uri): boolean {
+    // TODO: for impl
+    if (!this.dbtProjectContainer) {
+      throw new Error("dbtProjectContainer not initialized for runner!");
+    }
+    const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
+    if (!dbtProject) {
+      // if not part of dbt project, assume compiled is true
+      return true;
+    }
+    return dbtProject.isCompiled(docUri);
+  }
+  private async findCompiledSQLText(docUri: vscode.Uri): Promise<string | undefined>  {
+    if (!this.dbtProjectContainer) {
+      throw new Error("dbtProjectContainer not initialized for runner!");
+    }    
+    const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
+    if (!dbtProject) {
+      // if not part of dbt project, assume compiled is true
+      throw new Error('something went wrong with file lookup');
+    }    
+    return dbtProject.getCompiledSQLText(docUri);
+  }
+  private async getQueryText(): Promise<string> {
     if (!this.editor) {
       throw new Error("No active editor window was found");
     }
-
-    let text: string;
-
-    // Only return the selected text
-    if (onlySelected) {
-      const selection = this.editor.selection;
-      if (selection.isEmpty) {
-        throw new Error("No text is currently selected");
-      }
-
-      text = this.editor.document.getText(selection).trim();
+    console.log(`queryRunner.getQueryText.docURI.path: ${this.editor.document.uri.path}`);
+    const compiled = this.isCompiled(this.editor.document.uri);
+    let text: string | undefined;
+    if (compiled) {
+      text = this.editor.document.getText().trim(); 
     } else {
-      text = this.editor.document.getText().trim();
+      text = await this.findCompiledSQLText(this.editor.document.uri);
+      if (!text) {
+        throw new Error("No compiled SQL found!");
+      }
     }
 
     if (!text) {
       throw new Error("The editor window is empty");
     }
-
-    // Replace variables
-    for (let [key, value] of Object.entries(variables)) {
-      const re = new RegExp(key, 'g');
-      text = text.replace(re, value);
-    }
-
     return text;
   }
 

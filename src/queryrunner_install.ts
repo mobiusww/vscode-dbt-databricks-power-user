@@ -4,24 +4,20 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import { BigQueryRunner } from './queryrunner';
+import { DBTPowerUserExtension } from './dbtPowerUserExtension';
 
-const configPrefix = "bigquery";
+const configPrefix = "dbt.bigquery"; // share config with bigquery
 let config: vscode.WorkspaceConfiguration;
 // let output = vscode.window.createOutputChannel("QueryRunner");
 let  vscontext: vscode.ExtensionContext;
-let  bigQueryRunner: BigQueryRunner;
-
-export async function runQueryRunner() {
-	console.log('calling runQueryRunner');
-	if (vscontext) {
-		await openQueryRunner(vscontext, 
-			            bigQueryRunner);
+//let  bigQueryRunner: BigQueryRunner;
+let vsdbtPowerUserExtension: DBTPowerUserExtension | undefined;
+export async function openQueryRunner(): Promise<void> {
+	if (!vscontext) {
+		return;
 	}
-}
 
-async function openQueryRunner(context: vscode.ExtensionContext, 
-								 bigQueryRunner: BigQueryRunner) {
-	let localResourceRoot = vscode.Uri.file(path.join(context.extensionPath,'public'));
+	let localResourceRoot = vscode.Uri.file(path.join(vscontext.extensionPath,'public'));
 	console.log('localResourceRoot: ' + localResourceRoot);
 	const panel = vscode.window.createWebviewPanel(
 		'queryRunner', // Identifies the type of the webview. Used internally
@@ -33,22 +29,22 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 			localResourceRoots: [localResourceRoot]
 		}
 	);
-
-	panel.webview.html = getWebviewContent(context);
-
-	// Send variables to webview.
-	const variables = context.workspaceState.get("variables", {});
-	panel.webview.postMessage({ command: 'setVariables', variables: variables });
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		throw new Error("No active editor window was found");
+	}		
+	const bigQueryRunner = new BigQueryRunner(config, editor);
+	if (vsdbtPowerUserExtension) {
+		const dbtProjectContainer = vsdbtPowerUserExtension.getDbtProjectContainer();
+		bigQueryRunner.setDbtProjectContainer(dbtProjectContainer);
+	}
+	panel.webview.html = getWebviewContent(vscontext);
 
 	panel.webview.onDidReceiveMessage(
 		async message => {
 			switch (message.command) {
-				case 'openExternal':
-						vscode.env.openExternal(message.url);
-					break;
-
 				case 'runAsQuery':
-					const queryResult = await bigQueryRunner.runAsQuery(message.variables, message.onlySelected);
+					const queryResult = await bigQueryRunner.runAsQuery();
 					if (queryResult.status === "error") {
 						panel.webview.postMessage({ command: 'queryError', errorMessage: queryResult.errorMessage });
 					} else {
@@ -61,18 +57,15 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 					panel.webview.postMessage({ command: 'cancelQuery', result: cancelResult });
 					break;
 
-				case 'saveVariables':
-					context.workspaceState.update("variables", message.variables);
-					break;
 			}
 		},
 		undefined,
-		context.subscriptions
+		vscontext.subscriptions
 	);
 	
 	// start running query upon opening the window
 	console.log(`executing openQueryRunner runAsQuery on open`);
-	const queryResult = await bigQueryRunner.runAsQuery(variables);
+	const queryResult = await bigQueryRunner.runAsQuery();
 	if (queryResult.status === "error") {
 		panel.webview.postMessage({ command: 'queryError', errorMessage: queryResult.errorMessage });
 	} else {
@@ -84,36 +77,30 @@ async function openQueryRunner(context: vscode.ExtensionContext,
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext, dbtPowerUserExtension: DBTPowerUserExtension) {
 	readConfig();
-
-	const editor = vscode.window.activeTextEditor;
-	if (!editor) {
-		return;
-	}
-
-	bigQueryRunner = new BigQueryRunner(config, editor);
-    vscontext = context;
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration(event => {
 			if (!event.affectsConfiguration(configPrefix)) {
 				return;
 			}
-
+			// update config
 			readConfig();
-			bigQueryRunner.setConfig(config);
+			
 		})
 	);
-	let disposable = vscode.commands.registerCommand("dbtPowerUser.openQueryRunner", async() => {await openQueryRunner(context, bigQueryRunner);});
+	let disposable = vscode.commands.registerCommand("dbtPowerUser.openQueryRunner", openQueryRunner);
 	context.subscriptions.push(disposable);
+	vscontext = context;
+	vsdbtPowerUserExtension = dbtPowerUserExtension;
 
 }
 
 function readConfig(): void {
 	try {
 		config = vscode.workspace.getConfiguration(configPrefix);
-	} catch (e) {
-		vscode.window.showErrorMessage(`failed to read config: ${e}`);
+	} catch (err) {
+		vscode.window.showErrorMessage(`failed to read config: ${err}`);
 	}
 }
 

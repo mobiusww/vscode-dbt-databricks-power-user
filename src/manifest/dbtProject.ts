@@ -1,4 +1,4 @@
-import { readFileSync, statSync } from "fs";
+import { read, readFileSync, statSync } from "fs";
 import { safeLoad } from "js-yaml";
 import * as path from "path";
 import {
@@ -96,7 +96,9 @@ export class DBTProject implements Disposable {
       this.dbtProjectLog
     );
   }
-
+  public getTargetPath(): string {
+    return this.targetPath;
+  }
   async tryRefresh() {
     try {
       await this.refresh();
@@ -181,7 +183,28 @@ export class DBTProject implements Disposable {
       };
     }
   }
+  public isCompiled(docUri: Uri): boolean {
+    return docUri.fsPath.startsWith(this.targetPath);
+  }
+  public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
+    const baseName = path.basename(modelPath.fsPath);
+    const pattern = `${this.targetPath}/compiled/**/${baseName}`;
+    // console.log(`findModelInTargetfolder: looking for ${pattern}`);
+    const targetModels = await workspace.findFiles(
+      new RelativePattern(
+        this.projectRoot,
+        pattern
+      )
+    );
+    if (targetModels.length > 0) {
+      const targetModel0 = targetModels[0];
+      // console.log(`findModelInTargetfolder: ${targetModel0}`);
+      const buffer = readFileSync(targetModel0.path);
+      return buffer.toString();
+    }
 
+    return "";
+  }
   private async findModelInTargetfolder(modelPath: Uri, type: string) {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/${type}/**/${baseName}`;
