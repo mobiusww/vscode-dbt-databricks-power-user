@@ -39,13 +39,6 @@ export class RunModel {
     }
   }
 
-  // async previewSQLOnActiveWindow() {
-  //   const fullPath = window.activeTextEditor?.document.uri;
-  //   if (fullPath !== undefined) {
-  //     this.previewSQL(fullPath);
-  //   }
-  // }
-
   showRunSQLOnActiveWindow() {
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
@@ -64,10 +57,6 @@ export class RunModel {
   showCompiledSQL(modelPath: Uri) {
     this.dbtProjectContainer.showCompiledSQL(modelPath);
   }
-
-  // async previewSQL(modelPath: Uri) {
-  //   this.dbtProjectContainer.previewSQL(modelPath);
-  // }
 
   showRunSQL(modelPath: Uri) {
     this.dbtProjectContainer.showRunSQL(modelPath);

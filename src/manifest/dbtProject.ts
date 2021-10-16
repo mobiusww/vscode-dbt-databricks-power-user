@@ -155,9 +155,6 @@ export class DBTProject implements Disposable {
     this.findModelInTargetfolder(modelPath, "compiled");
   }
 
-  // async previewSQL(modelPath: Uri) {
-  //   await this.previewSQLInTargetfolder(modelPath);
-  // }
 
   showRunSQL(modelPath: Uri) {
     this.findModelInTargetfolder(modelPath, "run");
