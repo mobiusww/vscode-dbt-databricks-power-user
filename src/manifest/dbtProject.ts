@@ -189,6 +189,10 @@ export class DBTProject implements Disposable {
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/compiled/**/${baseName}`;
+    const modelName = path.basename(modelPath.fsPath, ".sql");
+    const orig_file = modelPath.path;
+    const orig_file_stats = statSync(orig_file);
+    const orig_file_mtime = orig_file_stats.mtime;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     const targetModels = await workspace.findFiles(
       new RelativePattern(
@@ -199,11 +203,33 @@ export class DBTProject implements Disposable {
     if (targetModels.length > 0) {
       const targetModel0 = targetModels[0];
       // console.log(`findModelInTargetfolder: ${targetModel0}`);
+      const target_path = targetModel0.path;
+      console.log(`previewSQLInTargetfolder: ${target_path}`);
+      const target_path_stats = statSync(target_path);
+      const target_path_mtime = target_path_stats.mtime;
+      console.log(`target_path_mtime: ${target_path_mtime}`);
+      if (target_path_mtime < orig_file_mtime) {
+        // trigger compile
+        const runModelParams: RunModelParams = {
+          plusOperatorLeft: "",
+          modelName: modelName,
+          plusOperatorRight: ""
+         
+        };
+        const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
+          this.projectRoot,
+          runModelParams
+        );
+        console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
+        await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
+  
+      }      
+
       const buffer = readFileSync(targetModel0.path);
       return buffer.toString();
     }
 
-    return "";
+    throw new Error("Current model not found!"); 
   }
   private async findModelInTargetfolder(modelPath: Uri, type: string) {
     const baseName = path.basename(modelPath.fsPath);

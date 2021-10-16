@@ -226,7 +226,14 @@ export class BigQueryRunner {
       // was previously run or if compiled sql text was not in 
       // sync with uncompiled sql - if uncompiled sql is not
       // in sync - trigger compilation and use compiled text
-      text = await this.findCompiledSQLText(this.editor.document.uri);
+      const docUri = this.editor.document.uri;
+      if (this.editor.document.isDirty) {
+        const saved = await this.editor.document.save();
+        if (!saved) {
+          throw new Error("Couldn't save current document");
+        }
+      }
+      text = await this.findCompiledSQLText(docUri);
       if (!text) {
         throw new Error("No compiled SQL found!");
       }
