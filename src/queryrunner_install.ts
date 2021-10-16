@@ -8,9 +8,7 @@ import { DBTPowerUserExtension } from './dbtPowerUserExtension';
 
 const configPrefix = "dbt.bigquery"; // share config with bigquery
 let config: vscode.WorkspaceConfiguration;
-// let output = vscode.window.createOutputChannel("QueryRunner");
 let  vscontext: vscode.ExtensionContext;
-//let  bigQueryRunner: BigQueryRunner;
 let vsdbtPowerUserExtension: DBTPowerUserExtension | undefined;
 export async function openQueryRunner(): Promise<void> {
 	if (!vscontext) {
@@ -84,7 +82,6 @@ export function activate(context: vscode.ExtensionContext, dbtPowerUserExtension
 			if (!event.affectsConfiguration(configPrefix)) {
 				return;
 			}
-			// update config
 			readConfig();
 			
 		})
@@ -120,8 +117,5 @@ function getWebviewContent(context: vscode.ExtensionContext): string {
 	return html.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
 }
 
-// function publicPath(filePath: string, context: vscode.ExtensionContext): string {
-// }
 
-// this method is called when your extension is deactivated
 export function deactivate() { }

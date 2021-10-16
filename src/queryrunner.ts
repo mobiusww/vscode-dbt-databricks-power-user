@@ -35,9 +35,6 @@ export class BigQueryRunner {
       projectId: this.config?.get("projectId"),
     };
     this.client = new BigQuery(options);
-    // get project root and target path
-    // const dbtPowerUserExtension = container.get(DBTPowerUserExtension);
-    // this.dbtProjectContainer = dbtPowerUserExtension.getDbtProjectContainer();
 
   }
   setDbtProjectContainer(dbtProjectContainer: DBTProjectContainer) {
@@ -190,8 +187,7 @@ export class BigQueryRunner {
     return result;
   }
   private isCompiled(docUri: vscode.Uri): boolean {
-    // TODO: for impl
-    if (!this.dbtProjectContainer) {
+     if (!this.dbtProjectContainer) {
       throw new Error("dbtProjectContainer not initialized for runner!");
     }
     const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
@@ -222,10 +218,6 @@ export class BigQueryRunner {
     if (compiled) {
       text = this.editor.document.getText().trim(); 
     } else {
-      // TODO: check if docuri update time is later than what
-      // was previously run or if compiled sql text was not in 
-      // sync with uncompiled sql - if uncompiled sql is not
-      // in sync - trigger compilation and use compiled text
       const docUri = this.editor.document.uri;
       if (this.editor.document.isDirty) {
         const saved = await this.editor.document.save();
