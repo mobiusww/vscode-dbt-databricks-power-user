@@ -146,14 +146,7 @@
           "dark": "./media/file-code_dark.svg"
         }
       },
-      {
-        "command": "dbtPowerUser.previewSQL",
-        "title": "dbt Big Query Power User: Preview SQL",
-        "icon": {
-          "light": "./media/source_light.svg",
-          "dark": "./media/source_dark.svg"
-        }
-      },
+
       {
         "command": "dbtPowerUser.showCompiledSQL",
         "title": "dbt Power User: Show compiled SQL",
@@ -197,7 +190,7 @@
           "group": "navigation@-1"
         },
         {
-          "command": "dbtPowerUser.previewSQL",
+          "command": "dbtPowerUser.openQueryRunner",
           "when": "resourceLangId == jinja-sql",
           "group": "navigation@-2"
         },
@@ -205,6 +198,11 @@
           "command": "dbtPowerUser.compileCurrentModel",
           "when": "resourceLangId == jinja-sql",
           "group": "navigation@0"
+        },
+        {
+          "command": "dbtPowerUser.showCompiledSQL",
+          "when": "resourceLangId == jinja-sql",
+          "group": "navigation@-3"
         }
       ],
       "view/title": [
