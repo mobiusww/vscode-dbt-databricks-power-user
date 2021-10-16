@@ -222,6 +222,10 @@ export class BigQueryRunner {
     if (compiled) {
       text = this.editor.document.getText().trim(); 
     } else {
+      // TODO: check if docuri update time is later than what
+      // was previously run or if compiled sql text was not in 
+      // sync with uncompiled sql - if uncompiled sql is not
+      // in sync - trigger compilation and use compiled text
       text = await this.findCompiledSQLText(this.editor.document.uri);
       if (!text) {
         throw new Error("No compiled SQL found!");
