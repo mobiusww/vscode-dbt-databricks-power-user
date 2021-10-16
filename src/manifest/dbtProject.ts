@@ -155,9 +155,9 @@ export class DBTProject implements Disposable {
     this.findModelInTargetfolder(modelPath, "compiled");
   }
 
-  async previewSQL(modelPath: Uri) {
-    await this.previewSQLInTargetfolder(modelPath);
-  }
+  // async previewSQL(modelPath: Uri) {
+  //   await this.previewSQLInTargetfolder(modelPath);
+  // }
 
   showRunSQL(modelPath: Uri) {
     this.findModelInTargetfolder(modelPath, "run");
@@ -250,54 +250,54 @@ export class DBTProject implements Disposable {
     }
   }
 
-  private async previewSQLInTargetfolder(modelPath: Uri) {
-    const baseName = path.basename(modelPath.fsPath);
-    const modelName = path.basename(modelPath.fsPath, ".sql");
-    const orig_file = modelPath.path;
-    const orig_file_stats = statSync(orig_file);
-    const orig_file_mtime = orig_file_stats.mtime;
-    console.log(`orig_file_mtime: ${orig_file_mtime}`);
-    console.log(`orig_file modelName: ${modelName}`);
-    const pattern = `${this.targetPath}/compiled/**/${baseName}`;
-    console.log(`previewSQLInTargetfolder: looking for ${pattern}`);
-    const targetModels = await workspace.findFiles(
-      new RelativePattern(
-        this.projectRoot,
-        pattern
-      )
-    );
-    if (targetModels.length > 0) {
-      const targetModel0 = targetModels[0];
-      const target_path = targetModel0.path;
-      console.log(`previewSQLInTargetfolder: ${target_path}`);
-      const target_path_stats = statSync(target_path);
-      const target_path_mtime = target_path_stats.mtime;
-      console.log(`target_path_mtime: ${target_path_mtime}`);
-      if (target_path_mtime < orig_file_mtime) {
-        // trigger compile
-        const runModelParams: RunModelParams = {
-          plusOperatorLeft: "",
-          modelName: modelName,
-          plusOperatorRight: ""
+  // private async previewSQLInTargetfolder(modelPath: Uri) {
+  //   const baseName = path.basename(modelPath.fsPath);
+  //   const modelName = path.basename(modelPath.fsPath, ".sql");
+  //   const orig_file = modelPath.path;
+  //   const orig_file_stats = statSync(orig_file);
+  //   const orig_file_mtime = orig_file_stats.mtime;
+  //   console.log(`orig_file_mtime: ${orig_file_mtime}`);
+  //   console.log(`orig_file modelName: ${modelName}`);
+  //   const pattern = `${this.targetPath}/compiled/**/${baseName}`;
+  //   console.log(`previewSQLInTargetfolder: looking for ${pattern}`);
+  //   const targetModels = await workspace.findFiles(
+  //     new RelativePattern(
+  //       this.projectRoot,
+  //       pattern
+  //     )
+  //   );
+  //   if (targetModels.length > 0) {
+  //     const targetModel0 = targetModels[0];
+  //     const target_path = targetModel0.path;
+  //     console.log(`previewSQLInTargetfolder: ${target_path}`);
+  //     const target_path_stats = statSync(target_path);
+  //     const target_path_mtime = target_path_stats.mtime;
+  //     console.log(`target_path_mtime: ${target_path_mtime}`);
+  //     if (target_path_mtime < orig_file_mtime) {
+  //       // trigger compile
+  //       const runModelParams: RunModelParams = {
+  //         plusOperatorLeft: "",
+  //         modelName: modelName,
+  //         plusOperatorRight: ""
          
-        };
-        const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
-          this.projectRoot,
-          runModelParams
-        );
-        console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
-        await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
+  //       };
+  //       const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
+  //         this.projectRoot,
+  //         runModelParams
+  //       );
+  //       console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
+  //       await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
   
-      }      
-      // const queryText = readFileSync(target_path,"utf8");
+  //     }      
+  //     // const queryText = readFileSync(target_path,"utf8");
 
-      // await runAsQueryText(queryText);
-      commands.executeCommand("vscode.open", targetModel0, {
-        preview: false,
-      });
-      //invoke query after     
-    }
-  }
+  //     // await runAsQueryText(queryText);
+  //     commands.executeCommand("vscode.open", targetModel0, {
+  //       preview: false,
+  //     });
+  //     //invoke query after     
+  //   }
+  // }
 
 
   private async refresh() {

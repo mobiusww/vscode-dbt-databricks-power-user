@@ -39,12 +39,12 @@ export class RunModel {
     }
   }
 
-  async previewSQLOnActiveWindow() {
-    const fullPath = window.activeTextEditor?.document.uri;
-    if (fullPath !== undefined) {
-      this.previewSQL(fullPath);
-    }
-  }
+  // async previewSQLOnActiveWindow() {
+  //   const fullPath = window.activeTextEditor?.document.uri;
+  //   if (fullPath !== undefined) {
+  //     this.previewSQL(fullPath);
+  //   }
+  // }
 
   showRunSQLOnActiveWindow() {
     const fullPath = window.activeTextEditor?.document.uri;
@@ -65,9 +65,9 @@ export class RunModel {
     this.dbtProjectContainer.showCompiledSQL(modelPath);
   }
 
-  async previewSQL(modelPath: Uri) {
-    this.dbtProjectContainer.previewSQL(modelPath);
-  }
+  // async previewSQL(modelPath: Uri) {
+  //   this.dbtProjectContainer.previewSQL(modelPath);
+  // }
 
   showRunSQL(modelPath: Uri) {
     this.dbtProjectContainer.showRunSQL(modelPath);
