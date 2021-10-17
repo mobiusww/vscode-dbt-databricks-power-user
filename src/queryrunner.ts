@@ -9,6 +9,7 @@ interface QueryResult {
   table: TableResult;
   json: string;
   detail: string;
+  startIndex?: number;
 }
 
 interface QueryResultError {
@@ -26,10 +27,12 @@ export class BigQueryRunner {
   client: BigQuery;
   job: Job | null = null;
   editor: vscode.TextEditor;
+  startIndex: string;
   dbtProjectContainer: DBTProjectContainer | undefined;
   constructor(config: vscode.WorkspaceConfiguration, editor: vscode.TextEditor) {
     this.config = config;
     this.editor = editor;
+    this.startIndex = "0";
     let options: BigQueryOptions = {
       keyFilename: this.config?.get("keyFilename"),
       projectId: this.config?.get("projectId"),
@@ -72,6 +75,8 @@ export class BigQueryRunner {
   private async query(queryText: string, isDryRun?: boolean): Promise<QueryResult> {
     let data;
     console.log(`queryrunner run query: queryText: ${queryText}`);
+
+
     try {
       data = await this.client.createQueryJob({
         query: queryText,
@@ -90,10 +95,14 @@ export class BigQueryRunner {
     vscode.window.showInformationMessage(`BigQuery job ID: ${this.job.metadata.id}`);
 
     let result;
-
+    // reset index to 0
+    this.startIndex = "0";
+    console.log('get query results startIndex', this.startIndex);
     try {
       result = await this.job.getQueryResults({
-        autoPaginate: true // TODO
+        autoPaginate: true, // TODO
+        maxResults: 10,
+        startIndex: this.startIndex,     
       });
     } catch (err) {
       vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);
@@ -101,6 +110,7 @@ export class BigQueryRunner {
     }
 
     try {
+      console.log('get query results before processResults startIndex', this.startIndex);
       return await this.processResults(result[0]);
     } catch (err) {
       vscode.window.showErrorMessage(`Failed to get results: ${err}`);
@@ -125,6 +135,12 @@ export class BigQueryRunner {
       table.push(tableRow);
     });
 
+    // increment startIndex to continue 
+    let start = parseInt(this.startIndex);
+    if (table.length > 0) {
+      let newstart = start + table.length;
+      this.startIndex = newstart.toString();
+    }
     return {
       headers,
       rows: table
@@ -137,7 +153,8 @@ export class BigQueryRunner {
     }
 
     const metadata = (await this.job.getMetadata())[0];
-
+    const startRowId = parseInt(this.startIndex);
+    console.log('startRowID ', startRowId);
     return {
       status: "success",
       info: {
@@ -155,7 +172,36 @@ export class BigQueryRunner {
       table: this.makeTable(rows),
       json: JSON.stringify(rows, null, "  "),
       detail: JSON.stringify(metadata.statistics, null, "  "),
+      startIndex: startRowId,
     };
+  }
+  public async getNextPage(): Promise<QueryResult | QueryResultError> {
+    if (!this.job) {
+      vscode.window.showErrorMessage('Next page invalid as no job has been started!');
+      return {
+        status: "error",
+        errorMessage: 'Next page invalid as no job has been started!',
+      };
+    }
+    let result;
+    try {
+      console.log('next page get query results startIndex', this.startIndex);
+      result = await this.job.getQueryResults({
+        autoPaginate: true, // TODO
+        maxResults: 10,
+        startIndex: this.startIndex,     
+      });
+    } catch (err) {
+      vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);
+      throw err;
+    }
+    try {
+      console.log('next query before processResults startIndex', this.startIndex);
+      return await this.processResults(result[0]);
+    } catch (err) {
+      vscode.window.showErrorMessage(`Failed to get results: ${err}`);
+      throw err;
+    }
   }
 
   public async runAsQuery(): Promise<QueryResult | QueryResultError> {

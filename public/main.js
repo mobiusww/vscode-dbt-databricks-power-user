@@ -16,6 +16,7 @@ const vueApp = new Vue ({
     json: '',
     detail: 'det',
     errorMessage: null,
+    startIndex: 0,
   },
   computed: {
     elapsedTime () {
@@ -52,6 +53,14 @@ const vueApp = new Vue ({
       }
     },
 
+    nextPage () {
+      this.queryStatus = 'runningAsQuery';
+      call ({
+        command: 'nextPage',
+        variables: this._parseVariables() || {},
+      });
+    },
+
     runAsQuery () {
       this.queryStatus = 'runningAsQuery';
       call ({
@@ -66,6 +75,7 @@ const vueApp = new Vue ({
       this.sql = result.sql;
       this.info = result.info;
       this.table = result.table;
+      this.startIndex = result.startIndex;
       // this.json = result.json
       this.detail = result.detail;
     },
@@ -106,6 +116,9 @@ const vueApp = new Vue ({
 window.addEventListener ('message', event => {
   switch (event.data.command) {
     case 'runAsQuery':
+      vueApp.displayResult(event.data.result);
+      break;
+    case 'nextPage':
       vueApp.displayResult(event.data.result);
       break;
     case 'queryError':

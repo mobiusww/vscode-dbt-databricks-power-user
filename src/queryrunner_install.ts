@@ -49,6 +49,14 @@ export async function openQueryRunner(): Promise<void> {
 						panel.webview.postMessage({ command: 'runAsQuery', result: queryResult });
 					}
 					break;
+				case 'nextPage':
+					const nextResult = await bigQueryRunner.getNextPage();
+					if (nextResult.status === "error") {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: nextResult.errorMessage });
+					} else {
+						panel.webview.postMessage({ command: 'nextPage', result: nextResult });
+					}
+					break;
 
 				case 'cancelQuery':
 					const cancelResult = await bigQueryRunner.cancelQuery();

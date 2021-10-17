@@ -19,6 +19,9 @@
         @click="runAsQuery">Rerun Query</button>
       <button class="button is-info" disabled v-if="queryStatus === 'runningAsQuery'">Running...</button>
       <button class="button is-danger" v-if="queryStatus === 'runningAsQuery'" @click="cancelQuery">Cancel</button>
+      <button class="button is-info"
+        v-if="queryStatus === 'done'"
+        @click="nextPage">Next Page</button>
 
       <span v-if="queryStatus === 'done'">(Elapsed time: {{elapsedTime}} sec., Processed Bytes:
         {{(totalBytesProcessed / 1000000.0).toFixed(2)}} MB)</span>
@@ -66,7 +69,7 @@
           </thead>
           <tbody>
             <tr v-for="(row, idx) in table.rows">
-              <th>{{idx + 1}}</th>
+              <th>{{idx + startIndex + 1}}</th>
               <td v-for="value in row">{{displayValue(value)}}</td>
             </tr>
           </tbody>
