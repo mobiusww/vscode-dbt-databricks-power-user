@@ -17,6 +17,8 @@ const vueApp = new Vue ({
     detail: 'det',
     errorMessage: null,
     startIndex: 0,
+    hasNext: false,
+    hasPrev: false,
   },
   computed: {
     elapsedTime () {
@@ -60,6 +62,14 @@ const vueApp = new Vue ({
         variables: this._parseVariables() || {},
       });
     },
+  
+    prevPage () {
+      this.queryStatus = 'runningAsQuery';
+      call ({
+        command: 'prevPage',
+        variables: this._parseVariables() || {},
+      });
+    },
 
     runAsQuery () {
       this.queryStatus = 'runningAsQuery';
@@ -78,6 +88,8 @@ const vueApp = new Vue ({
       this.startIndex = result.startIndex;
       // this.json = result.json
       this.detail = result.detail;
+      this.hasNext = result.hasNext? "true":"false";
+      this.hasPrev = result.hasPrev? "true":"false";
     },
 
     displayValue (value) {
@@ -119,6 +131,9 @@ window.addEventListener ('message', event => {
       vueApp.displayResult(event.data.result);
       break;
     case 'nextPage':
+      vueApp.displayResult(event.data.result);
+      break;
+    case 'prevPage':
       vueApp.displayResult(event.data.result);
       break;
     case 'queryError':

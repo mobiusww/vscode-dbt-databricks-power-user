@@ -20,7 +20,10 @@
       <button class="button is-info" disabled v-if="queryStatus === 'runningAsQuery'">Running...</button>
       <button class="button is-danger" v-if="queryStatus === 'runningAsQuery'" @click="cancelQuery">Cancel</button>
       <button class="button is-info"
-        v-if="queryStatus === 'done'"
+        v-if="queryStatus === 'done' && hasPrev === 'true'"
+        @click="prevPage">Prev Page</button>
+      <button class="button is-info"
+        v-if="queryStatus === 'done' && hasNext === 'true'"
         @click="nextPage">Next Page</button>
 
       <span v-if="queryStatus === 'done'">(Elapsed time: {{elapsedTime}} sec., Processed Bytes:
