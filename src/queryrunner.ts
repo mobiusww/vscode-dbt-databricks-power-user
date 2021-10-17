@@ -24,12 +24,14 @@ interface TableResult {
   rows: any[];
 }
 
+const DEFAULT_ITEMS_PER_PAGE = 50;
 export class BigQueryRunner {
   config: vscode.WorkspaceConfiguration;
   client: BigQuery;
   job: Job | null = null;
   editor: vscode.TextEditor;
   startIndex: number;
+  items_per_page: number = DEFAULT_ITEMS_PER_PAGE;
   dbtProjectContainer: DBTProjectContainer | undefined;
   nextToken: any;
   constructor(config: vscode.WorkspaceConfiguration, editor: vscode.TextEditor) {
@@ -37,6 +39,10 @@ export class BigQueryRunner {
     this.editor = editor;
     this.startIndex = 0;
     this.nextToken = undefined;
+    const items_per_page = this.config?.get("itemsPerPage", DEFAULT_ITEMS_PER_PAGE);
+    if (items_per_page) {
+      this.items_per_page = parseInt(items_per_page.toString());
+    }
     let options: BigQueryOptions = {
       keyFilename: this.config?.get("keyFilename"),
       projectId: this.config?.get("projectId"),
@@ -105,7 +111,7 @@ export class BigQueryRunner {
     try {
       result = await this.job.getQueryResults({
         autoPaginate: true, // TODO
-        maxResults: 10,
+        maxResults: this.items_per_page,
         startIndex: this.startIndex.toString(),     
       });
     } catch (err) {
@@ -205,7 +211,7 @@ export class BigQueryRunner {
     }
     //
     const startIndex = this.startIndex;
-    let newStartIndex = startIndex - 2*10;
+    let newStartIndex = startIndex - 2*this.items_per_page;
     if (newStartIndex < 0) {
       newStartIndex = 0;
     }
@@ -225,7 +231,7 @@ export class BigQueryRunner {
       console.log('next page get query results startIndex', this.startIndex);
       result = await this.job.getQueryResults({
         autoPaginate: true,
-        maxResults: 10,
+        maxResults: this.items_per_page,
         startIndex: this.startIndex.toString(), 
          
       });
