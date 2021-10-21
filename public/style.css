@@ -1,6 +1,3 @@
-body {
-  background-color: white;
-}
 
 #button-container {
   padding: 1rem;
@@ -17,7 +14,6 @@ body {
 }
 
 .table-sticky-container thead tr th {
-  background-color: #ececec;
   position: sticky;
   top: 0;
   border-top-width: 0 !important;
@@ -25,7 +21,6 @@ body {
 }
 
 .table-sticky-container tbody tr th {
-  background-color: #ececec;
   position: sticky;
   left: 0;
   z-index: 1;

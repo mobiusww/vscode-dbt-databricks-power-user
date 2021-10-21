@@ -19,6 +19,7 @@ const vueApp = new Vue ({
     startIndex: 0,
     hasNext: false,
     hasPrev: false,
+    theme: 'dark',
   },
   computed: {
     elapsedTime () {
