@@ -14,9 +14,13 @@ export async function openQueryRunner(): Promise<void> {
 	if (!vscontext) {
 		return;
 	}
-
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		throw new Error("No active editor window was found");
+	}	
 	let localResourceRoot = vscode.Uri.file(path.join(vscontext.extensionPath,'public'));
 	console.log('localResourceRoot: ' + localResourceRoot);
+	vscode.commands.executeCommand('workbench.action.editorLayoutTwoRows');
 	const panel = vscode.window.createWebviewPanel(
 		'queryRunner', // Identifies the type of the webview. Used internally
 		'QueryRunner', // Title of the panel displayed to the user
@@ -27,10 +31,8 @@ export async function openQueryRunner(): Promise<void> {
 			localResourceRoots: [localResourceRoot]
 		}
 	);
-	const editor = vscode.window.activeTextEditor;
-	if (!editor) {
-		throw new Error("No active editor window was found");
-	}		
+	
+
 	const bigQueryRunner = new BigQueryRunner(config, editor);
 	if (vsdbtPowerUserExtension) {
 		const dbtProjectContainer = vsdbtPowerUserExtension.getDbtProjectContainer();
