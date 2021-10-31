@@ -1,0 +1,15 @@
+html {
+    background-color: #fff;
+}
+
+body {
+    background-color: white;
+}
+
+.table-sticky-container thead tr th {
+    background-color: #ececec;
+}
+
+.table-sticky-container tbody tr th {
+    background-color: #ececec;
+}

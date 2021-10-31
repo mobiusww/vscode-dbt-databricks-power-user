@@ -1,0 +1,42 @@
+html {
+    background-color: rgb(15, 1, 1);
+}
+
+body {
+    background-color: rgb(15, 1, 1);
+}
+
+.table-sticky-container thead tr th {
+    background-color: #180e0e;
+}
+
+.table-sticky-container tbody tr th {
+    background-color: #180e0e;
+}
+
+.table-sticky-container tbody tr td {
+    background-color: #180e0e;
+    color: rgb(99, 107, 107);
+    ;
+}
+
+.table-container thead tr th {
+    background-color: #180e0e;
+    color: rgb(99, 107, 107);
+}
+
+.table-container tbody tr th {
+    background-color: #180e0e;
+    color: rgb(99, 107, 107);
+}
+
+.table-container tbody tr td {
+    background-color: #180e0e;
+    color: rgb(99, 107, 107);
+    ;
+}
+
+pre {
+    background-color: #180e0e;
+    color: rgb(99, 107, 107);
+}

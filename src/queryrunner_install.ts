@@ -8,17 +8,19 @@ import { DBTPowerUserExtension } from './dbtPowerUserExtension';
 
 const configPrefix = "dbt.bigquery"; // share config with bigquery
 let config: vscode.WorkspaceConfiguration;
-// let output = vscode.window.createOutputChannel("QueryRunner");
 let  vscontext: vscode.ExtensionContext;
-//let  bigQueryRunner: BigQueryRunner;
 let vsdbtPowerUserExtension: DBTPowerUserExtension | undefined;
 export async function openQueryRunner(): Promise<void> {
 	if (!vscontext) {
 		return;
 	}
-
+	const editor = vscode.window.activeTextEditor;
+	if (!editor) {
+		throw new Error("No active editor window was found");
+	}	
 	let localResourceRoot = vscode.Uri.file(path.join(vscontext.extensionPath,'public'));
 	console.log('localResourceRoot: ' + localResourceRoot);
+	vscode.commands.executeCommand('workbench.action.editorLayoutTwoRows');
 	const panel = vscode.window.createWebviewPanel(
 		'queryRunner', // Identifies the type of the webview. Used internally
 		'QueryRunner', // Title of the panel displayed to the user
@@ -29,10 +31,8 @@ export async function openQueryRunner(): Promise<void> {
 			localResourceRoots: [localResourceRoot]
 		}
 	);
-	const editor = vscode.window.activeTextEditor;
-	if (!editor) {
-		throw new Error("No active editor window was found");
-	}		
+	
+
 	const bigQueryRunner = new BigQueryRunner(config, editor);
 	if (vsdbtPowerUserExtension) {
 		const dbtProjectContainer = vsdbtPowerUserExtension.getDbtProjectContainer();
@@ -51,7 +51,26 @@ export async function openQueryRunner(): Promise<void> {
 						panel.webview.postMessage({ command: 'runAsQuery', result: queryResult });
 					}
 					break;
-
+				case 'nextPage':
+					const nextResult = await bigQueryRunner.getNextPage();
+					if (nextResult.status === "error") {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: nextResult.errorMessage });
+					} else {
+						panel.webview.postMessage({ command: 'nextPage', result: nextResult });
+					}
+					break;
+				case 'prevPage':
+					if (bigQueryRunner.startIndex === 0) {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: "No more previous pages" });
+						break; // no more prev page;
+					}
+					const prevResult = await bigQueryRunner.getPrevPage();
+					if (prevResult.status === "error") {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: prevResult.errorMessage });
+					} else {
+						panel.webview.postMessage({ command: 'prevPage', result: prevResult });
+					}
+					break;
 				case 'cancelQuery':
 					const cancelResult = await bigQueryRunner.cancelQuery();
 					panel.webview.postMessage({ command: 'cancelQuery', result: cancelResult });
@@ -84,7 +103,6 @@ export function activate(context: vscode.ExtensionContext, dbtPowerUserExtension
 			if (!event.affectsConfiguration(configPrefix)) {
 				return;
 			}
-			// update config
 			readConfig();
 			
 		})
@@ -116,12 +134,10 @@ function getWebviewContent(context: vscode.ExtensionContext): string {
 		path.join(context.extensionPath, 'public')
 	);
 	resourceDir = resourceDir.with({ scheme: 'vscode-resource' });
-
-	return html.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
+    html = html.replace(new RegExp('__THEME__','g'), config.get('runnerTheme','dark'));
+	html = html.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
+	return html;
 }
 
-// function publicPath(filePath: string, context: vscode.ExtensionContext): string {
-// }
 
-// this method is called when your extension is deactivated
 export function deactivate() { }

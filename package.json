@@ -1,280 +1,287 @@
 {
-  "name": "vscode-dbt-bigquery-power-user",
-  "displayName": "dbt Big Query Power User",
-  "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
-  "icon": "media/dbt.png",
-  "publisher": "butchland",
-  "license": "MIT",
-  "homepage": "https://github.com/butchland/vscode-dbt-bigquery-power-user",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user.git"
-  },
-  "bugs": {
-    "url": "https://github.com/butchland/vscode-dbt-bigquer-power-user/issues"
-  },
-  "version": "0.5.12",
-  "engines": {
-    "vscode": "^1.52.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "keywords": [
-    "dbt",
-    "sql",
-    "jinja-sql",
-    "bigquery"
-  ],
-  "activationEvents": [
-    "workspaceContains:**/dbt_project.yml"
-  ],
-  "main": "./dist/extension",
-  "contributes": {
-    "configuration": [
-      {
-        "title": "dbt Power User",
-        "properties": {
-          "dbt.listModelsDisabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Disable automatic listing of models when files change."
-          },
-          "dbt.bigquery.keyFilename": {
-            "type": "string",
-            "default": "",
-            "description": "Full path to the a .json, .pem, or .p12 key downloaded from the Google Developers Console. If you provide a path to a JSON file, the projectId option is not necessary. NOTE: .pem and .p12 require you to specify the email option as well."
-          },
-          "dbt.bigquery.projectId": {
-            "type": "string",
-            "default": "",
-            "description": "(Optional) The project ID from the Google Developer's Console, e.g. 'grape-spaceship-123'. This is NOT needed if you are provide a key in JSON format"
-          },
-          "dbt.bigquery.useLegacySql": {
-            "type": "boolean",
-            "default": false,
-            "description": "Specifies whether to use BigQuery's legacy SQL dialect for this query. The default value is false. If set to false, the query will use BigQuery's standard SQL: https://cloud.google.com/bigquery/sql-reference/"
-          },
-          "dbt.bigquery.location": {
-            "type": "string",
-            "default": "US",
-            "description": "The geographic location of the job. Required except for US and EU. See details at https://cloud.google.com/bigquery/docs/dataset-locations#specifying_your_location."
-          },
-          "dbt.bigquery.maximumBytesBilled": {
-            "type": "integer",
-            "default": 1000000000000,
-            "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
-          },
-          "dbt.bigquery.outputFormat": {
-            "type": "string",
-            "default": "json",
-            "enum": [
-              "json",
-              "csv",
-              "table"
+    "name": "vscode-dbt-bigquery-power-user",
+    "displayName": "dbt Big Query Power User",
+    "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
+    "icon": "media/dbt.png",
+    "publisher": "butchland",
+    "license": "MIT",
+    "homepage": "https://github.com/butchland/vscode-dbt-bigquery-power-user",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user.git"
+    },
+    "bugs": {
+        "url": "https://github.com/butchland/vscode-dbt-bigquer-power-user/issues"
+    },
+    "version": "0.5.12",
+    "engines": {
+        "vscode": "^1.52.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "dbt",
+        "sql",
+        "jinja-sql",
+        "bigquery"
+    ],
+    "activationEvents": [
+        "workspaceContains:**/dbt_project.yml"
+    ],
+    "main": "./dist/extension",
+    "contributes": {
+        "configuration": [{
+            "title": "dbt Power User",
+            "properties": {
+                "dbt.listModelsDisabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Disable automatic listing of models when files change."
+                },
+                "dbt.bigquery.keyFilename": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Full path to the a .json, .pem, or .p12 key downloaded from the Google Developers Console. If you provide a path to a JSON file, the projectId option is not necessary. NOTE: .pem and .p12 require you to specify the email option as well."
+                },
+                "dbt.bigquery.itemsPerPage": {
+                    "type": "number",
+                    "default": 50,
+                    "description": "Number of result rows per page"
+                },
+
+                "dbt.bigquery.projectId": {
+                    "type": "string",
+                    "default": "",
+                    "description": "(Optional) The project ID from the Google Developer's Console, e.g. 'grape-spaceship-123'. This is NOT needed if you are provide a key in JSON format"
+                },
+                "dbt.bigquery.useLegacySql": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies whether to use BigQuery's legacy SQL dialect for this query. The default value is false. If set to false, the query will use BigQuery's standard SQL: https://cloud.google.com/bigquery/sql-reference/"
+                },
+                "dbt.bigquery.location": {
+                    "type": "string",
+                    "default": "US",
+                    "description": "The geographic location of the job. Required except for US and EU. See details at https://cloud.google.com/bigquery/docs/dataset-locations#specifying_your_location."
+                },
+                "dbt.bigquery.maximumBytesBilled": {
+                    "type": "integer",
+                    "default": 1000000000000,
+                    "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
+                },
+                "dbt.bigquery.outputFormat": {
+                    "type": "string",
+                    "default": "json",
+                    "enum": [
+                        "json",
+                        "csv",
+                        "table"
+                    ],
+                    "description": "Controls the output format for query results."
+                },
+                "dbt.bigquery.prettyPrintJSON": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Pretty print JSON results."
+                },
+                "dbt.bigquery.runnerTheme": {
+                    "type": "string",
+                    "default": "dark",
+                    "enum": [
+                        "light",
+                        "dark"
+                    ],
+                    "description": "Controls the theme of the query runner."
+                }
+
+            }
+        }],
+        "viewsContainers": {
+            "activitybar": [{
+                "id": "dbt_view",
+                "title": "dbt Big Query Power User",
+                "icon": "./media/dbt_icon.svg",
+                "contextualTitle": "dbt Power User"
+            }]
+        },
+        "views": {
+            "dbt_view": [{
+                    "id": "parent_model_treeview",
+                    "name": "Parent Models"
+                },
+                {
+                    "id": "children_model_treeview",
+                    "name": "Children Models"
+                }
+            ]
+        },
+        "commands": [{
+                "command": "dbtPowerUser.runCurrentModel",
+                "title": "dbt Power User: Run current model",
+                "icon": {
+                    "light": "./media/run-light.svg",
+                    "dark": "./media/run-dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.compileCurrentModel",
+                "title": "dbt Power User: Compile current model",
+                "icon": {
+                    "light": "./media/build_light.svg",
+                    "dark": "./media/build_dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.runChildrenModels",
+                "title": "dbt Power User: Run children models",
+                "icon": {
+                    "light": "./media/run-light.svg",
+                    "dark": "./media/run-dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.runParentModels",
+                "title": "dbt Power User: Run parent models",
+                "icon": {
+                    "light": "./media/run-light.svg",
+                    "dark": "./media/run-dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.showRunSQL",
+                "title": "dbt Power User: Show run SQL",
+                "icon": {
+                    "light": "./media/file-code_light.svg",
+                    "dark": "./media/file-code_dark.svg"
+                }
+            },
+
+            {
+                "command": "dbtPowerUser.showCompiledSQL",
+                "title": "dbt Power User: Show compiled SQL",
+                "icon": {
+                    "light": "./media/file-code_light.svg",
+                    "dark": "./media/file-code_dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.openQueryRunner",
+                "title": "dbt Big Query Power User: Open QueryRunner",
+
+                "icon": {
+                    "light": "./media/dashboard_light.svg",
+                    "dark": "./media/dashboard_dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.querySQLResult",
+                "title": "dbt Big Query Power User: Query SQL",
+                "icon": {
+                    "light": "./media/source_light.svg",
+                    "dark": "./media/source_dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.querySQLDryRun",
+                "title": "dbt Big Query Power User: Dry Run SQL",
+                "icon": {
+                    "light": "./media/source_light.svg",
+                    "dark": "./media/source_dark.svg"
+                }
+
+            }
+        ],
+        "menus": {
+            "editor/title": [{
+                    "command": "dbtPowerUser.runCurrentModel",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-1"
+                },
+                {
+                    "command": "dbtPowerUser.openQueryRunner",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-2"
+                },
+                {
+                    "command": "dbtPowerUser.compileCurrentModel",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@0"
+                },
+                {
+                    "command": "dbtPowerUser.showCompiledSQL",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-3"
+                }
             ],
-            "description": "Controls the output format for query results."
-          },
-          "dbt.bigquery.prettyPrintJSON": {
-            "type": "boolean",
-            "default": true,
-            "description": "Pretty print JSON results."
-          }
+            "view/title": [{
+                    "command": "dbtPowerUser.runChildrenModels",
+                    "when": "view == children_model_treeview",
+                    "group": "navigation"
+                },
+                {
+                    "command": "dbtPowerUser.runParentModels",
+                    "when": "view == parent_model_treeview",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [{
+                    "command": "dbtPowerUser.runChildrenModels",
+                    "when": "view == children_model_treeview && viewItem != source",
+                    "group": "inline"
+                },
+                {
+                    "command": "dbtPowerUser.runParentModels",
+                    "when": "view == parent_model_treeview && viewItem != source",
+                    "group": "inline"
+                }
+            ]
         }
-      }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "dbt_view",
-          "title": "dbt Big Query Power User",
-          "icon": "./media/dbt_icon.svg",
-          "contextualTitle": "dbt Power User"
-        }
-      ]
     },
-    "views": {
-      "dbt_view": [
-        {
-          "id": "parent_model_treeview",
-          "name": "Parent Models"
-        },
-        {
-          "id": "children_model_treeview",
-          "name": "Children Models"
-        }
-      ]
+    "scripts": {
+        "vscode:prepublish": "webpack --mode production",
+        "webpack": "webpack --mode development",
+        "webpack-dev": "webpack --mode development --watch",
+        "test-compile": "tsc -p ./",
+        "lint": "eslint src --ext ts",
+        "lint:fix": "eslint src --ext ts --fix",
+        "deploy": "vsce publish"
     },
-    "commands": [
-      {
-        "command": "dbtPowerUser.runCurrentModel",
-        "title": "dbt Power User: Run current model",
-        "icon": {
-          "light": "./media/run-light.svg",
-          "dark": "./media/run-dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.compileCurrentModel",
-        "title": "dbt Power User: Compile current model",
-        "icon": {
-          "light": "./media/build_light.svg",
-          "dark": "./media/build_dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.runChildrenModels",
-        "title": "dbt Power User: Run children models",
-        "icon": {
-          "light": "./media/run-light.svg",
-          "dark": "./media/run-dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.runParentModels",
-        "title": "dbt Power User: Run parent models",
-        "icon": {
-          "light": "./media/run-light.svg",
-          "dark": "./media/run-dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.showRunSQL",
-        "title": "dbt Power User: Show run SQL",
-        "icon": {
-          "light": "./media/file-code_light.svg",
-          "dark": "./media/file-code_dark.svg"
-        }
-      },
-
-      {
-        "command": "dbtPowerUser.showCompiledSQL",
-        "title": "dbt Power User: Show compiled SQL",
-        "icon": {
-          "light": "./media/file-code_light.svg",
-          "dark": "./media/file-code_dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.openQueryRunner",
-        "title": "dbt Big Query Power User: Open QueryRunner",
-
-        "icon": {
-          "light": "./media/dashboard_light.svg",
-          "dark": "./media/dashboard_dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.querySQLResult",
-        "title": "dbt Big Query Power User: Query SQL",
-        "icon": {
-          "light": "./media/source_light.svg",
-          "dark": "./media/source_dark.svg"
-        }
-      },
-      {
-        "command": "dbtPowerUser.querySQLDryRun",
-        "title": "dbt Big Query Power User: Dry Run SQL",
-        "icon": {
-          "light": "./media/source_light.svg",
-          "dark": "./media/source_dark.svg"
-        }
-
-      }
+    "devDependencies": {
+        "@types/easy-table": "^0.0.33",
+        "@types/flat": "^5.0.2",
+        "@types/glob": "^7.1.1",
+        "@types/js-yaml": "^3.12.5",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.13.15",
+        "@types/vscode": "^1.52.0",
+        "@typescript-eslint/eslint-plugin": "^2.30.0",
+        "@typescript-eslint/parser": "^2.30.0",
+        "eslint": "^6.8.0",
+        "file-loader": "^6.1.0",
+        "glob": "^7.1.6",
+        "mocha": "^7.1.2",
+        "ts-loader": "^8.0.3",
+        "typescript": "^3.8.3",
+        "vsce": "^1.100.1",
+        "vscode-test": "^1.3.0",
+        "webpack": "^4.44.1",
+        "webpack-cli": "^3.3.12"
+    },
+    "extensionDependencies": [
+        "samuelcolvin.jinjahtml",
+        "bastienboutonnet.vscode-dbt",
+        "ms-python.python"
     ],
-    "menus": {
-      "editor/title": [
-        {
-          "command": "dbtPowerUser.runCurrentModel",
-          "when": "resourceLangId == jinja-sql",
-          "group": "navigation@-1"
-        },
-        {
-          "command": "dbtPowerUser.openQueryRunner",
-          "when": "resourceLangId == jinja-sql",
-          "group": "navigation@-2"
-        },
-        {
-          "command": "dbtPowerUser.compileCurrentModel",
-          "when": "resourceLangId == jinja-sql",
-          "group": "navigation@0"
-        },
-        {
-          "command": "dbtPowerUser.showCompiledSQL",
-          "when": "resourceLangId == jinja-sql",
-          "group": "navigation@-3"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "dbtPowerUser.runChildrenModels",
-          "when": "view == children_model_treeview",
-          "group": "navigation"
-        },
-        {
-          "command": "dbtPowerUser.runParentModels",
-          "when": "view == parent_model_treeview",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "dbtPowerUser.runChildrenModels",
-          "when": "view == children_model_treeview && viewItem != source",
-          "group": "inline"
-        },
-        {
-          "command": "dbtPowerUser.runParentModels",
-          "when": "view == parent_model_treeview && viewItem != source",
-          "group": "inline"
-        }
-      ]
+    "dependencies": {
+        "@google-cloud/bigquery": "^5.9.0",
+        "csv-stringify": "^5.6.5",
+        "dayjs": "^1.8.34",
+        "easy-table": "^1.1.1",
+        "flat": "^5.0.2",
+        "inversify": "^5.0.5",
+        "inversify-binding-decorators": "^4.0.0",
+        "js-yaml": "^3.14.0",
+        "reflect-metadata": "^0.1.13"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "webpack --mode production",
-    "webpack": "webpack --mode development",
-    "webpack-dev": "webpack --mode development --watch",
-    "test-compile": "tsc -p ./",
-    "lint": "eslint src --ext ts",
-    "lint:fix": "eslint src --ext ts --fix",
-    "deploy": "vsce publish"
-  },
-  "devDependencies": {
-    "@types/easy-table": "^0.0.33",
-    "@types/flat": "^5.0.2",
-    "@types/glob": "^7.1.1",
-    "@types/js-yaml": "^3.12.5",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^13.13.15",
-    "@types/vscode": "^1.52.0",
-    "@typescript-eslint/eslint-plugin": "^2.30.0",
-    "@typescript-eslint/parser": "^2.30.0",
-    "eslint": "^6.8.0",
-    "file-loader": "^6.1.0",
-    "glob": "^7.1.6",
-    "mocha": "^7.1.2",
-    "ts-loader": "^8.0.3",
-    "typescript": "^3.8.3",
-    "vsce": "^1.100.1",
-    "vscode-test": "^1.3.0",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
-  },
-  "extensionDependencies": [
-    "samuelcolvin.jinjahtml",
-    "bastienboutonnet.vscode-dbt",
-    "ms-python.python"
-  ],
-  "dependencies": {
-    "@google-cloud/bigquery": "^5.9.0",
-    "csv-stringify": "^5.6.5",
-    "dayjs": "^1.8.34",
-    "easy-table": "^1.1.1",
-    "flat": "^5.0.2",
-    "inversify": "^5.0.5",
-    "inversify-binding-decorators": "^4.0.0",
-    "js-yaml": "^3.14.0",
-    "reflect-metadata": "^0.1.13"
-  }
 }
