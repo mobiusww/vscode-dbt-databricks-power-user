@@ -19,7 +19,6 @@ const vueApp = new Vue({
         startIndex: 0,
         hasNext: false,
         hasPrev: false,
-        theme: 'dark',
     },
     computed: {
         elapsedTime() {
@@ -87,7 +86,6 @@ const vueApp = new Vue({
             this.info = result.info;
             this.table = result.table;
             this.startIndex = result.startIndex;
-            this.theme = result.theme;
             // this.json = result.json
             this.detail = result.detail;
             this.hasNext = result.hasNext ? "true" : "false";

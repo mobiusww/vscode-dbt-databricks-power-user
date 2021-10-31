@@ -132,8 +132,9 @@ function getWebviewContent(context: vscode.ExtensionContext): string {
 		path.join(context.extensionPath, 'public')
 	);
 	resourceDir = resourceDir.with({ scheme: 'vscode-resource' });
-
-	return html.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
+    html = html.replace(new RegExp('__THEME__','g'), config.get('runnerTheme','dark'));
+	html = html.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
+	return html;
 }
 
 

@@ -12,7 +12,6 @@ interface QueryResult {
   startIndex?: number;
   hasNext: boolean;
   hasPrev: boolean;
-  theme: string;
 }
 
 interface QueryResultError {
@@ -193,7 +192,6 @@ export class BigQueryRunner {
       startIndex: startRowId,
       hasNext: !!this.nextToken,
       hasPrev: startRowId > 0,
-      theme: this.config.get('runnerTheme','dark'),
     };
   }
   public async getPrevPage(): Promise<QueryResult | QueryResultError> {
