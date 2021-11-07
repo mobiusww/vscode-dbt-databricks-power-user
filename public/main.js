@@ -19,6 +19,8 @@ const vueApp = new Vue({
         startIndex: 0,
         hasNext: false,
         hasPrev: false,
+        maxResults: 0,
+        totalRecords: 0,
     },
     computed: {
         elapsedTime() {
@@ -34,6 +36,16 @@ const vueApp = new Vue({
             }
 
             return this.info.totalBytesProcessed; // TODO
+        },
+        maxResults() {
+
+            return this.maxResults;
+
+        },
+        totalRecords() {
+
+            return this.totalRecords;
+
         }
     },
     watch: {
@@ -90,6 +102,9 @@ const vueApp = new Vue({
             this.detail = result.detail;
             this.hasNext = result.hasNext ? "true" : "false";
             this.hasPrev = result.hasPrev ? "true" : "false";
+            this.maxResults = result.maxResults;
+            this.totalRecords = result.totalRecords;
+
         },
 
         displayValue(value) {
