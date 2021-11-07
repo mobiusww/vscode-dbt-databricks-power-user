@@ -23,7 +23,7 @@
             <button class="button is-info" v-if="queryStatus === 'done' && hasNext === 'true'" @click="nextPage">Next Page</button>
 
             <span v-if="queryStatus === 'done'">(Elapsed time: {{elapsedTime}} sec., Processed Bytes:
-        {{(totalBytesProcessed / 1000000.0).toFixed(2)}} MB)</span>
+        {{(totalBytesProcessed / 1000000.0).toFixed(2)}} MB, {{maxResults}} records per page {{totalRecords}})</span>
         </div>
         <div v-if="queryStatus === 'error'">
             <article class="message is-danger">
