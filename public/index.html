@@ -19,11 +19,13 @@
             <button class="button is-info" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="runAsQuery">Rerun Query</button>
             <button class="button is-info" disabled v-if="queryStatus === 'runningAsQuery'">Running...</button>
             <button class="button is-danger" v-if="queryStatus === 'runningAsQuery'" @click="cancelQuery">Cancel</button>
-            <button class="button is-info" v-if="queryStatus === 'done' && hasPrev === 'true'" @click="prevPage">Prev Page</button>
-            <button class="button is-info" v-if="queryStatus === 'done' && hasNext === 'true'" @click="nextPage">Next Page</button>
+            <button class="button is-info" v-if="queryStatus === 'done' && hasPrev === 'true'" @click="firstPage">&leftleftarrows;</button>
+            <button class="button is-info" v-if="queryStatus === 'done' && hasPrev === 'true'" @click="prevPage">&leftarrow;</button>
+            <button class="button is-info" v-if="queryStatus === 'done' && hasNext === 'true'" @click="nextPage">&rightarrow;</button>
+            <button class="button is-info" v-if="queryStatus === 'done' && hasNext === 'true'" @click="lastPage">&rightrightarrows;</button>
 
             <span v-if="queryStatus === 'done'">(Elapsed time: {{elapsedTime}} sec., Processed Bytes:
-        {{(totalBytesProcessed / 1000000.0).toFixed(2)}} MB)</span>
+        {{(totalBytesProcessed / 1000000.0).toFixed(2)}} MB, Records: {{startIndex}}/{{maxResults}}/{{totalRecords}})</span>
         </div>
         <div v-if="queryStatus === 'error'">
             <article class="message is-danger">

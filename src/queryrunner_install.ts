@@ -71,6 +71,27 @@ export async function openQueryRunner(): Promise<void> {
 						panel.webview.postMessage({ command: 'prevPage', result: prevResult });
 					}
 					break;
+				case 'firstPage':
+						const firstResult = await bigQueryRunner.getFirstPage();
+						if (firstResult.status === "error") {
+							panel.webview.postMessage({ command: 'queryError', errorMessage: firstResult.errorMessage });
+						} else {
+							panel.webview.postMessage({ command: 'nextPage', result: firstResult });
+						}
+						break;
+					case 'lastPage':
+						if (bigQueryRunner.startIndex === 0) {
+							panel.webview.postMessage({ command: 'queryError', errorMessage: "No more previous pages" });
+							break; // no more prev page;
+						}
+						const lastResult = await bigQueryRunner.getLastPage();
+						if (lastResult.status === "error") {
+							panel.webview.postMessage({ command: 'queryError', errorMessage: lastResult.errorMessage });
+						} else {
+							panel.webview.postMessage({ command: 'prevPage', result: lastResult });
+						}
+						break;
+	
 				case 'cancelQuery':
 					const cancelResult = await bigQueryRunner.cancelQuery();
 					panel.webview.postMessage({ command: 'cancelQuery', result: cancelResult });
