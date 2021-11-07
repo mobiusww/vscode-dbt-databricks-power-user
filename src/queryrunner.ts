@@ -10,6 +10,8 @@ interface QueryResult {
   json: string;
   detail: string;
   startIndex?: number;
+  totalRecords: number;
+  maxResults: number;
   hasNext: boolean;
   hasPrev: boolean;
 }
@@ -103,7 +105,7 @@ export class BigQueryRunner {
     }
 
     vscode.window.showInformationMessage(`BigQuery job ID: ${this.job.metadata.id}`);
-
+    console.log(`Job : ${JSON.stringify(this.job)}`);
     let result:QueryRowsResponse;
     // reset index to 0
     this.startIndex = 0;
@@ -118,7 +120,7 @@ export class BigQueryRunner {
       vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);
       throw err;
     }
-
+    console.log(`result: ${JSON.stringify(result)}`);
     try {
       console.log('get query results before processResults startIndex', this.startIndex);
       console.log('query result length', result.length);
@@ -160,7 +162,8 @@ export class BigQueryRunner {
     }
 
     this.nextToken = nextToken;
-    const metadata = (await this.job.getMetadata())[0];
+    console.log(`nextToken: ${JSON.stringify(nextToken)}`);
+    const metadata = (await this.job.getMetadata())[0]; 
     const startRowId = this.startIndex;
     const table = this.makeTable(rows);
     console.log('startRowID ', startRowId);
@@ -171,7 +174,8 @@ export class BigQueryRunner {
       let newstart = start + rows.length;
       this.startIndex = newstart;
     }  
-    
+    console.log(`metadata.statistics: ${JSON.stringify(metadata.statistics)}`);
+
     return {
       status: "success",
       info: {
@@ -190,6 +194,8 @@ export class BigQueryRunner {
       json: JSON.stringify(rows, null, "  "),
       detail: JSON.stringify(metadata.statistics, null, "  "),
       startIndex: startRowId,
+      totalRecords: 0, // metadata.statistics.
+      maxResults: this.items_per_page,
       hasNext: !!this.nextToken,
       hasPrev: startRowId > 0,
     };
