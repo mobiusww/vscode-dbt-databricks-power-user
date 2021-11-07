@@ -46,6 +46,11 @@ const vueApp = new Vue({
 
             return this.totalRecords;
 
+        },
+        startIndex() {
+
+            return this.startIndex;
+
         }
     },
     watch: {
@@ -79,6 +84,21 @@ const vueApp = new Vue({
             this.queryStatus = 'runningAsQuery';
             call({
                 command: 'prevPage',
+                variables: this._parseVariables() || {},
+            });
+        },
+        firstPage() {
+            this.queryStatus = 'runningAsQuery';
+            call({
+                command: 'firstPage',
+                variables: this._parseVariables() || {},
+            });
+        },
+
+        lastPage() {
+            this.queryStatus = 'runningAsQuery';
+            call({
+                command: 'lastPage',
                 variables: this._parseVariables() || {},
             });
         },
