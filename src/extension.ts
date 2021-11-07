@@ -12,7 +12,7 @@ export async function activate(context: ExtensionContext) {
   );
 
   await dbtPowerUserExtension.activate();
-  await bigquery_activate(context);
+  await bigquery_activate(context, dbtPowerUserExtension);
   await queryrunner_activate(context, dbtPowerUserExtension);
 }
 
