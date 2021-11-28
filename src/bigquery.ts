@@ -77,7 +77,11 @@ function getQueryText( editor: TextEditor| undefined): string {
 async function runAsQuery(): Promise<void> {
   try {
     let queryText = getQueryText(window.activeTextEditor);
-    await query(queryText);
+    const docURI = window.activeTextEditor?.document.uri;
+    console.log(`runAsQuery.docURI: ${docURI}`);   
+    const root_path = docURI !== undefined? vsdbtProjectContainer.getProjectRootpath(docURI)?.path: undefined;
+    const format:any = config?.get("outputFormat");
+    await query(queryText, false, root_path, format);
   } catch (err) {
     window.showErrorMessage(`${err}`);
   }
@@ -93,18 +97,18 @@ async function dryRun(): Promise<void> {
 }
 
 
-export async function runAsQueryText(queryText: string): Promise<void> {
-  if (!queryText) {
-    window.showErrorMessage("Query text is empty");
-    return;
-  }
-  console.log("Invoking run query");
-  try {
-    await query(queryText, false); // set dry-run to true
-  } catch (err) {
-    window.showErrorMessage(`${err}`);
-  }
-}
+// export async function runAsQueryText(queryText: string): Promise<void> {
+//   if (!queryText) {
+//     window.showErrorMessage("Query text is empty");
+//     return;
+//   }
+//   console.log("Invoking run query");
+//   try {
+//     await query(queryText, false); // set dry-run to true
+//   } catch (err) {
+//     window.showErrorMessage(`${err}`);
+//   }
+// }
 function makeid(length: number): string {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -116,8 +120,10 @@ function makeid(length: number): string {
   return result;
 }
 
-function getResultsFileName(): string|undefined {
-  let format:string|undefined = config?.get("outputFormat");
+function getResultsFileName(root_path?: string, format?:string|undefined): string|undefined {
+  if (!format) {
+    format = config?.get("outputFormat");
+  }
   if(!format) {
     format = "csv";
   }
@@ -127,11 +133,11 @@ function getResultsFileName(): string|undefined {
   const ext = format.toLowerCase();
   console.log(`output file ext: ${ext}`);
   
-  const docURI = window.activeTextEditor?.document.uri;
-  if (!docURI) {
-    return;
-  }
-  const root_path = vsdbtProjectContainer.getProjectRootpath(docURI)?.path;
+  // const docURI = window.activeTextEditor?.document.uri;
+  // if (!docURI) {
+  //   return;
+  // }
+  // const root_path = vsdbtProjectContainer.getProjectRootpath(docURI)?.path;
   if (!root_path) {
     return;
   }
@@ -159,14 +165,17 @@ function getResultsFileName(): string|undefined {
  * @param queryText
  * @param isDryRun Defaults to False.
  */
-async function query(queryText: string, isDryRun?: boolean, ): Promise<any> {
+export async function query(queryText: string, isDryRun?: boolean, root_path?: string,  format?: string): Promise<any> {
+  //let format:string|undefined = config?.get("outputFormat");
+
   let options: BigQueryOptions = {
     keyFilename: config?.get("keyFilename"),
     projectId: config?.get("projectId"),
   };
 
   let client = new BigQuery(options);
-  const fileName = getResultsFileName();
+  const fileName = getResultsFileName(root_path,format);
+  console.log(`bigquery.fileName: ${fileName}`);
   let id: string | undefined;
   let job = client
     .createQueryJob({
@@ -180,7 +189,7 @@ async function query(queryText: string, isDryRun?: boolean, ): Promise<any> {
       let job = data[0];
       id = job.id;
       console.log(`running client job id: ${job.id}`);
-      const jobIdMessage = `BigQuery job ID: ${job.id}`;
+      const jobIdMessage = `BigQuery job ID: ${job.id} file: ${fileName}`;
       if (isDryRun) {
         window.showInformationMessage(`${jobIdMessage} (dry run)`);
         let totalBytesProcessed = job.metadata.statistics.totalBytesProcessed;
@@ -200,8 +209,16 @@ async function query(queryText: string, isDryRun?: boolean, ): Promise<any> {
 
   return job
     .then(async data => {
+      if (!format) {
+        format = config?.get("outputFormat");
+      }
+
+      if(!format) {
+        format = "csv";
+      }
+
       if (data) {
-        await writeResults(fileName, id, data[0]);
+        await writeResults(fileName, id, data[0], format);
       }
     })
     .catch(err => {
@@ -209,14 +226,14 @@ async function query(queryText: string, isDryRun?: boolean, ): Promise<any> {
     });
 }
 
-async function writeResults(fileName: PathLike|undefined,jobId: string | undefined, rows: Array<any>): Promise<void> {
+async function writeResults(fileName: PathLike|undefined, jobId: string | undefined, rows: Array<any>, format: string): Promise<void> {
   inner_output.show();
   inner_output.appendLine(`Results for job ${jobId}:`);
 
-  let format:string|undefined = config?.get("outputFormat");
-  if(!format) {
-    format = "csv";
-  }
+  // let format:string|undefined = config?.get("outputFormat");
+  // if(!format) {
+  //   format = "csv";
+  // }
   
   format = format.toLowerCase();
 

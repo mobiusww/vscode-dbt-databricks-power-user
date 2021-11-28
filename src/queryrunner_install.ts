@@ -5,6 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { BigQueryRunner } from './queryrunner';
 import { DBTPowerUserExtension } from './dbtPowerUserExtension';
+import {query} from './bigquery';
 
 const configPrefix = "dbt.bigquery"; // share config with bigquery
 let config: vscode.WorkspaceConfiguration;
@@ -34,13 +35,19 @@ export async function openQueryRunner(): Promise<void> {
 	
 
 	const bigQueryRunner = new BigQueryRunner(config, editor);
+ 	
 	if (vsdbtPowerUserExtension) {
 		const dbtProjectContainer = vsdbtPowerUserExtension.getDbtProjectContainer();
 		bigQueryRunner.setDbtProjectContainer(dbtProjectContainer);
 	}
+    const docURI = editor?.document.uri;
+    console.log(`runAsQuery.docURI: ${docURI}`);   
+    const root_path = docURI !== undefined? bigQueryRunner.dbtProjectContainer?.getProjectRootpath(docURI)?.path: undefined;
+
 	panel.webview.html = getWebviewContent(vscontext);
 
 	panel.webview.onDidReceiveMessage(
+		
 		async message => {
 			switch (message.command) {
 				case 'runAsQuery':
@@ -79,7 +86,7 @@ export async function openQueryRunner(): Promise<void> {
 							panel.webview.postMessage({ command: 'nextPage', result: firstResult });
 						}
 						break;
-					case 'lastPage':
+				case 'lastPage':
 						if (bigQueryRunner.startIndex === 0) {
 							panel.webview.postMessage({ command: 'queryError', errorMessage: "No more previous pages" });
 							break; // no more prev page;
@@ -95,6 +102,21 @@ export async function openQueryRunner(): Promise<void> {
 				case 'cancelQuery':
 					const cancelResult = await bigQueryRunner.cancelQuery();
 					panel.webview.postMessage({ command: 'cancelQuery', result: cancelResult });
+					break;
+				case 'saveAsCSV':
+					const csvQueryText = await bigQueryRunner.getQueryText();
+					console.log(`saveAsCSV.csvQueryText: ${csvQueryText}`);
+					await query(csvQueryText, false, root_path, 'csv', );
+					break;
+				case 'saveAsTable':
+					const tableQueryText = await bigQueryRunner.getQueryText();
+					console.log(`saveAsCSV.tableQueryText: ${tableQueryText}`);
+					await query(tableQueryText, false, root_path, 'table');
+					break;
+				case 'saveAsJSON':
+					const jsonQueryText = await bigQueryRunner.getQueryText();
+					console.log(`saveAsCSV.jsonQueryText: ${jsonQueryText}`);
+					await query(jsonQueryText, false, root_path, 'json');
 					break;
 
 			}

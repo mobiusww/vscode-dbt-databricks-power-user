@@ -26,6 +26,10 @@
 
             <span v-if="queryStatus === 'done'">(Elapsed time: {{elapsedTime}} sec., Processed Bytes:
         {{(totalBytesProcessed / 1000000.0).toFixed(2)}} MB, Records: {{startIndex}}/{{maxResults}}/{{totalRecords}})</span>
+            <button class="button is-info is-pulled-right" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="saveAsCSV">CSV</button>
+            <button class="button is-info is-pulled-right" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="saveAsTable">Table</button>
+            <button class="button is-info is-pulled-right" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="saveAsJSON">JSON</button>
+
         </div>
         <div v-if="queryStatus === 'error'">
             <article class="message is-danger">

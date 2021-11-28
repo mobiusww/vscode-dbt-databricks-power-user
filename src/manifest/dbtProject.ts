@@ -25,9 +25,9 @@ import {
 } from "../dbt_client/dbtCommandFactory";
 import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 
-import {
-  runAsQueryText,
-} from "../bigquery";
+// import {
+//   runAsQueryText,
+// } from "../bigquery";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
   static DBT_MODULES = "dbt_modules";

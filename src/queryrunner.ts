@@ -340,7 +340,7 @@ export class BigQueryRunner {
     }    
     return dbtProject.getCompiledSQLText(docUri);
   }
-  private async getQueryText(): Promise<string> {
+  public async getQueryText(): Promise<string> {
     if (!this.editor) {
       throw new Error("No active editor window was found");
     }

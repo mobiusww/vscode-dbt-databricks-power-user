@@ -110,6 +110,27 @@ const vueApp = new Vue({
                 variables: this._parseVariables() || {},
             });
         },
+        saveAsCSV() {
+            this.queryStatus = 'done';
+            call({
+                command: 'saveAsCSV',
+                variables: this._parseVariables() || {},
+            });
+        },
+        saveAsTable() {
+            this.queryStatus = 'done';
+            call({
+                command: 'saveAsTable',
+                variables: this._parseVariables() || {},
+            });
+        },
+        saveAsJSON() {
+            this.queryStatus = 'done';
+            call({
+                command: 'saveAsJSON',
+                variables: this._parseVariables() || {},
+            });
+        },
 
         displayResult(result) {
             this.activeTag = 'table';
