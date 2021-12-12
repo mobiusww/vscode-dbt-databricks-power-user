@@ -1,42 +1,80 @@
 html {
-    background-color: rgb(15, 1, 1);
+    background-color: #1e1e1e;
 }
 
 body {
-    background-color: rgb(15, 1, 1);
+    background-color: #1e1e1e;
 }
 
 .table-sticky-container thead tr th {
-    background-color: #180e0e;
+    background-color: #1e1e1e;
 }
 
 .table-sticky-container tbody tr th {
-    background-color: #180e0e;
+    background-color: #1e1e1e;
 }
 
 .table-sticky-container tbody tr td {
-    background-color: #180e0e;
-    color: rgb(99, 107, 107);
+    background-color: #1e1e1e;
+    color: rgb(212, 212, 212);
     ;
 }
 
 .table-container thead tr th {
-    background-color: #180e0e;
-    color: rgb(99, 107, 107);
+    background-color: #1e1e1e;
+    color: rgb(226, 192, 141);
+    font-size: 14px;
 }
 
 .table-container tbody tr th {
-    background-color: #180e0e;
-    color: rgb(99, 107, 107);
+    background-color: #1e1e1e;
+    color: rgb(226, 192, 141);
+    font-size: 14px;
 }
 
 .table-container tbody tr td {
-    background-color: #180e0e;
-    color: rgb(99, 107, 107);
+    background-color: #1e1e1e;
+    color: rgb(212, 212, 212);
     ;
 }
 
 pre {
-    background-color: #180e0e;
-    color: rgb(99, 107, 107);
+    background-color: #1e1e1e;
+    color: rgb(212, 212, 212);
+}
+
+textarea,
+span,
+td {
+    color: rgb(212, 212, 212);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13px;
+}
+
+.table thead th {
+    background-color: #1e1e1e;
+    color: rgb(226, 192, 141);
+    font-size: 14px;
+}
+
+.table th {
+    background-color: #1e1e1e;
+    color: rgb(226, 192, 141);
+    font-size: 14px;
+}
+
+.is-family-primary {
+    font-family: Consolas, "Courier New", monospace
+}
+
+.is-family-secondary {
+    font-family: Consolas, "Courier New", monospace
+}
+
+.is-family-sans-serif {
+    font-family: Consolas, "Courier New", monospace
+}
+
+.is-info {
+    font-size: 13px;
 }
