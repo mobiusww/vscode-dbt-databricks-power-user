@@ -94,7 +94,8 @@ export class BigQueryRunner {
     try {
       data = await this.client.createQueryJob({
         query: queryText,
-        dryRun: !!isDryRun
+        dryRun: !!isDryRun,
+        jobTimeoutMs: this.config?.get('timeoutMs')
       });
     } catch (err) {
       vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);
@@ -116,7 +117,8 @@ export class BigQueryRunner {
       result = await this.job.getQueryResults({
         autoPaginate: true, // TODO
         maxResults: this.items_per_page,
-        startIndex: this.startIndex.toString(),     
+        startIndex: this.startIndex.toString(), 
+        timeoutMs: this.config?.get('timeoutMs')
       });
     } catch (err) {
       vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);

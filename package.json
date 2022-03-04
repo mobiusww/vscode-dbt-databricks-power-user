@@ -69,6 +69,11 @@
                     "default": 1000000000000,
                     "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
                 },
+                "dbt.bigquery.timeoutMs": {
+                    "type": "integer",
+                    "default": 10000,
+                    "description": "Query timeout in ms (default: 10000 ms)"
+                },
                 "dbt.bigquery.outputFormat": {
                     "type": "string",
                     "default": "json",
