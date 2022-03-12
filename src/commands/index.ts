@@ -4,7 +4,7 @@ import { provideSingleton } from "../utils";
 import { InstallDBT } from "./installDBT";
 import { UpdateDBT } from "./updateDBT";
 import { RunModelType } from "../domain";
-import { openQueryRunner } from "../queryrunner_install";
+
 @provideSingleton(VSCodeCommands)
 export class VSCodeCommands implements Disposable {
   private disposables: Disposable[] = [];
