@@ -143,7 +143,7 @@ export class DBTProject implements Disposable {
     console.log(`compileMode.runModelParams.modelName: ${runModelParams.modelName} `);
     console.log(`compileMode.runModelParams.plusOperatorLeft: ${runModelParams.plusOperatorLeft} `);
     console.log(`compileMode.runModelParams.plusOperatorRight: ${runModelParams.plusOperatorRight} `);
-    
+
     const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
       this.projectRoot,
       runModelParams
@@ -183,6 +183,21 @@ export class DBTProject implements Disposable {
   public isCompiled(docUri: Uri): boolean {
     return docUri.fsPath.startsWith(this.targetPath);
   }
+  private async createCompileModel(modelName: string) {
+    const runModelParams: RunModelParams = {
+      plusOperatorLeft: "",
+      modelName: modelName,
+      plusOperatorRight: ""
+
+    };
+    const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
+      this.projectRoot,
+      runModelParams
+    );
+    console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
+    await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
+
+  }
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/compiled/**/${baseName}`;
@@ -191,7 +206,7 @@ export class DBTProject implements Disposable {
     const orig_file_stats = statSync(orig_file);
     const orig_file_mtime = orig_file_stats.mtime;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
-    const targetModels = await workspace.findFiles(
+    let targetModels = await workspace.findFiles(
       new RelativePattern(
         this.projectRoot,
         pattern
@@ -207,26 +222,37 @@ export class DBTProject implements Disposable {
       console.log(`target_path_mtime: ${target_path_mtime}`);
       if (target_path_mtime < orig_file_mtime) {
         // trigger compile
-        const runModelParams: RunModelParams = {
-          plusOperatorLeft: "",
-          modelName: modelName,
-          plusOperatorRight: ""
-         
-        };
-        const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
-          this.projectRoot,
-          runModelParams
-        );
-        console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
-        await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
-  
-      }      
+        await this.createCompileModel(modelName);
+      }
 
       const buffer = readFileSync(targetModel0.path);
       return buffer.toString();
+    } else {
+      // target not yet compiled
+      await this.createCompileModel(modelName);
+      // try after compilation
+      targetModels = await workspace.findFiles(
+        new RelativePattern(
+          this.projectRoot,
+          pattern
+        )
+      );
+      if (targetModels.length === 0) {
+        throw new Error("Current model not found!");
+      }
+      const targetModel0 = targetModels[0];
+      // console.log(`findModelInTargetfolder: ${targetModel0}`);
+      const target_path = targetModel0.path;
+      console.log(`previewSQLInTargetfolder: ${target_path}`);
+      const target_path_stats = statSync(target_path);
+      const target_path_mtime = target_path_stats.mtime;
+      console.log(`target_path_mtime: ${target_path_mtime}`);
+      const buffer = readFileSync(targetModel0.path);
+      return buffer.toString();
+
     }
 
-    throw new Error("Current model not found!"); 
+
   }
   private async findModelInTargetfolder(modelPath: Uri, type: string) {
     const baseName = path.basename(modelPath.fsPath);
@@ -276,7 +302,7 @@ export class DBTProject implements Disposable {
   //         plusOperatorLeft: "",
   //         modelName: modelName,
   //         plusOperatorRight: ""
-         
+
   //       };
   //       const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
   //         this.projectRoot,
@@ -284,7 +310,7 @@ export class DBTProject implements Disposable {
   //       );
   //       console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
   //       await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
-  
+
   //     }      
   //     // const queryText = readFileSync(target_path,"utf8");
 
