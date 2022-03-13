@@ -97,18 +97,7 @@ async function dryRun(): Promise<void> {
 }
 
 
-// export async function runAsQueryText(queryText: string): Promise<void> {
-//   if (!queryText) {
-//     window.showErrorMessage("Query text is empty");
-//     return;
-//   }
-//   console.log("Invoking run query");
-//   try {
-//     await query(queryText, false); // set dry-run to true
-//   } catch (err) {
-//     window.showErrorMessage(`${err}`);
-//   }
-// }
+
 function makeid(length: number): string {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -132,12 +121,7 @@ function getResultsFileName(root_path?: string, format?:string|undefined): strin
   }
   const ext = format.toLowerCase();
   console.log(`output file ext: ${ext}`);
-  
-  // const docURI = window.activeTextEditor?.document.uri;
-  // if (!docURI) {
-  //   return;
-  // }
-  // const root_path = vsdbtProjectContainer.getProjectRootpath(docURI)?.path;
+
   if (!root_path) {
     return;
   }
@@ -151,7 +135,7 @@ function getResultsFileName(root_path?: string, format?:string|undefined): strin
     return;
   }
   const d = new Date();
-  // bq-results-20211102-182526-xrtcj2eli3b6
+  
   const randsuffix = makeid(8);
   const fname = `query-results-${d.getFullYear()}${d.getMonth()}${d.getDate()}-${d.getHours()}${d.getMinutes()}${d.getSeconds()}-${randsuffix}`;
   console.log(`output fname: ${fname}`);
@@ -166,7 +150,7 @@ function getResultsFileName(root_path?: string, format?:string|undefined): strin
  * @param isDryRun Defaults to False.
  */
 export async function query(queryText: string, isDryRun?: boolean, root_path?: string,  format?: string): Promise<any> {
-  //let format:string|undefined = config?.get("outputFormat");
+  
 
   let options: BigQueryOptions = {
     keyFilename: config?.get("keyFilename"),
@@ -229,11 +213,6 @@ export async function query(queryText: string, isDryRun?: boolean, root_path?: s
 async function writeResults(fileName: PathLike|undefined, jobId: string | undefined, rows: Array<any>, format: string): Promise<void> {
   inner_output.show();
   inner_output.appendLine(`Results for job ${jobId}:`);
-
-  // let format:string|undefined = config?.get("outputFormat");
-  // if(!format) {
-  //   format = "csv";
-  // }
   
   format = format.toLowerCase();
 
