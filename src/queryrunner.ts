@@ -57,7 +57,7 @@ export class BigQueryRunner {
   setDbtProjectContainer(dbtProjectContainer: DBTProjectContainer) {
     this.dbtProjectContainer = dbtProjectContainer;
   }
-  findTargetPath(docUri: vscode.Uri):string {
+  findTargetPath(docUri: vscode.Uri): string {
     if (!this.dbtProjectContainer) {
       throw new Error("dbtProjectContainer not initialized for runner!");
     }
@@ -74,14 +74,14 @@ export class BigQueryRunner {
     const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
     if (!dbtProject) {
       throw new Error(`couldn't find DBT Project for ${docUri}`);
-    } 
-    return dbtProject.projectRoot;   
+    }
+    return dbtProject.projectRoot;
   }
   setConfig(config: vscode.WorkspaceConfiguration) {
     this.config = config;
   }
 
-  
+
   /**
    * @param queryText
    * @param isDryRun Defaults to False.
@@ -109,7 +109,7 @@ export class BigQueryRunner {
 
     vscode.window.showInformationMessage(`BigQuery job ID: ${this.job.metadata.id}`);
     console.log(`Job : ${JSON.stringify(this.job)}`);
-    let result:QueryRowsResponse;
+    let result: QueryRowsResponse;
     // reset index to 0
     this.startIndex = 0;
     console.log('get query results startIndex', this.startIndex);
@@ -117,7 +117,7 @@ export class BigQueryRunner {
       result = await this.job.getQueryResults({
         autoPaginate: true, // TODO
         maxResults: this.items_per_page,
-        startIndex: this.startIndex.toString(), 
+        startIndex: this.startIndex.toString(),
         timeoutMs: this.config?.get('timeoutMs')
       });
     } catch (err) {
@@ -128,7 +128,7 @@ export class BigQueryRunner {
     try {
       console.log('get query results before processResults startIndex', this.startIndex);
       console.log('query result length', result.length);
-      
+
       return await this.processResults(result[0], result[1], result[2]);
 
     } catch (err) {
@@ -154,7 +154,7 @@ export class BigQueryRunner {
       table.push(tableRow);
     });
 
-   return {
+    return {
       headers,
       rows: table
     };
@@ -167,17 +167,17 @@ export class BigQueryRunner {
 
     this.nextToken = nextToken;
     console.log(`nextToken: ${JSON.stringify(nextToken)}`);
-    const metadata = (await this.job.getMetadata())[0]; 
+    const metadata = (await this.job.getMetadata())[0];
     const startRowId = this.startIndex;
     const table = this.makeTable(rows);
     console.log('startRowID ', startRowId);
-    
-      // increment startIndex to continue 
+
+    // increment startIndex to continue 
     let start = this.startIndex;
     if (rows.length > 0) {
       let newstart = start + rows.length;
       this.startIndex = newstart;
-    }  
+    }
     console.log(`metadata.statistics: ${JSON.stringify(metadata.statistics)}`);
     console.log(`resultsResponse: ${JSON.stringify(resultsResponse)}`);
     this.totalRecords = resultsResponse.totalRows;
@@ -214,15 +214,15 @@ export class BigQueryRunner {
       };
     }
     if (this.startIndex === 0) {
-      vscode.window.showErrorMessage('Prev page invalid');			
+      vscode.window.showErrorMessage('Prev page invalid');
       return {
         status: "error",
         errorMessage: 'Prev page invalid as no job has been started!',
-      }; 
+      };
     }
     //
     const startIndex = this.startIndex;
-    let newStartIndex = startIndex - 2*this.items_per_page;
+    let newStartIndex = startIndex - 2 * this.items_per_page;
     if (newStartIndex < 0) {
       newStartIndex = 0;
     }
@@ -274,8 +274,8 @@ export class BigQueryRunner {
       result = await this.job.getQueryResults({
         autoPaginate: true,
         maxResults: this.items_per_page,
-        startIndex: this.startIndex.toString(), 
-         
+        startIndex: this.startIndex.toString(),
+
       });
     } catch (err) {
       vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);
@@ -306,7 +306,7 @@ export class BigQueryRunner {
       vscode.window.showErrorMessage(`${err}`);
       return {
         status: "error",
-        errorMessage: (err instanceof Error)? err.message:'',
+        errorMessage: (err instanceof Error) ? err.message : '',
       };
     }
   }
@@ -321,7 +321,7 @@ export class BigQueryRunner {
     return result;
   }
   private isCompiled(docUri: vscode.Uri): boolean {
-     if (!this.dbtProjectContainer) {
+    if (!this.dbtProjectContainer) {
       throw new Error("dbtProjectContainer not initialized for runner!");
     }
     const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
@@ -331,15 +331,15 @@ export class BigQueryRunner {
     }
     return dbtProject.isCompiled(docUri);
   }
-  private async findCompiledSQLText(docUri: vscode.Uri): Promise<string | undefined>  {
+  private async findCompiledSQLText(docUri: vscode.Uri): Promise<string | undefined> {
     if (!this.dbtProjectContainer) {
       throw new Error("dbtProjectContainer not initialized for runner!");
-    }    
+    }
     const dbtProject = this.dbtProjectContainer.findDBTProject(docUri);
     if (!dbtProject) {
       // if not part of dbt project, assume compiled is true
       throw new Error('something went wrong with file lookup');
-    }    
+    }
     return dbtProject.getCompiledSQLText(docUri);
   }
   public async getQueryText(): Promise<string> {
@@ -350,7 +350,7 @@ export class BigQueryRunner {
     const compiled = this.isCompiled(this.editor.document.uri);
     let text: string | undefined;
     if (compiled) {
-      text = this.editor.document.getText().trim(); 
+      text = this.editor.document.getText().trim();
     } else {
       const docUri = this.editor.document.uri;
       if (this.editor.document.isDirty) {
