@@ -6,6 +6,7 @@ import {
   Disposable,
   EventEmitter,
   window,
+  CancellationToken,
 } from "vscode";
 import { DBTClient } from "../dbt_client";
 import { DBTWorkspaceFolder } from "./dbtWorkspaceFolder";
@@ -93,6 +94,8 @@ export class DBTProjectContainer implements Disposable {
     this.findDBTProject(modelPath)?.showCompiledSql(modelPath);
   }
 
+  
+
   findDBTProject(uri: Uri): DBTProject | undefined {
     return this.findDBTWorkspaceFolder(uri)?.findDBTProject(uri);
   }
@@ -107,6 +110,19 @@ export class DBTProjectContainer implements Disposable {
       return;
     }
     this.dbtClient.addCommandToQueue(command);
+  }
+
+  async executeCommandImmediately(command: DBTCommand, token?: CancellationToken | undefined) {
+    if (this.dbtClient === undefined) {
+      if (command.focus) {
+        window.showErrorMessage(
+          "Can't run the command. Please ensure you have selected a Python interpreter with DBT installed."
+        );
+      }
+      return;
+    }
+    await this.dbtClient.executeCommandImmediately(command, token);   
+    console.log(`executeCommandImmediately completed ${command.commandAsString}`);
   }
 
   async installDBT(): Promise<void> {

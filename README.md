@@ -1,70 +1,17 @@
-# vscode-dbt-power-user
-
-![Last updated](https://img.shields.io/visual-studio-marketplace/last-updated/innoverio.vscode-dbt-power-user) ![Version](https://img.shields.io/visual-studio-marketplace/v/innoverio.vscode-dbt-power-user) ![Installs](https://img.shields.io/visual-studio-marketplace/i/innoverio.vscode-dbt-power-user) ![Build passing](https://github.com/innoverio/vscode-dbt-power-user/workflows/.github/workflows/ci.yml/badge.svg) 
-
-This extension makes vscode seamlessly work with [dbt](https://www.getdbt.com/).
-
-Main features:
-- Go to the definition of any models, macro's and sources.
-- Autocompletion of models, macros and sources
-- Ability to run a model through the play button of the document
-- dbt install / update
-- dbt logs viewer (force tailing)
-
-This extension is using the Python extension to detect Python interpreters that are installed in standard locations. See [Python Environments](https://code.visualstudio.com/docs/languages/python#_environments).
-
-This extension is fully compatible with the remote extension. See [Visual Studio Code Remote - Containers](https://code.visualstudio.com/docs/remote/containers) and [Visual Studio Code Remote - WSL](https://code.visualstudio.com/docs/remote/wsl).
-
-Please let us know about any bugs or feature requests through the github issues.
-
-This extension is sponsored by [innover.io](https://innover.io/).
-
-## Features at work
-### See the model graph
-
-![See the graph and execute parent or children models](./media/graph.gif)
-
-### Go to definition
-
-![Go to model definition](./media/definition-model.gif)
-
-![Go to macro definition](./media/definition-macro.gif)
-
-![Go to source definition](./media/definition-source.gif)
-
-### Autocompletion
-
-![Autocomplete model](./media/autocomplete-model.gif)
-
-![Autocomplete macro](./media/autocomplete-macro.gif)
-
-![Autocomplete source](./media/autocomplete-source.gif)
-
-### dbt logs force tailing (new)
-
-![dbt logs](./media/dbt-log.gif)
-
-### Update dbt if dbt is outdated (new)
-
-![Update dbt](./media/update-dbt.gif)
-
-### Install dbt if dbt is not in the Python Environment (new)
-
-![Install dbt](./media/install-dbt.gif)
+# vscode-dbt-bigquery-power-user
 
 
 
-## How to use the extension
+This extension makes vscode seamlessly work with [dbt](https://www.getdbt.com/) and Biq Query
+This extension is based on the [vscode-dbt-power-user](https://github.com/innoverio/vscode-dbt-power-user) extension made by Innoverio and adds
+a *preview sql* command that compiles (if not updated) the model and runs the compiled sql
+on BigQuery. 
+The Big Query integration uses code based on the [vscode-big-query](https://github.com/google/vscode-bigquery) extension but has been extensively modified. 
 
-You should associate your .sql files with the jinja-sql language by configuring in Preferences > Settings
+The vscode-dbt-bigquery-power-user extension is a drop-in replacement for vscode-dbt-power-user and
+is incompatible with concurrent usage (as they use the same config and registered commands). 
 
-![Associations](./media/associations.png)
+On the other hand, you can still install the [vscode-bigquery](https://github.com/google/vscode-bigquery) extension (and use the same config) which will allow you to run BigQuery sql queries on compiled dbt sql files.
 
-or add the following in settings.json:
 
-```
-    "files.associations": {
-        "*.sql": "jinja-sql"
-    },
-```
 
