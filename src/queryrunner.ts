@@ -65,7 +65,11 @@ export class BigQueryRunner {
     if (!dbtProject) {
       throw new Error(`couldn't find DBT Project for ${docUri}`);
     }
-    return dbtProject.getTargetPath();
+    const targetPath = dbtProject.getTargetPath();
+    if (!targetPath) {
+       throw new Error(`couldn't find targetPath for ${docUri}`);
+    }
+    return targetPath;
   }
   findProjectRoot(docUri: vscode.Uri): vscode.Uri {
     if (!this.dbtProjectContainer) {
