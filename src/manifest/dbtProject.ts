@@ -26,6 +26,7 @@ import {
 } from "../dbt_client/dbtCommandFactory";
 import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 import { DBTTerminal } from "../dbt_client/dbtTerminal";
+import { syncBuiltinESMExports } from "module";
 
 // import {
 //   runAsQueryText,
@@ -44,9 +45,9 @@ export class DBTProject implements Disposable {
   static RESOURCE_TYPE_SNAPSHOT = "snapshot";
 
   readonly projectRoot: Uri;
-  private projectName: string|undefined;
-  private targetPath: string|undefined;
-  private sourcePaths: string[]|undefined;
+  private projectName: string | undefined;
+  private targetPath: string | undefined;
+  private sourcePaths: string[] | undefined;
 
   private _onProjectConfigChanged = new EventEmitter<ProjectConfigChangedEvent>();
   public onProjectConfigChanged = this._onProjectConfigChanged.event;
@@ -93,7 +94,7 @@ export class DBTProject implements Disposable {
       this.dbtProjectLog
     );
   }
-  public getTargetPath(): string|undefined {
+  public getTargetPath(): string | undefined {
     return this.targetPath;
   }
   async tryRefresh() {
@@ -189,6 +190,7 @@ export class DBTProject implements Disposable {
     await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
 
   }
+  
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/compiled/**/${baseName}`;
@@ -230,13 +232,13 @@ export class DBTProject implements Disposable {
       const MAX_TRIES = 100;
       let t = 0;
       while (t < MAX_TRIES) {
-      targetModels = await workspace.findFiles(
-        new RelativePattern(
-          this.projectRoot,
-          pattern
-        )
-      );
-      if (targetModels.length === 0) {
+        targetModels = await workspace.findFiles(
+          new RelativePattern(
+            this.projectRoot,
+            pattern
+          )
+        );
+        if (targetModels.length === 0) {
           sleep();
           t += 1;  
         } else {
@@ -281,57 +283,9 @@ export class DBTProject implements Disposable {
     }
   }
 
-  // private async previewSQLInTargetfolder(modelPath: Uri) {
-  //   const baseName = path.basename(modelPath.fsPath);
-  //   const modelName = path.basename(modelPath.fsPath, ".sql");
-  //   const orig_file = modelPath.path;
-  //   const orig_file_stats = statSync(orig_file);
-  //   const orig_file_mtime = orig_file_stats.mtime;
-  //   console.log(`orig_file_mtime: ${orig_file_mtime}`);
-  //   console.log(`orig_file modelName: ${modelName}`);
-  //   const pattern = `${this.targetPath}/compiled/**/${baseName}`;
-  //   console.log(`previewSQLInTargetfolder: looking for ${pattern}`);
-  //   const targetModels = await workspace.findFiles(
-  //     new RelativePattern(
-  //       this.projectRoot,
-  //       pattern
-  //     )
-  //   );
-  //   if (targetModels.length > 0) {
-  //     const targetModel0 = targetModels[0];
-  //     const target_path = targetModel0.path;
-  //     console.log(`previewSQLInTargetfolder: ${target_path}`);
-  //     const target_path_stats = statSync(target_path);
-  //     const target_path_mtime = target_path_stats.mtime;
-  //     console.log(`target_path_mtime: ${target_path_mtime}`);
-  //     if (target_path_mtime < orig_file_mtime) {
-  //       // trigger compile
-  //       const runModelParams: RunModelParams = {
-  //         plusOperatorLeft: "",
-  //         modelName: modelName,
-  //         plusOperatorRight: ""
-
-  //       };
-  //       const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
-  //         this.projectRoot,
-  //         runModelParams
-  //       );
-  //       console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
-  //       await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
-
-  //     }      
-  //     // const queryText = readFileSync(target_path,"utf8");
-
-  //     // await runAsQueryText(queryText);
-  //     commands.executeCommand("vscode.open", targetModel0, {
-  //       preview: false,
-  //     });
-  //     //invoke query after     
-  //   }
-  // }
   private findSourcePaths(projectConfig: any): string[] {
     return DBTProject.SOURCE_PATHS_VAR.reduce((prev: string[], current: string) => {
-      if(projectConfig[current] !== undefined) {
+      if (projectConfig[current] !== undefined) {
         return projectConfig[current] as string[];
       } else {
         return prev;
