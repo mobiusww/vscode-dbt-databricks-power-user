@@ -1,5 +1,4 @@
-import { read, readFileSync, statSync } from "fs";
-import { safeLoad } from "js-yaml";
+import { readFileSync, statSync } from "fs"
 import { parse } from "yaml";
 import * as path from "path";
 import {
@@ -167,7 +166,7 @@ export class DBTProject implements Disposable {
       path.join(this.projectRoot.fsPath, DBTProject.DBT_PROJECT_FILE),
       "utf8"
     );
-    return parse(dbtProjectYamlFile, {}) as any;
+    return parse(dbtProjectYamlFile, { uniqueKeys: false}) as any;
   }
   public isCompiled(docUri: Uri): boolean {
     if (this.targetPath) {
@@ -195,9 +194,6 @@ export class DBTProject implements Disposable {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/compiled/**/${baseName}`;
     const modelName = path.basename(modelPath.fsPath, ".sql");
-    const orig_file = modelPath.path;
-    const orig_file_stats = statSync(orig_file);
-    const orig_file_mtime = orig_file_stats.mtime;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     let targetModels = await workspace.findFiles(
       new RelativePattern(
@@ -206,6 +202,11 @@ export class DBTProject implements Disposable {
       )
     );
     if (targetModels.length > 0) {
+      
+      const orig_file = modelPath.path;
+      const orig_file_stats = statSync(orig_file);
+      const orig_file_mtime = orig_file_stats.mtime;
+
       const targetModel0 = targetModels[0];
       // console.log(`findModelInTargetfolder: ${targetModel0}`);
       const target_path = targetModel0.path;
