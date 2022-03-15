@@ -222,12 +222,29 @@ export class DBTProject implements Disposable {
       // target not yet compiled
       await this.createCompileModel(modelName);
       // try after compilation
+      // loop on this and await
+      const snooze = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
+      const sleep = async() => {
+        await snooze(1000); // snooze 1 sec
+      };
+      const MAX_TRIES = 100;
+      let t = 0;
+      while (t < MAX_TRIES) {
       targetModels = await workspace.findFiles(
         new RelativePattern(
           this.projectRoot,
           pattern
         )
       );
+      if (targetModels.length === 0) {
+          sleep();
+          t += 1;  
+        } else {
+          t = MAX_TRIES;
+        }
+       
+
+      }
       if (targetModels.length === 0) {
         throw new Error("Current model not found!");
       }
