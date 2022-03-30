@@ -1,4 +1,5 @@
 import *  as fs from "fs";
+import * as path from "path";
 import {
   window,
   workspace,
@@ -65,7 +66,7 @@ function getQueryText(editor: TextEditor | undefined): string {
   if (!editor) {
     throw new Error("No active editor window was found");
   }
-  console.log(`bigquery.getQueryText.docURI.path: ${editor.document.uri.path}`);
+  console.log(`bigquery.getQueryText.docURI.fsPath: ${editor.document.uri.fsPath}`);
   let text = editor.document.getText().trim();
   if (!text) {
     throw new Error("The editor window is empty");
@@ -79,7 +80,7 @@ async function runAsQuery(): Promise<void> {
     let queryText = getQueryText(window.activeTextEditor);
     const docURI = window.activeTextEditor?.document.uri;
     console.log(`runAsQuery.docURI: ${docURI}`);
-    const root_path = docURI !== undefined ? vsdbtProjectContainer.getProjectRootpath(docURI)?.path : undefined;
+    const root_path = docURI !== undefined ? vsdbtProjectContainer.getProjectRootpath(docURI)?.fsPath : undefined;
     const format: any = config?.get("outputFormat");
     await query(queryText, false, root_path, format);
   } catch (err) {
@@ -125,7 +126,7 @@ function getResultsFileName(root_path?: string, format?: string | undefined): st
   if (!root_path) {
     return;
   }
-  const dir_prefix = root_path + "/logs/results";
+  const dir_prefix = path.join(root_path,"logs","results");
   if (!fs.existsSync(dir_prefix)) {
     fs.mkdirSync(dir_prefix, { recursive: true });
   }
@@ -139,7 +140,7 @@ function getResultsFileName(root_path?: string, format?: string | undefined): st
   const randsuffix = makeid(8);
   const fname = `query-results-${d.getFullYear()}${d.getMonth()}${d.getDate()}-${d.getHours()}${d.getMinutes()}${d.getSeconds()}-${randsuffix}`;
   console.log(`output fname: ${fname}`);
-  const fileName = dir_prefix + "/" + fname + "." + ext; // come up with something that is in logs
+  const fileName = path.join(dir_prefix,fname + "." + ext); // come up with something that is in logs
   console.log(`output filename: ${fileName}`);
   return fileName;
 

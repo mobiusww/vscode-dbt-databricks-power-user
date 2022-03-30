@@ -5,11 +5,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { BigQueryRunner } from './queryrunner';
 import { DBTPowerUserExtension } from './dbtPowerUserExtension';
-import {query} from './bigquery';
+import { query } from './bigquery';
 
 const configPrefix = "dbt.bigquery"; // share config with bigquery
 let config: vscode.WorkspaceConfiguration;
-let  vscontext: vscode.ExtensionContext;
+let vscontext: vscode.ExtensionContext;
 let vsdbtPowerUserExtension: DBTPowerUserExtension | undefined;
 export async function openQueryRunner(): Promise<void> {
 	if (!vscontext) {
@@ -18,8 +18,9 @@ export async function openQueryRunner(): Promise<void> {
 	const editor = vscode.window.activeTextEditor;
 	if (!editor) {
 		throw new Error("No active editor window was found");
-	}	
-	let localResourceRoot = vscode.Uri.file(path.join(vscontext.extensionPath,'public'));
+	}
+	const fullPath = path.join(vscontext.extensionPath, 'public');
+	const localResourceRoot = vscode.Uri.file(fullPath);
 	console.log('localResourceRoot: ' + localResourceRoot);
 	vscode.commands.executeCommand('workbench.action.editorLayoutTwoRows');
 	const panel = vscode.window.createWebviewPanel(
@@ -32,22 +33,22 @@ export async function openQueryRunner(): Promise<void> {
 			localResourceRoots: [localResourceRoot]
 		}
 	);
-	
+
 
 	const bigQueryRunner = new BigQueryRunner(config, editor);
- 	
+
 	if (vsdbtPowerUserExtension) {
 		const dbtProjectContainer = vsdbtPowerUserExtension.getDbtProjectContainer();
 		bigQueryRunner.setDbtProjectContainer(dbtProjectContainer);
 	}
-    const docURI = editor?.document.uri;
-    console.log(`runAsQuery.docURI: ${docURI}`);   
-    const root_path = docURI !== undefined? bigQueryRunner.dbtProjectContainer?.getProjectRootpath(docURI)?.path: undefined;
+	const docURI = editor?.document.uri;
+	console.log(`runAsQuery.docURI: ${docURI}`);
+	const root_path = docURI !== undefined ? bigQueryRunner.dbtProjectContainer?.getProjectRootpath(docURI)?.fsPath : undefined;
 
 	panel.webview.html = getWebviewContent(vscontext);
 
 	panel.webview.onDidReceiveMessage(
-		
+
 		async message => {
 			switch (message.command) {
 				case 'runAsQuery':
@@ -79,26 +80,26 @@ export async function openQueryRunner(): Promise<void> {
 					}
 					break;
 				case 'firstPage':
-						const firstResult = await bigQueryRunner.getFirstPage();
-						if (firstResult.status === "error") {
-							panel.webview.postMessage({ command: 'queryError', errorMessage: firstResult.errorMessage });
-						} else {
-							panel.webview.postMessage({ command: 'nextPage', result: firstResult });
-						}
-						break;
+					const firstResult = await bigQueryRunner.getFirstPage();
+					if (firstResult.status === "error") {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: firstResult.errorMessage });
+					} else {
+						panel.webview.postMessage({ command: 'nextPage', result: firstResult });
+					}
+					break;
 				case 'lastPage':
-						if (bigQueryRunner.startIndex === 0) {
-							panel.webview.postMessage({ command: 'queryError', errorMessage: "No more previous pages" });
-							break; // no more prev page;
-						}
-						const lastResult = await bigQueryRunner.getLastPage();
-						if (lastResult.status === "error") {
-							panel.webview.postMessage({ command: 'queryError', errorMessage: lastResult.errorMessage });
-						} else {
-							panel.webview.postMessage({ command: 'prevPage', result: lastResult });
-						}
-						break;
-	
+					if (bigQueryRunner.startIndex === 0) {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: "No more previous pages" });
+						break; // no more prev page;
+					}
+					const lastResult = await bigQueryRunner.getLastPage();
+					if (lastResult.status === "error") {
+						panel.webview.postMessage({ command: 'queryError', errorMessage: lastResult.errorMessage });
+					} else {
+						panel.webview.postMessage({ command: 'prevPage', result: lastResult });
+					}
+					break;
+
 				case 'cancelQuery':
 					const cancelResult = await bigQueryRunner.cancelQuery();
 					panel.webview.postMessage({ command: 'cancelQuery', result: cancelResult });
@@ -106,7 +107,7 @@ export async function openQueryRunner(): Promise<void> {
 				case 'saveAsCSV':
 					const csvQueryText = await bigQueryRunner.getQueryText();
 					console.log(`saveAsCSV.csvQueryText: ${csvQueryText}`);
-					await query(csvQueryText, false, root_path, 'csv', );
+					await query(csvQueryText, false, root_path, 'csv',);
 					break;
 				case 'saveAsTable':
 					const tableQueryText = await bigQueryRunner.getQueryText();
@@ -124,7 +125,7 @@ export async function openQueryRunner(): Promise<void> {
 		undefined,
 		vscontext.subscriptions
 	);
-	
+
 	// start running query upon opening the window
 	console.log(`executing openQueryRunner runAsQuery on open`);
 	const queryResult = await bigQueryRunner.runAsQuery();
@@ -147,7 +148,7 @@ export function activate(context: vscode.ExtensionContext, dbtPowerUserExtension
 				return;
 			}
 			readConfig();
-			
+
 		})
 	);
 	let disposable = vscode.commands.registerCommand("dbtPowerUser.openQueryRunner", openQueryRunner);
@@ -166,19 +167,27 @@ function readConfig(): void {
 }
 
 function getWebviewContent(context: vscode.ExtensionContext): string {
-	let indexPath = vscode.Uri.file(
-		path.join(context.extensionPath, 'public', 'index.html')
-	);
-	indexPath = indexPath.with({ scheme: 'vscode-resource' });
+	const fullIndexPath = path.join(context.extensionPath, 'public', 'index.html');
+	const indexPath = vscode.Uri.file(fullIndexPath);
+	const schemeIndexPath = indexPath.with({ scheme: 'vscode-resource' });
+	let htmlfile: Buffer | undefined;
+	try {
+		console.log(`getWebviewContent: attempting to read file ${schemeIndexPath.fsPath}`)
+		htmlfile = fs.readFileSync(schemeIndexPath.fsPath);
+	} catch (error) {
+		console.log(`getWebviewContent: could not find htmlfile ${schemeIndexPath.fsPath}`);
+		throw Error(`getWebviewContent: could not find htmlfile ${schemeIndexPath.fsPath}`);
+	}
 
-	let html = fs.readFileSync(indexPath.path).toString();
-
-	let resourceDir = vscode.Uri.file(
-		path.join(context.extensionPath, 'public')
-	);
+	let html = htmlfile?.toString();
+	const fullPath = path.join(context.extensionPath, 'public');
+	let resourceDir = vscode.Uri.file(fullPath);
 	resourceDir = resourceDir.with({ scheme: 'vscode-resource' });
-    html = html.replace(new RegExp('__THEME__','g'), config.get('runnerTheme','dark'));
-	html = html.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
+	html = html?.replace(new RegExp('__THEME__', 'g'), config.get('runnerTheme', 'dark'));
+	html = html?.replace(new RegExp('__RESOURCE_DIR__', 'g'), resourceDir.toString());
+	if (!html) {
+		html = '';
+	}
 	return html;
 }
 

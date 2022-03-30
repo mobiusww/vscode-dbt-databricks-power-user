@@ -346,7 +346,7 @@ export class BigQueryRunner {
     if (!this.editor) {
       throw new Error("No active editor window was found");
     }
-    console.log(`queryRunner.getQueryText.docURI.path: ${this.editor.document.uri.path}`);
+    console.log(`queryRunner.getQueryText.docURI.fsPath: ${this.editor.document.uri.fsPath}`);
     const compiled = this.isCompiled(this.editor.document.uri);
     let text: string | undefined;
     if (compiled) {
