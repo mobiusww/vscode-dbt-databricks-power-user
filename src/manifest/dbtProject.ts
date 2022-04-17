@@ -1,5 +1,5 @@
-import { read, readFileSync, statSync } from "fs";
-import { safeLoad } from "js-yaml";
+import { readFileSync, statSync } from "fs"
+import { parse } from "yaml";
 import * as path from "path";
 import {
   SourceFileWatchers,
@@ -24,17 +24,19 @@ import {
   RunModelParams,
 } from "../dbt_client/dbtCommandFactory";
 import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
+import { DBTTerminal } from "../dbt_client/dbtTerminal";
+import { syncBuiltinESMExports } from "module";
 
 // import {
 //   runAsQueryText,
 // } from "../bigquery";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
-  static DBT_MODULES = "dbt_modules";
+  static DBT_MODULES = ["dbt_modules", "dbt_packages"];
   static MANIFEST_FILE = "manifest.json";
   static RUN_RESULTS_FILE = "run_results.json";
   static TARGET_PATH_VAR = "target-path";
-  static SOURCE_PATHS_VAR = "source-paths";
+  static SOURCE_PATHS_VAR = ["source-paths", "model-paths"];
 
   static RESOURCE_TYPE_MODEL = "model";
   static RESOURCE_TYPE_SOURCE = "source";
@@ -42,9 +44,9 @@ export class DBTProject implements Disposable {
   static RESOURCE_TYPE_SNAPSHOT = "snapshot";
 
   readonly projectRoot: Uri;
-  private projectName: string;
-  private targetPath: string;
-  private sourcePaths: string[];
+  private projectName: string | undefined;
+  private targetPath: string | undefined;
+  private sourcePaths: string[] | undefined;
 
   private _onProjectConfigChanged = new EventEmitter<ProjectConfigChangedEvent>();
   public onProjectConfigChanged = this._onProjectConfigChanged.event;
@@ -59,16 +61,11 @@ export class DBTProject implements Disposable {
     private dbtProjectLogFactory: DBTProjectLogFactory,
     private targetWatchersFactory: TargetWatchersFactory,
     private dbtCommandFactory: DBTCommandFactory,
+    private terminal: DBTTerminal,
     path: Uri,
     _onManifestChanged: EventEmitter<ManifestCacheChangedEvent>
   ) {
     this.projectRoot = path;
-
-    const projectConfig = this.readAndParseProjectConfig();
-
-    this.projectName = projectConfig.name;
-    this.targetPath = projectConfig[DBTProject.TARGET_PATH_VAR] as string;
-    this.sourcePaths = projectConfig[DBTProject.SOURCE_PATHS_VAR] as string[];
 
     const dbtProjectConfigWatcher = workspace.createFileSystemWatcher(
       new RelativePattern(path, DBTProject.DBT_PROJECT_FILE)
@@ -96,26 +93,26 @@ export class DBTProject implements Disposable {
       this.dbtProjectLog
     );
   }
-  public getTargetPath(): string {
+  public getTargetPath(): string | undefined {
     return this.targetPath;
   }
   async tryRefresh() {
     try {
       await this.refresh();
     } catch (error) {
-      console.log("An error occurred while trying to refresh the project", error);
+      console.log("An error occurred while trying to refresh the project configuration", error);
+      this.terminal.log(`An error occurred while trying to refresh the project configuration: ${error}`);
     }
   }
 
   findPackageName(uri: Uri): string | undefined {
     const documentPath = uri.path;
-    // TODO: could potentially have issues with casing @camfrout
     const pathSegments = documentPath
       .replace(new RegExp(this.projectRoot.path + "/", "g"), "")
       .split("/");
 
     const insidePackage =
-      pathSegments.length > 1 && pathSegments[0] === DBTProject.DBT_MODULES;
+      pathSegments.length > 1 && DBTProject.DBT_MODULES.includes(pathSegments[0]);
 
     if (insidePackage) {
       return pathSegments[1];
@@ -165,23 +162,17 @@ export class DBTProject implements Disposable {
   }
 
   private readAndParseProjectConfig() {
-    try {
-      const dbtProjectYamlFile = readFileSync(
-        path.join(this.projectRoot.fsPath, DBTProject.DBT_PROJECT_FILE),
-        "utf8"
-      );
-      return safeLoad(dbtProjectYamlFile) as any;
-    } catch (error) {
-      console.log(error);
-      return {
-        name: "",
-        targetPath: "target",
-        sourcePaths: ["models"],
-      };
-    }
+    const dbtProjectYamlFile = readFileSync(
+      path.join(this.projectRoot.fsPath, DBTProject.DBT_PROJECT_FILE),
+      "utf8"
+    );
+    return parse(dbtProjectYamlFile, { uniqueKeys: false}) as any;
   }
   public isCompiled(docUri: Uri): boolean {
-    return docUri.fsPath.startsWith(this.targetPath);
+    if (this.targetPath) {
+      return docUri.fsPath.startsWith(this.targetPath);
+    }
+    return false;
   }
   private async createCompileModel(modelName: string) {
     const runModelParams: RunModelParams = {
@@ -198,13 +189,13 @@ export class DBTProject implements Disposable {
     await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
 
   }
+  
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/compiled/**/${baseName}`;
     const modelName = path.basename(modelPath.fsPath, ".sql");
     const orig_file = modelPath.fsPath;
     const orig_file_stats = statSync(orig_file);
-    const orig_file_mtime = orig_file_stats.mtime;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     let targetModels = await workspace.findFiles(
       new RelativePattern(
@@ -213,6 +204,11 @@ export class DBTProject implements Disposable {
       )
     );
     if (targetModels.length > 0) {
+      
+      const orig_file = modelPath.path;
+      const orig_file_stats = statSync(orig_file);
+      const orig_file_mtime = orig_file_stats.mtime;
+
       const targetModel0 = targetModels[0];
       // console.log(`findModelInTargetfolder: ${targetModel0}`);
       const target_path = targetModel0.fsPath;
@@ -231,12 +227,29 @@ export class DBTProject implements Disposable {
       // target not yet compiled
       await this.createCompileModel(modelName);
       // try after compilation
-      targetModels = await workspace.findFiles(
-        new RelativePattern(
-          this.projectRoot,
-          pattern
-        )
-      );
+      // loop on this and await
+      const snooze = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
+      const sleep = async() => {
+        await snooze(1000); // snooze 1 sec
+      };
+      const MAX_TRIES = 100;
+      let t = 0;
+      while (t < MAX_TRIES) {
+        targetModels = await workspace.findFiles(
+          new RelativePattern(
+            this.projectRoot,
+            pattern
+          )
+        );
+        if (targetModels.length === 0) {
+          sleep();
+          t += 1;  
+        } else {
+          t = MAX_TRIES;
+        }
+       
+
+      }
       if (targetModels.length === 0) {
         throw new Error("Current model not found!");
       }
@@ -273,66 +286,32 @@ export class DBTProject implements Disposable {
     }
   }
 
-  // private async previewSQLInTargetfolder(modelPath: Uri) {
-  //   const baseName = path.basename(modelPath.fsPath);
-  //   const modelName = path.basename(modelPath.fsPath, ".sql");
-  //   const orig_file = modelPath.path;
-  //   const orig_file_stats = statSync(orig_file);
-  //   const orig_file_mtime = orig_file_stats.mtime;
-  //   console.log(`orig_file_mtime: ${orig_file_mtime}`);
-  //   console.log(`orig_file modelName: ${modelName}`);
-  //   const pattern = `${this.targetPath}/compiled/**/${baseName}`;
-  //   console.log(`previewSQLInTargetfolder: looking for ${pattern}`);
-  //   const targetModels = await workspace.findFiles(
-  //     new RelativePattern(
-  //       this.projectRoot,
-  //       pattern
-  //     )
-  //   );
-  //   if (targetModels.length > 0) {
-  //     const targetModel0 = targetModels[0];
-  //     const target_path = targetModel0.path;
-  //     console.log(`previewSQLInTargetfolder: ${target_path}`);
-  //     const target_path_stats = statSync(target_path);
-  //     const target_path_mtime = target_path_stats.mtime;
-  //     console.log(`target_path_mtime: ${target_path_mtime}`);
-  //     if (target_path_mtime < orig_file_mtime) {
-  //       // trigger compile
-  //       const runModelParams: RunModelParams = {
-  //         plusOperatorLeft: "",
-  //         modelName: modelName,
-  //         plusOperatorRight: ""
+  private findSourcePaths(projectConfig: any): string[] {
+    return DBTProject.SOURCE_PATHS_VAR.reduce((prev: string[], current: string) => {
+      if (projectConfig[current] !== undefined) {
+        return projectConfig[current] as string[];
+      } else {
+        return prev;
+      }
+    }, ["models"]);
+  }
 
-  //       };
-  //       const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
-  //         this.projectRoot,
-  //         runModelParams
-  //       );
-  //       console.log(`executing immediately Command ${runModelCommand.commandAsString} `);
-  //       await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
-
-  //     }      
-  //     // const queryText = readFileSync(target_path,"utf8");
-
-  //     // await runAsQueryText(queryText);
-  //     commands.executeCommand("vscode.open", targetModel0, {
-  //       preview: false,
-  //     });
-  //     //invoke query after     
-  //   }
-  // }
-
+  private findTargetPath(projectConfig: any): string {
+    if (projectConfig[DBTProject.TARGET_PATH_VAR] !== undefined) {
+      return projectConfig[DBTProject.TARGET_PATH_VAR] as string;
+    }
+    return "target";
+  }
 
   private async refresh() {
     const projectConfig = this.readAndParseProjectConfig();
-
     this.projectName = projectConfig.name;
-    this.targetPath = projectConfig[DBTProject.TARGET_PATH_VAR] as string;
-    this.sourcePaths = projectConfig[DBTProject.SOURCE_PATHS_VAR] as string[];
+    this.targetPath = this.findTargetPath(projectConfig);
+    this.sourcePaths = this.findSourcePaths(projectConfig);
 
     const event = new ProjectConfigChangedEvent(
       this.projectRoot,
-      this.projectName,
+      this.projectName as string,
       this.targetPath,
       this.sourcePaths
     );

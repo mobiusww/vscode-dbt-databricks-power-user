@@ -39,6 +39,14 @@
                     "default": false,
                     "description": "Disable automatic listing of models when files change."
                 },
+                "dbt.runModelCommandAdditionalParams": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "description": "Add additonal params to the dbt run model command."
+                },
                 "dbt.bigquery.keyFilename": {
                     "type": "string",
                     "default": "",
@@ -168,6 +176,14 @@
                 }
             },
             {
+                "command": "dbtPowerUser.runSQL",
+                "title": "dbt Power User: Run SQL",
+                "icon": {
+                    "light": "./media/file-code_light.svg",
+                    "dark": "./media/file-code_dark.svg"
+                }
+            },
+            {
                 "command": "dbtPowerUser.openQueryRunner",
                 "title": "dbt Big Query Power User: Open QueryRunner",
                 "icon": {
@@ -251,7 +267,6 @@
         "@types/easy-table": "^0.0.33",
         "@types/flat": "^5.0.2",
         "@types/glob": "^7.1.1",
-        "@types/js-yaml": "^3.12.5",
         "@types/mocha": "^7.0.2",
         "@types/node": "^13.13.15",
         "@types/vscode": "^1.52.0",
@@ -280,7 +295,7 @@
         "flat": "^5.0.2",
         "inversify": "^5.0.5",
         "inversify-binding-decorators": "^4.0.0",
-        "js-yaml": "^3.14.0",
-        "reflect-metadata": "^0.1.13"
+        "reflect-metadata": "^0.1.13",
+        "yaml": "^2.0.0-10"
     }
 }

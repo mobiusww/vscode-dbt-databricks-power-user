@@ -2,7 +2,6 @@ import {
   CancellationToken,
   Disposable,
   EventEmitter,
-  Terminal,
   window,
   Uri,
   workspace,
@@ -16,6 +15,7 @@ import {
 import { DBTInstallationFoundEvent } from "./dbtVersionEvent";
 import { PythonEnvironment } from "../manifest/pythonEnvironment";
 import { provideSingleton } from "../utils";
+import { DBTTerminal } from "./dbtTerminal";
 
 @provideSingleton(DBTClient)
 export class DBTClient implements Disposable {
@@ -23,16 +23,13 @@ export class DBTClient implements Disposable {
     new EventEmitter<DBTInstallationFoundEvent>();
   public readonly onDBTInstallationFound = this._onDBTInstallationFound.event;
   private static readonly INSTALLED_VERSION =
-    /(?<=installed\sversion:\s)(\d+.\d+.\d+)(?=\D+)/g;
+    /installed version:\s(.*)/g;
   private static readonly LATEST_VERSION =
-    /(?<=latest\sversion:\s)(\d+.\d+.\d+)(?=\D+)/g;
+    /latest version:\s(.*)/g;
   private static readonly IS_INSTALLED = /installed\sversion/g;
   private pythonPath?: string;
-  private readonly writeEmitter = new EventEmitter<string>();
   private dbtInstalled?: boolean;
-  private terminal?: Terminal;
   private disposables: Disposable[] = [
-    this.writeEmitter,
     this._onDBTInstallationFound,
   ];
 
@@ -40,7 +37,8 @@ export class DBTClient implements Disposable {
     private pythonEnvironment: PythonEnvironment,
     private dbtCommandFactory: DBTCommandFactory,
     private queue: DBTCommandQueue,
-    private commandProcessExecutionFactory: CommandProcessExecutionFactory
+    private commandProcessExecutionFactory: CommandProcessExecutionFactory,
+    private terminal: DBTTerminal
   ) {}
 
   dispose() {
@@ -83,6 +81,22 @@ export class DBTClient implements Disposable {
     await this.handlePythonExtension();
   }
 
+  async executeSQL(projectUri: Uri, sql: string): Promise<any> {
+    
+    try {
+      const sqlCommandProcess = await this.executeCommand(
+        this.dbtCommandFactory.createSqlCommand(projectUri, sql)
+      );
+      const output = await sqlCommandProcess.complete();
+      sqlCommandProcess.dispose();
+      const data = JSON.parse(output);
+      return data;
+    } catch (err) {
+      console.log(`An error occured while executing query '${sql}'`, err);
+      this.terminal.log(`An error occured while executing query '${sql}': ${err}`);
+    }
+  }
+
   async listModels(projectUri: Uri): Promise<void> {
     const listModelsDisabled = workspace
       .getConfiguration("dbt")
@@ -96,7 +110,7 @@ export class DBTClient implements Disposable {
   }
 
   async checkIfDBTIsInstalled(): Promise<void> {
-    const checkDBTInstalledProcess = this.executeCommand(
+    const checkDBTInstalledProcess = await this.executeCommand(
       this.dbtCommandFactory.createImportDBTCommand()
     );
 
@@ -108,7 +122,7 @@ export class DBTClient implements Disposable {
       return;
     }
 
-    const checkDBTVersionProcess = this.executeCommand(
+    const checkDBTVersionProcess = await this.executeCommand(
       this.dbtCommandFactory.createVersionCommand()
     );
     const timeoutCmd = new Promise((resolve, _) => {
@@ -118,7 +132,7 @@ export class DBTClient implements Disposable {
       await Promise.race([checkDBTVersionProcess.complete(), timeoutCmd]);
       checkDBTVersionProcess.dispose();
     } catch (err) {
-      if (err.match(DBTClient.IS_INSTALLED)) {
+      if (typeof(err) === 'string' && err.match(DBTClient.IS_INSTALLED)) {
         this.checkIfDBTIsUpToDate(err);
         return;
       }
@@ -147,34 +161,31 @@ export class DBTClient implements Disposable {
     command: DBTCommand,
     token?: CancellationToken
   ) {
-    const process = this.executeCommand(command, token);
-    await process.completeWithTerminalOutput(this.writeEmitter);
-    process.dispose();
+    const completedProcess = await this.executeCommand(command, token);
+    completedProcess.completeWithTerminalOutput(this.terminal);
+    completedProcess.dispose();
   }
 
-  private executeCommand(
+  private async executeCommand(
     command: DBTCommand,
     token?: CancellationToken
-  ): CommandProcessExecution {
+  ): Promise<CommandProcessExecution> {
     const { args, cwd } = command.processExecutionParams;
-    if (this.terminal === undefined) {
-      this.terminal = window.createTerminal({
-        name: "Tasks - dbt",
-        pty: {
-          onDidWrite: this.writeEmitter.event,
-          open: () => this.writeEmitter.fire(""),
-          close: () => {
-            this.terminal?.dispose();
-            this.terminal = undefined;
-          },
-        },
-      });
+    const configText = await workspace.getConfiguration();
+    const config = JSON.parse(JSON.stringify(configText));
+    let envVars = {};
+    if (config.terminal !== undefined && config.terminal.integrated !== undefined && config.terminal.integrated.env !== undefined) {
+      const env =  config.terminal.integrated.env;
+      for (let prop in env) {
+        envVars = {
+          ...process.env, 
+          ...envVars,
+          ...env[prop],
+        };
+      }
     }
-
     if (command.commandAsString !== undefined) {
-      this.writeEmitter.fire(
-        `\r> Executing task:  ${command.commandAsString}\n\r\n\r`
-      );
+      this.terminal.log(`> Executing task: ${command.commandAsString}\n\r`);
 
       if (command.focus) {
         this.terminal.show(true);
@@ -185,7 +196,8 @@ export class DBTClient implements Disposable {
       this.pythonPath!,
       args,
       cwd,
-      token
+      token,
+      envVars
     );
   }
 
@@ -220,20 +232,24 @@ export class DBTClient implements Disposable {
   }
 
   private checkIfDBTIsUpToDate(message: string): void {
-    const installedVersionMatch = message.match(DBTClient.INSTALLED_VERSION);
-    if (installedVersionMatch === null) {
+    const installedVersionMatch = DBTClient.INSTALLED_VERSION.exec(message);
+    if (installedVersionMatch === null || installedVersionMatch.length !== 2) {
       throw Error(
         `The Regex INSTALLED_VERSION ${DBTClient.INSTALLED_VERSION} is not working ...`
       );
     }
-    const installedVersion = installedVersionMatch[0];
-    const latestVersionMatch = message.match(DBTClient.LATEST_VERSION);
-    if (latestVersionMatch === null) {
+    const installedVersion = installedVersionMatch[1];
+    if (installedVersion === 'unknown') {
+      this.raiseDBTVersionCouldNotBeDeterminedEvent();
+      return;
+    }
+    const latestVersionMatch = DBTClient.LATEST_VERSION.exec(message);
+    if (latestVersionMatch === null || latestVersionMatch.length !== 2) {
       throw Error(
         `The Regex IS_LATEST_VERSION ${DBTClient.LATEST_VERSION} is not working ...`
       );
     }
-    const latestVersion = latestVersionMatch[0];
+    const latestVersion = latestVersionMatch[1];
     this.raiseDBTVersionEvent(true, installedVersion, latestVersion);
   }
 
