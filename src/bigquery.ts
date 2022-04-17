@@ -15,7 +15,7 @@ import {
   BigQuery,
   BigQueryOptions,
 } from "@google-cloud/bigquery";
-import toCSV = require("csv-stringify");
+import {stringify as toCSV} from "csv-stringify";
 import EasyTable = require("easy-table");
 import flatten = require("flat");
 import { PathLike } from "fs";
