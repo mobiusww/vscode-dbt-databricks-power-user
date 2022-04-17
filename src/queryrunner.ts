@@ -27,6 +27,7 @@ interface TableResult {
 }
 
 const DEFAULT_ITEMS_PER_PAGE = 50;
+const DEFAULT_LIMIT_COUNT = 1000;
 export class BigQueryRunner {
   config: vscode.WorkspaceConfiguration;
   client: BigQuery;
@@ -34,6 +35,8 @@ export class BigQueryRunner {
   editor: vscode.TextEditor;
   startIndex: number;
   items_per_page: number = DEFAULT_ITEMS_PER_PAGE;
+  limitEnabled: boolean | undefined;
+  limitRecords: number | undefined;
   totalRecords: number;
   dbtProjectContainer: DBTProjectContainer | undefined;
   nextToken: any;
@@ -51,6 +54,15 @@ export class BigQueryRunner {
       keyFilename: this.config?.get("keyFilename"),
       projectId: this.config?.get("projectId"),
     };
+    this.limitEnabled = this.config?.get("limitEnabled", false);
+    this.limitRecords = this.config?.get("limitCount", DEFAULT_LIMIT_COUNT);
+    if (this.limitEnabled === undefined) {
+      this.limitEnabled = false;
+    }
+    if (this.limitRecords === undefined) {
+      this.limitRecords = DEFAULT_LIMIT_COUNT;
+    }
+
     this.client = new BigQuery(options);
 
   }
@@ -67,7 +79,7 @@ export class BigQueryRunner {
     }
     const targetPath = dbtProject.getTargetPath();
     if (!targetPath) {
-       throw new Error(`couldn't find targetPath for ${docUri}`);
+      throw new Error(`couldn't find targetPath for ${docUri}`);
     }
     return targetPath;
   }
@@ -93,8 +105,6 @@ export class BigQueryRunner {
   private async query(queryText: string, isDryRun?: boolean): Promise<QueryResult> {
     let data;
     console.log(`queryrunner run query: queryText: ${queryText}`);
-
-
     try {
       data = await this.client.createQueryJob({
         query: queryText,
@@ -295,15 +305,25 @@ export class BigQueryRunner {
       throw err;
     }
   }
-
-  public async runAsQuery(): Promise<QueryResult | QueryResultError> {
-    try {
+  private async getFinalQueryText() {
       console.log(`BigQueryRunner.runAsQuery`);
       const queryText = await this.getQueryText();
       console.log(`BigQueryRunner.runAsQuery.queryText:  ${queryText}`);
-      let queryResult = await this.query(queryText);
+      let finalQueryText = queryText;
+      if (this.limitEnabled) {
+        const random_ctename = 'xj0df033d2';
+        finalQueryText = `WITH ${random_ctename} AS (\n${queryText}\n)\nSELECT * \nFROM ${random_ctename}\nLIMIT ${this.limitRecords}`;
+      }
+      console.log(`final queryrunner run query: final queryText: ${finalQueryText}`);
+      return finalQueryText;
+
+  }
+  public async runAsQuery(): Promise<QueryResult | QueryResultError> {
+    try {
+      const finalQueryText = await this.getFinalQueryText();
+      let queryResult = await this.query(finalQueryText);
       console.log(`BigQueryRunner.runAsQuery.queryResult: ${queryResult}`);
-      queryResult.sql = queryText;
+      queryResult.sql = finalQueryText;
       return queryResult;
     } catch (err) {
       console.log(`BiqQueryRunner.runAsQuery.catcherr: ${err}`);
