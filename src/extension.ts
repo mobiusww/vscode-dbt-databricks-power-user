@@ -11,7 +11,7 @@ export async function activate(context: ExtensionContext) {
     dbtPowerUserExtension,
   );
 
-  await dbtPowerUserExtension.activate();
+  await dbtPowerUserExtension.activate(context);
   await bigquery_activate(context, dbtPowerUserExtension);
   await queryrunner_activate(context, dbtPowerUserExtension);
 }

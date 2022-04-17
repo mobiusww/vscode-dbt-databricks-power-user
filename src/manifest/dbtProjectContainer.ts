@@ -7,6 +7,7 @@ import {
   EventEmitter,
   window,
   CancellationToken,
+  ExtensionContext
 } from "vscode";
 import { DBTClient } from "../dbt_client";
 import { DBTWorkspaceFolder } from "./dbtWorkspaceFolder";
@@ -16,12 +17,14 @@ import { provideSingleton } from "../utils";
 import { inject } from "inversify";
 import * as path from "path";
 import { RunModelType } from "../domain";
+import { VSCodeCommands } from "../commands";
 
 @provideSingleton(DBTProjectContainer)
 export class DBTProjectContainer implements Disposable {
   public onDBTInstallationFound = this.dbtClient.onDBTInstallationFound;
   private dbtWorkspaceFolders: DBTWorkspaceFolder[] = [];
   private _onManifestChanged = new EventEmitter<ManifestCacheChangedEvent>();
+  private _vsContext:ExtensionContext|undefined;
   public readonly onManifestChanged = this._onManifestChanged.event;
   private disposables: Disposable[] = [this._onManifestChanged];
 
@@ -49,7 +52,12 @@ export class DBTProjectContainer implements Disposable {
       })
     );
   }
-
+  public setVsContext(context:ExtensionContext) {
+    this._vsContext = context;
+  }
+  public getVsContext(): ExtensionContext|undefined {
+    return this._vsContext;
+  }
   async initializeDBTProjects(): Promise<void> {
     const folders = workspace.workspaceFolders;
     if (folders === undefined) {

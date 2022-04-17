@@ -42,10 +42,10 @@ export class ExecuteSQL {
       }
       fqn += `${node.schema}.${node.alias}`;
 
-      const sql = `SELECT * FROM ${fqn} LIMIT 10`;
+      const sql = `SELECT * FROM ${fqn} LIMIT 200`;
       
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, sql);
-      this.queryView.createWebviewPanel(sql, data);
+      this.queryView.createWebviewPanel(this.dbtProjectContainer.getVsContext(),sql, data);
     }
   }
 
