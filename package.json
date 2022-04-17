@@ -113,7 +113,7 @@
                 "id": "dbt_view",
                 "title": "dbt Big Query Power User",
                 "icon": "./media/dbt_icon.svg",
-                "contextualTitle": "dbt Power User"
+                "contextualTitle": "dbt Big Query Power User"
             }]
         },
         "views": {
@@ -261,7 +261,9 @@
         "test-compile": "tsc -p ./",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
-        "deploy": "vsce publish"
+        "deploy-vscode": "vsce publish",
+        "deploy-openvsx": "ovsx publish"
+
     },
     "devDependencies": {
         "@types/easy-table": "^0.0.33",
@@ -270,28 +272,29 @@
         "@types/mocha": "^7.0.2",
         "@types/node": "^13.13.15",
         "@types/vscode": "^1.52.0",
-        "@typescript-eslint/eslint-plugin": "^2.30.0",
-        "@typescript-eslint/parser": "^2.30.0",
-        "eslint": "^6.8.0",
+        "@typescript-eslint/eslint-plugin": "^5.10.0",
+        "@typescript-eslint/parser": "^5.10.0",
+        "eslint": "^8.7.0",
         "file-loader": "^6.1.0",
         "glob": "^7.1.6",
-        "mocha": "^7.1.2",
+        "mocha": "^8.1.3",
+        "ovsx": "^0.3.0",
         "ts-loader": "^8.0.3",
         "typescript": "^3.8.3",
         "vsce": "^1.103.1",
         "vscode-test": "^1.3.0",
-        "webpack": "^4.44.1",
-        "webpack-cli": "^3.3.12"
+        "webpack": "^5.67.1",
+        "webpack-cli": "^4.9.1"
     },
     "extensionDependencies": [
         "samuelcolvin.jinjahtml",
         "ms-python.python"
     ],
     "dependencies": {
-        "@google-cloud/bigquery": "^5.9.0",
-        "csv-stringify": "^5.6.5",
+        "@google-cloud/bigquery": "^5.12.0",
+        "csv-stringify": "^6.0.5",
         "dayjs": "^1.8.34",
-        "easy-table": "^1.1.1",
+        "easy-table": "^1.2.0",
         "flat": "^5.0.2",
         "inversify": "^5.0.5",
         "inversify-binding-decorators": "^4.0.0",
