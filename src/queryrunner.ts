@@ -138,7 +138,7 @@ export class BigQueryRunner {
       vscode.window.showErrorMessage(`Failed to query BigQuery: ${err}`);
       throw err;
     }
-    console.log(`result: ${JSON.stringify(result)}`);
+    // console.log(`result: ${JSON.stringify(result)}`);
     try {
       console.log('get query results before processResults startIndex', this.startIndex);
       console.log('query result length', result.length);
@@ -193,7 +193,7 @@ export class BigQueryRunner {
       this.startIndex = newstart;
     }
     console.log(`metadata.statistics: ${JSON.stringify(metadata.statistics)}`);
-    console.log(`resultsResponse: ${JSON.stringify(resultsResponse)}`);
+    // console.log(`resultsResponse: ${JSON.stringify(resultsResponse)}`);
     this.totalRecords = resultsResponse.totalRows;
     return {
       status: "success",
@@ -322,7 +322,7 @@ export class BigQueryRunner {
     try {
       const finalQueryText = await this.getFinalQueryText();
       let queryResult = await this.query(finalQueryText);
-      console.log(`BigQueryRunner.runAsQuery.queryResult: ${queryResult}`);
+      //console.log(`BigQueryRunner.runAsQuery.queryResult: ${queryResult}`);
       queryResult.sql = finalQueryText;
       return queryResult;
     } catch (err) {
