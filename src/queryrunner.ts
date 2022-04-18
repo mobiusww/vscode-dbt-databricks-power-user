@@ -26,6 +26,15 @@ interface TableResult {
   rows: any[];
 }
 
+const hashCode = (s:string):string => {
+    let hash = 0;
+    for (let i = 0; i < s.length; i++) {
+      const chr   = s.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return 'hash' + hash;
+};
 const DEFAULT_ITEMS_PER_PAGE = 50;
 const DEFAULT_LIMIT_COUNT = 1000;
 export class BigQueryRunner {
@@ -311,7 +320,7 @@ export class BigQueryRunner {
       console.log(`BigQueryRunner.runAsQuery.queryText:  ${queryText}`);
       let finalQueryText = queryText;
       if (this.limitEnabled) {
-        const random_ctename = 'xj0df033d2';
+        const random_ctename = hashCode(queryText);
         finalQueryText = `WITH ${random_ctename} AS (\n${queryText}\n)\nSELECT * \nFROM ${random_ctename}\nLIMIT ${this.limitRecords}`;
       }
       console.log(`final queryrunner run query: final queryText: ${finalQueryText}`);
