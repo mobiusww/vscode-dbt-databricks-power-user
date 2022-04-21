@@ -58,7 +58,7 @@ export class DBTCommandFactory {
       .get<string[]>("runModelCommandAdditionalParams", []);
 
     return {
-      commandAsString: `dbt run --model ${params.plusOperatorLeft}${params.modelName}${params.plusOperatorRight}${runModelCommandAdditionalParams.length > 0 ? ' ' + runModelCommandAdditionalParams.join(' '): ''}`,
+      commandAsString: `dbt run --model ${params.plusOperatorLeft}${params.modelName}${params.plusOperatorRight}${runModelCommandAdditionalParams.length > 0 ? ' ' + runModelCommandAdditionalParams.join(' ') : ''}`,
       statusMessage: "Running dbt models...",
       processExecutionParams: {
         cwd: projectRoot.fsPath,
@@ -98,19 +98,19 @@ export class DBTCommandFactory {
 
   createInstallDBTCommand() {
     return {
-      commandAsString: "pip install dbt",
+      commandAsString: "pip install dbt-core dbt-bigquery dbt-postgres dbt-redshift dbt-snowflake",
       statusMessage: "Installing dbt...",
-      processExecutionParams: { args: ["-m", "pip", "install", "dbt"] },
+      processExecutionParams: { args: ["-m", "pip", "install", "dbt-core", "dbt-bigquery", "dbt-postgres", "dbt-redshift", "dbt-snowflake"] },
       focus: true,
     };
   }
 
   createUpdateDBTCommand() {
     return {
-      commandAsString: "pip install --upgrade dbt",
+      commandAsString: "pip install --upgrade dbt-core dbt-bigquery dbt-postgres dbt-redshift dbt-snowflake",
       statusMessage: "Updating dbt...",
       processExecutionParams: {
-        args: ["-m", "pip", "install", "dbt", "--upgrade"],
+        args: ["-m", "pip", "install",  "dbt-core", "dbt-bigquery", "dbt-postgres", "dbt-redshift", "dbt-snowflake", "--upgrade"],
       },
       focus: true,
     };
