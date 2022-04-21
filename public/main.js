@@ -21,6 +21,8 @@ const vueApp = new Vue({
         hasPrev: false,
         maxResults: 0,
         totalRecords: 0,
+        limitEnabled: false,
+        limitCount: 0,
     },
     computed: {
         elapsedTime() {
@@ -42,11 +44,15 @@ const vueApp = new Vue({
             return this.maxResults;
 
         },
+        limitCount() {
+            return this.limitCount;
+        },
         totalRecords() {
 
             return this.totalRecords;
 
         },
+
         startIndex() {
 
             return this.startIndex;
@@ -102,7 +108,13 @@ const vueApp = new Vue({
                 variables: this._parseVariables() || {},
             });
         },
-
+        enableLimit() {
+            this.queryStatus = 'done';
+            call({
+                command: 'enableLimit',
+                variables: this._parseVariables() || {},
+            });
+        },
         runAsQuery() {
             this.queryStatus = 'runningAsQuery';
             call({
@@ -145,6 +157,8 @@ const vueApp = new Vue({
             this.hasPrev = result.hasPrev ? "true" : "false";
             this.maxResults = result.maxResults;
             this.totalRecords = result.totalRecords;
+            this.limitEnabled = result.limitEnabled ? "true" : "false";
+            this.limitCount = result.limitCount;
 
         },
 

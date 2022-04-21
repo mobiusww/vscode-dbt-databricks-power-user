@@ -14,6 +14,8 @@ interface QueryResult {
   maxResults: number;
   hasNext: boolean;
   hasPrev: boolean;
+  limitEnabled: boolean;
+  limitCount: number;
 }
 
 interface QueryResultError {
@@ -33,7 +35,7 @@ const hashCode = (s:string):string => {
       hash  = ((hash << 5) - hash) + chr;
       hash |= 0; // Convert to 32bit integer
     }
-    return 'hash' + hash;
+    return 'hash' + Math.abs(hash).toString();
 };
 const DEFAULT_ITEMS_PER_PAGE = 50;
 const DEFAULT_LIMIT_COUNT = 1000;
@@ -45,7 +47,7 @@ export class BigQueryRunner {
   startIndex: number;
   items_per_page: number = DEFAULT_ITEMS_PER_PAGE;
   limitEnabled: boolean | undefined;
-  limitRecords: number | undefined;
+  limitCount: number | undefined;
   totalRecords: number;
   dbtProjectContainer: DBTProjectContainer | undefined;
   nextToken: any;
@@ -64,12 +66,12 @@ export class BigQueryRunner {
       projectId: this.config?.get("projectId"),
     };
     this.limitEnabled = this.config?.get("limitEnabled", false);
-    this.limitRecords = this.config?.get("limitCount", DEFAULT_LIMIT_COUNT);
+    this.limitCount = this.config?.get("limitCount", DEFAULT_LIMIT_COUNT);
     if (this.limitEnabled === undefined) {
       this.limitEnabled = false;
     }
-    if (this.limitRecords === undefined) {
-      this.limitRecords = DEFAULT_LIMIT_COUNT;
+    if (this.limitCount === undefined) {
+      this.limitCount = DEFAULT_LIMIT_COUNT;
     }
 
     this.client = new BigQuery(options);
@@ -226,6 +228,8 @@ export class BigQueryRunner {
       maxResults: this.items_per_page,
       hasNext: !!this.nextToken,
       hasPrev: startRowId > 0,
+      limitEnabled: this.limitEnabled?? false,
+      limitCount: this.limitCount?? 0,
     };
   }
   public async getPrevPage(): Promise<QueryResult | QueryResultError> {
@@ -321,7 +325,7 @@ export class BigQueryRunner {
       let finalQueryText = queryText;
       if (this.limitEnabled) {
         const random_ctename = hashCode(queryText);
-        finalQueryText = `WITH ${random_ctename} AS (\n${queryText}\n)\nSELECT * \nFROM ${random_ctename}\nLIMIT ${this.limitRecords}`;
+        finalQueryText = `WITH ${random_ctename} AS (\n${queryText}\n)\nSELECT * \nFROM ${random_ctename}\nLIMIT ${this.limitCount}`;
       }
       console.log(`final queryrunner run query: final queryText: ${finalQueryText}`);
       return finalQueryText;

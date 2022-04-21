@@ -29,7 +29,10 @@
             <button class="button is-info is-pulled-right" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="saveAsCSV">CSV</button>
             <button class="button is-info is-pulled-right" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="saveAsTable">Table</button>
             <button class="button is-info is-pulled-right" v-if="queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error'" @click="saveAsJSON">JSON</button>
-
+            <br>
+            <input type="checkbox" class="checkbox is-info" v-if="(queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error') && limitEnabled === 'false'" @click="enableLimit" value="Enable limit" id="enableLimit" name="enableLimit">
+            <input type="checkbox" class="checkbox is-info" checked="true" v-if="(queryStatus === 'none' || queryStatus === 'done' || queryStatus === 'error') && limitEnabled === 'true'" @click="enableLimit" value="Enable limit" id="enableLimit" name="enableLimit">
+            <span>Enable limit {{limitCount}}</span>
         </div>
         <div v-if="queryStatus === 'error'">
             <article class="message is-danger">

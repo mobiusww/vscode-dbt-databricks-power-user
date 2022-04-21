@@ -119,6 +119,11 @@ export async function openQueryRunner(): Promise<void> {
 					console.log(`saveAsCSV.jsonQueryText: ${jsonQueryText}`);
 					await query(jsonQueryText, false, root_path, 'json');
 					break;
+				case 'enableLimit':
+					console.log(`enable limit called`);
+					const enableLimit = bigQueryRunner.limitEnabled;
+					bigQueryRunner.limitEnabled = !enableLimit;
+					break;
 
 			}
 		},
