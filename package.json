@@ -108,7 +108,7 @@
                 },
                 "dbt.bigquery.limitCount": {
                     "type": "number",
-                    "default": 1000,
+                    "default": 10000,
                     "description": "Limit results to number if limit clause enabled"
                 },
                 "dbt.bigquery.limitEnabled": {
