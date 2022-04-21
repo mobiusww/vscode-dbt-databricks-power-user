@@ -26,3 +26,6 @@ The highlights of this extension are:
 * The **Query Runner** panel that displays the results of the query. 
    - The **Rerun Query** button which allows you to update the model in your original panel and rerun the query (including the compilation) as well as the **Results navigation** buttons to see the next/prev page of results. 
    - The **Download** buttons which allow to display the results  (with a choice of JSON, text, or csv formats)  as well as download the data into the `logs/results` folder of the dbt-project.
+   - (**new in version 0.5.20**) An automatic limit clause that can be configured to default to _true_ or _false_ and the default limit amount can
+   also be changed (default value: 10000). Unchecking the checkbox and rerunning the query will run the query without the limit clause. _(Note: this limit does not apply to the download buttons)_
+* **Also fixed for in 0.5.20**: Checking, installing, and upgrading the dbt package now works with the latest versions of dbt. 
