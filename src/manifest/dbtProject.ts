@@ -174,10 +174,10 @@ export class DBTProject implements Disposable {
     }
     return false;
   }
-  private async createCompileModel(modelName: string) {
+  private async createCompileModel(relativePath: string) {
     const runModelParams: RunModelParams = {
       plusOperatorLeft: "",
-      modelName: modelName,
+      modelName: relativePath,
       plusOperatorRight: ""
 
     };
@@ -191,11 +191,10 @@ export class DBTProject implements Disposable {
   }
 
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
-    const baseName = path.basename(modelPath.fsPath);
-    const pattern = `${this.targetPath}/compiled/**/${baseName}`;
+    const remaining = path.relative(this.projectRoot.fsPath, modelPath.fsPath);
+    const pattern = `${this.targetPath}/compiled/${this.projectName}/${remaining}`;
     const modelName = path.basename(modelPath.fsPath, ".sql");
-    const orig_file = modelPath.fsPath;
-    const orig_file_stats = statSync(orig_file);
+
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     let targetModels = await workspace.findFiles(
       new RelativePattern(
@@ -218,14 +217,14 @@ export class DBTProject implements Disposable {
       console.log(`target_path_mtime: ${target_path_mtime}`);
       if (target_path_mtime < orig_file_mtime) {
         // trigger compile
-        await this.createCompileModel(modelName);
+        await this.createCompileModel(remaining);
       }
 
       const buffer = readFileSync(targetModel0.fsPath);
       return buffer.toString();
     } else {
       // target not yet compiled
-      await this.createCompileModel(modelName);
+      await this.createCompileModel(remaining);
       // try after compilation
       // loop on this and await
       const snooze = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
