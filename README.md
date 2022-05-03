@@ -29,3 +29,4 @@ The highlights of this extension are:
    - (**new in version 0.5.20**) An automatic limit clause that can be configured to default to _true_ or _false_ and the default limit amount can
    also be changed (default value: 10000). Unchecking the checkbox and rerunning the query will run the query without the limit clause. _(Note: this limit does not apply to the download buttons)_
 * **Also fixed for in 0.5.20**: Checking, installing, and upgrading the dbt package now works with the latest versions of dbt. 
+* **Fixed in 0.5.21**: Remove ambiguity in looking up compiled/run target sql files from models/analysis sql file
