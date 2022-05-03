@@ -189,7 +189,7 @@ export class DBTProject implements Disposable {
     await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
 
   }
-  
+
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
     const baseName = path.basename(modelPath.fsPath);
     const pattern = `${this.targetPath}/compiled/**/${baseName}`;
@@ -204,7 +204,7 @@ export class DBTProject implements Disposable {
       )
     );
     if (targetModels.length > 0) {
-      
+     
       const orig_file = modelPath.path;
       const orig_file_stats = statSync(orig_file);
       const orig_file_mtime = orig_file_stats.mtime;
@@ -268,8 +268,8 @@ export class DBTProject implements Disposable {
 
   }
   private async findModelInTargetfolder(modelPath: Uri, type: string) {
-    const baseName = path.basename(modelPath.fsPath);
-    const pattern = `${this.targetPath}/${type}/**/${baseName}`;
+    const remaining = path.relative(this.projectRoot.fsPath, modelPath.fsPath);
+    const pattern = `${this.targetPath}/${type}/${this.projectName}/${remaining}`;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     const targetModels = await workspace.findFiles(
       new RelativePattern(
