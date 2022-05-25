@@ -1,4 +1,4 @@
-import { readFileSync, statSync } from "fs"
+import { readFileSync, statSync } from "fs";
 import { parse } from "yaml";
 import * as path from "path";
 import {
@@ -191,7 +191,8 @@ export class DBTProject implements Disposable {
   }
 
   public async getCompiledSQLText(modelPath: Uri): Promise<string | undefined> {
-    const remaining = path.relative(this.projectRoot.fsPath, modelPath.fsPath);
+    let remaining = path.relative(this.projectRoot.path, modelPath.path);
+    remaining = remaining.split(path.sep).join('/');
     const pattern = `${this.targetPath}/compiled/${this.projectName}/${remaining}`;
     const modelName = path.basename(modelPath.fsPath, ".sql");
 
@@ -267,7 +268,8 @@ export class DBTProject implements Disposable {
 
   }
   private async findModelInTargetfolder(modelPath: Uri, type: string) {
-    const remaining = path.relative(this.projectRoot.fsPath, modelPath.fsPath);
+    let remaining = path.relative(this.projectRoot.path, modelPath.path);
+    remaining = remaining.split(path.sep).join('/');
     const pattern = `${this.targetPath}/${type}/${this.projectName}/${remaining}`;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
     const targetModels = await workspace.findFiles(
