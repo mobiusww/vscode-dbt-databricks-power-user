@@ -77,10 +77,14 @@ export class DBTProjectContainer implements Disposable {
   listModels(projectUri: Uri) {
     this.dbtClient.listModels(projectUri);
   }
-
+  genDocs(projectUri: Uri) {
+    this.dbtClient.genDocs(projectUri);
+  }
   runModel(modelPath: Uri, type?: RunModelType) {
     this.findDBTProject(modelPath)?.runModel(this.createModelParams(modelPath, type));
   }
+
+  
 
   compileModel(modelPath: Uri, type?: RunModelType) {
     this.findDBTProject(modelPath)?.compileModel(this.createModelParams(modelPath, type));

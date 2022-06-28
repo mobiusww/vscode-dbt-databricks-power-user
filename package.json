@@ -31,104 +31,108 @@
     ],
     "main": "./dist/extension",
     "contributes": {
-        "configuration": [{
-            "title": "dbt Big Query Power User",
-            "properties": {
-                "dbt.listModelsDisabled": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Disable automatic listing of models when files change."
-                },
-                "dbt.runModelCommandAdditionalParams": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [],
-                    "description": "Add additonal params to the dbt run model command."
-                },
-                "dbt.bigquery.keyFilename": {
-                    "type": "string",
-                    "default": "",
-                    "description": "Full path to the a .json, .pem, or .p12 key downloaded from the Google Developers Console. If you provide a path to a JSON file, the projectId option is not necessary. NOTE: .pem and .p12 require you to specify the email option as well."
-                },
-                "dbt.bigquery.itemsPerPage": {
-                    "type": "number",
-                    "default": 50,
-                    "description": "Number of result rows per page"
-                },
-                "dbt.bigquery.projectId": {
-                    "type": "string",
-                    "default": "",
-                    "description": "(Optional) The project ID from the Google Developer's Console, e.g. 'grape-spaceship-123'. This is NOT needed if you are provide a key in JSON format"
-                },
-                "dbt.bigquery.useLegacySql": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Specifies whether to use BigQuery's legacy SQL dialect for this query. The default value is false. If set to false, the query will use BigQuery's standard SQL: https://cloud.google.com/bigquery/sql-reference/"
-                },
-                "dbt.bigquery.location": {
-                    "type": "string",
-                    "default": "US",
-                    "description": "The geographic location of the job. Required except for US and EU. See details at https://cloud.google.com/bigquery/docs/dataset-locations#specifying_your_location."
-                },
-                "dbt.bigquery.maximumBytesBilled": {
-                    "type": "integer",
-                    "default": 1000000000000,
-                    "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
-                },
-                "dbt.bigquery.timeoutMs": {
-                    "type": "integer",
-                    "default": 10000,
-                    "description": "Query timeout in ms (default: 10000 ms)"
-                },
-                "dbt.bigquery.outputFormat": {
-                    "type": "string",
-                    "default": "json",
-                    "enum": [
-                        "json",
-                        "csv",
-                        "table"
-                    ],
-                    "description": "Controls the output format for query results."
-                },
-                "dbt.bigquery.prettyPrintJSON": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Pretty print JSON results."
-                },
-                "dbt.bigquery.runnerTheme": {
-                    "type": "string",
-                    "default": "dark",
-                    "enum": [
-                        "light",
-                        "dark"
-                    ],
-                    "description": "Controls the theme of the query runner."
-                },
-                "dbt.bigquery.limitCount": {
-                    "type": "number",
-                    "default": 10000,
-                    "description": "Limit results to number if limit clause enabled"
-                },
-                "dbt.bigquery.limitEnabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Automatically add a limit clause"
-                }
-
-            }
-        }],
-        "viewsContainers": {
-            "activitybar": [{
-                "id": "dbt_view",
+        "configuration": [
+            {
                 "title": "dbt Big Query Power User",
-                "icon": "./media/dbt_icon.svg",
-                "contextualTitle": "dbt Big Query Power User"
-            }]
+                "properties": {
+                    "dbt.listModelsDisabled": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Disable automatic listing of models when files change."
+                    },
+                    "dbt.runModelCommandAdditionalParams": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [],
+                        "description": "Add additonal params to the dbt run model command."
+                    },
+                    "dbt.bigquery.keyFilename": {
+                        "type": "string",
+                        "default": "",
+                        "description": "Full path to the a .json, .pem, or .p12 key downloaded from the Google Developers Console. If you provide a path to a JSON file, the projectId option is not necessary. NOTE: .pem and .p12 require you to specify the email option as well."
+                    },
+                    "dbt.bigquery.itemsPerPage": {
+                        "type": "number",
+                        "default": 50,
+                        "description": "Number of result rows per page"
+                    },
+                    "dbt.bigquery.projectId": {
+                        "type": "string",
+                        "default": "",
+                        "description": "(Optional) The project ID from the Google Developer's Console, e.g. 'grape-spaceship-123'. This is NOT needed if you are provide a key in JSON format"
+                    },
+                    "dbt.bigquery.useLegacySql": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Specifies whether to use BigQuery's legacy SQL dialect for this query. The default value is false. If set to false, the query will use BigQuery's standard SQL: https://cloud.google.com/bigquery/sql-reference/"
+                    },
+                    "dbt.bigquery.location": {
+                        "type": "string",
+                        "default": "US",
+                        "description": "The geographic location of the job. Required except for US and EU. See details at https://cloud.google.com/bigquery/docs/dataset-locations#specifying_your_location."
+                    },
+                    "dbt.bigquery.maximumBytesBilled": {
+                        "type": "integer",
+                        "default": 1000000000000,
+                        "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
+                    },
+                    "dbt.bigquery.timeoutMs": {
+                        "type": "integer",
+                        "default": 10000,
+                        "description": "Query timeout in ms (default: 10000 ms)"
+                    },
+                    "dbt.bigquery.outputFormat": {
+                        "type": "string",
+                        "default": "json",
+                        "enum": [
+                            "json",
+                            "csv",
+                            "table"
+                        ],
+                        "description": "Controls the output format for query results."
+                    },
+                    "dbt.bigquery.prettyPrintJSON": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Pretty print JSON results."
+                    },
+                    "dbt.bigquery.runnerTheme": {
+                        "type": "string",
+                        "default": "dark",
+                        "enum": [
+                            "light",
+                            "dark"
+                        ],
+                        "description": "Controls the theme of the query runner."
+                    },
+                    "dbt.bigquery.limitCount": {
+                        "type": "number",
+                        "default": 10000,
+                        "description": "Limit results to number if limit clause enabled"
+                    },
+                    "dbt.bigquery.limitEnabled": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Automatically add a limit clause"
+                    }
+                }
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "dbt_view",
+                    "title": "dbt Big Query Power User",
+                    "icon": "./media/dbt_icon.svg",
+                    "contextualTitle": "dbt Big Query Power User"
+                }
+            ]
         },
         "views": {
-            "dbt_view": [{
+            "dbt_view": [
+                {
                     "id": "parent_model_treeview",
                     "name": "Parent Models"
                 },
@@ -138,7 +142,8 @@
                 }
             ]
         },
-        "commands": [{
+        "commands": [
+            {
                 "command": "dbtPowerUser.runCurrentModel",
                 "title": "dbt Power User: Run current model",
                 "icon": {
@@ -146,6 +151,14 @@
                     "dark": "./media/run-dark.svg"
                 }
             },
+            {
+                "command": "dbtPowerUser.runDbtGenDocs",
+                "title": "dbt Power User: Dbt docs generate",
+                "icon": {
+                    "light": "./media/run-light.svg",
+                    "dark": "./media/run-dark.svg"
+                }
+            },            
             {
                 "command": "dbtPowerUser.compileCurrentModel",
                 "title": "dbt Power User: Compile current model",
@@ -220,7 +233,13 @@
             }
         ],
         "menus": {
-            "editor/title": [{
+            "editor/title": [
+                {
+                    "command": "dbtPowerUser.runDbtGenDocs",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-4"
+                },                
+                {
                     "command": "dbtPowerUser.runCurrentModel",
                     "when": "resourceLangId == jinja-sql",
                     "group": "navigation@-1"
@@ -241,7 +260,8 @@
                     "group": "navigation@-3"
                 }
             ],
-            "view/title": [{
+            "view/title": [
+                {
                     "command": "dbtPowerUser.runChildrenModels",
                     "when": "view == children_model_treeview",
                     "group": "navigation"
@@ -252,7 +272,8 @@
                     "group": "navigation"
                 }
             ],
-            "view/item/context": [{
+            "view/item/context": [
+                {
                     "command": "dbtPowerUser.runChildrenModels",
                     "when": "view == children_model_treeview && viewItem != source",
                     "group": "inline"
@@ -309,6 +330,7 @@
         "flat": "^5.0.2",
         "inversify": "^5.0.5",
         "inversify-binding-decorators": "^4.0.0",
+        "package": "^1.0.1",
         "reflect-metadata": "^0.1.13",
         "yaml": "^2.0.0-10"
     }

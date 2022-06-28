@@ -20,6 +20,9 @@ export class VSCodeCommands implements Disposable {
       commands.registerCommand("dbtPowerUser.runCurrentModel", () =>
         this.runModel.runModelOnActiveWindow()
       ),
+      commands.registerCommand("dbtPowerUser.runDbtGenDocs", () =>
+        this.runModel.runDbtGenDocs()
+      ),      
       commands.registerCommand("dbtPowerUser.compileCurrentModel", () =>
         this.runModel.compileModelOnActiveWindow()
       ),

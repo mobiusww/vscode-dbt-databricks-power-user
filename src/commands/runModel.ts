@@ -14,6 +14,15 @@ export class RunModel {
       this.runDBTModel(fullPath, type);
     }
   }
+  
+
+  runDbtGenDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    // const a = projectu
+    if (fullPath !== undefined) {
+      this.genDBTDocs();
+    }
+  }  
 
   compileModelOnActiveWindow(type?: RunModelType) {
     const fullPath = window.activeTextEditor?.document.uri;
@@ -48,6 +57,17 @@ export class RunModel {
 
   runDBTModel(modelPath: Uri, type?: RunModelType) {
     this.dbtProjectContainer.runModel(modelPath, type);
+  }
+
+  genDBTDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
+      if (dbtProject === undefined) {
+        return;
+      }
+      this.dbtProjectContainer.genDocs(dbtProject.projectRoot);
+    }
   }
 
   compileDBTModel(modelPath: Uri, type?: RunModelType) {
