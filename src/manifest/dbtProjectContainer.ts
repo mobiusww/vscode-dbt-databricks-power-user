@@ -97,6 +97,9 @@ export class DBTProjectContainer implements Disposable {
   showCompiledSQL(modelPath: Uri) {
     this.findDBTProject(modelPath)?.showCompiledSql(modelPath);
   }
+  previewSQL(modelPath: Uri) {
+    this.findDBTProject(modelPath)?.previewSQL(modelPath);
+  }
 
   
 

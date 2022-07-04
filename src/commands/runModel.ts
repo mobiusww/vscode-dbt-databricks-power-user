@@ -55,6 +55,13 @@ export class RunModel {
     }
   }
 
+  previewSQLOnActiveWindow() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      this.showRunSQL(fullPath);
+    }
+  }  
+
   runDBTModel(modelPath: Uri, type?: RunModelType) {
     this.dbtProjectContainer.runModel(modelPath, type);
   }
@@ -81,4 +88,7 @@ export class RunModel {
   showRunSQL(modelPath: Uri) {
     this.dbtProjectContainer.showRunSQL(modelPath);
   }
+  previewSQL(modelPath: Uri) {
+    this.dbtProjectContainer.previewSQL(modelPath);
+  }  
 }

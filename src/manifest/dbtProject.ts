@@ -157,6 +157,10 @@ export class DBTProject implements Disposable {
   showCompiledSql(modelPath: Uri) {
     this.findModelInTargetfolder(modelPath, "compiled");
   }
+  
+  previewSQL(modelPath: Uri) {
+    this.showContentsOfModelInTargetfolder(modelPath, "compiled");
+  }
 
 
   showRunSQL(modelPath: Uri) {
@@ -292,7 +296,29 @@ export class DBTProject implements Disposable {
       });
     }
   }
-
+  private async showContentsOfModelInTargetfolder(modelPath: Uri, type: string) {
+    let remaining = path.relative(this.projectRoot.path, modelPath.path);
+    remaining = remaining.split(path.sep).join('/');
+    const pattern = `${this.targetPath}/${type}/${this.projectName}/${remaining}`;
+    // console.log(`findModelInTargetfolder: looking for ${pattern}`);
+    const targetModels = await workspace.findFiles(
+      new RelativePattern(
+        this.projectRoot,
+        pattern
+      )
+    );
+    if (targetModels.length > 0) {
+      const targetModel0 = targetModels[0];
+      vscode.workspace.openTextDocument(targetModel0).then((document) => {
+        let text = document.getText();
+      });
+      
+      // console.log(`findModelInTargetfolder: ${targetModel0}`);
+      commands.executeCommand("vscode.open", targetModel0, {
+        preview: false,
+      });
+    }
+  }
   private findSourcePaths(projectConfig: any): string[] {
     return DBTProject.SOURCE_PATHS_VAR.reduce((prev: string[], current: string) => {
       if (projectConfig[current] !== undefined) {
