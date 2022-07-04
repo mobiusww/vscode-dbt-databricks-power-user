@@ -58,7 +58,7 @@ export class RunModel {
   previewSQLOnActiveWindow() {
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
-      this.showRunSQL(fullPath);
+      this.previewSQL(fullPath);
     }
   }  
 

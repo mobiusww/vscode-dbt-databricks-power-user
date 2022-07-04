@@ -1,6 +1,7 @@
 import { readFileSync, statSync } from "fs";
 import { parse } from "yaml";
 import * as path from "path";
+import * as vscode from 'vscode';
 import {
   SourceFileWatchers,
   SourceFileWatchersFactory,
@@ -158,8 +159,10 @@ export class DBTProject implements Disposable {
     this.findModelInTargetfolder(modelPath, "compiled");
   }
   
-  previewSQL(modelPath: Uri) {
-    this.showContentsOfModelInTargetfolder(modelPath, "compiled");
+  async previewSQL(modelPath: Uri) {
+    return await this.showContentsOfModelInTargetfolder(modelPath, "compiled");
+    // let text = this.getCompiledSQLText(modelPath);
+    // console.log(`1111111 ${text}`);
   }
 
 
@@ -307,17 +310,21 @@ export class DBTProject implements Disposable {
         pattern
       )
     );
+   
     if (targetModels.length > 0) {
       const targetModel0 = targetModels[0];
-      vscode.workspace.openTextDocument(targetModel0).then((document) => {
-        let text = document.getText();
+
+      const t = vscode.workspace.openTextDocument(targetModel0).then((document) => {
+        const text = document.getText();
+        return text;
       });
-      
+      return t;
       // console.log(`findModelInTargetfolder: ${targetModel0}`);
-      commands.executeCommand("vscode.open", targetModel0, {
-        preview: false,
-      });
+      // commands.executeCommand("vscode.open", targetModel0, {
+      //   preview: false,
+      // });
     }
+    
   }
   private findSourcePaths(projectConfig: any): string[] {
     return DBTProject.SOURCE_PATHS_VAR.reduce((prev: string[], current: string) => {

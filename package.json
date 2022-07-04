@@ -192,6 +192,15 @@
                 }
             },
             {
+                "command": "dbtPowerUser.previewSQL",
+                "title": "dbt Power User: Preview SQL",
+                "icon": {
+                    "light": "./media/file-code_light.svg",
+                    "dark": "./media/file-code_dark.svg"
+                }
+            },
+            
+            {
                 "command": "dbtPowerUser.showCompiledSQL",
                 "title": "dbt Power User: Show compiled SQL",
                 "icon": {
