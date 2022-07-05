@@ -150,7 +150,17 @@ export class DBTProject implements Disposable {
     );
     this.dbtProjectContainer.addCommandToQueue(runModelCommand);
   }
+  async async_compileModel(runModelParams: RunModelParams) {
+    console.log(`compileMode.runModelParams.modelName: ${runModelParams.modelName} `);
+    console.log(`compileMode.runModelParams.plusOperatorLeft: ${runModelParams.plusOperatorLeft} `);
+    console.log(`compileMode.runModelParams.plusOperatorRight: ${runModelParams.plusOperatorRight} `);
 
+    const runModelCommand = this.dbtCommandFactory.createCompileModelCommand(
+      this.projectRoot,
+      runModelParams
+    );
+    await this.dbtProjectContainer.executeCommandImmediately(runModelCommand);
+  }
   showCompiledSql(modelPath: Uri) {
     this.findModelInTargetfolder(modelPath, "compiled");
   }

@@ -93,6 +93,11 @@ export class DBTProjectContainer implements Disposable {
     this.findDBTProject(modelPath)?.compileModel(this.createModelParams(modelPath, type));
   }
 
+  async async_compileModel(modelPath: Uri, type?: RunModelType) {
+    await this.findDBTProject(modelPath)?.async_compileModel(this.createModelParams(modelPath, type));
+  }
+
+
   showRunSQL(modelPath: Uri) {
     this.findDBTProject(modelPath)?.showRunSQL(modelPath);
   }

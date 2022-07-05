@@ -38,6 +38,12 @@ export class RunModel {
     }
   }
 
+  async async_compileModelOnActiveWindow(type?: RunModelType) {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      await this.async_compileDBTModel(fullPath, type);
+    }
+  }  
   runModelOnNodeTreeItem(type: RunModelType) {
     return (model?: NodeTreeItem) => {
       if (model === undefined) {
@@ -97,6 +103,11 @@ export class RunModel {
     this.dbtProjectContainer.compileModel(modelPath, type);
   }
 
+  async async_compileDBTModel(modelPath: Uri, type?: RunModelType) {
+    await this.dbtProjectContainer.async_compileModel(modelPath, type);
+  }
+  
+  
   showCompiledSQL(modelPath: Uri) {
     this.dbtProjectContainer.showCompiledSQL(modelPath);
   }
