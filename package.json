@@ -143,6 +143,7 @@
             ]
         },
         "commands": [
+            
             {
                 "command": "dbtPowerUser.runCurrentModel",
                 "title": "dbt Power User: Run current model",
@@ -153,12 +154,20 @@
             },
             {
                 "command": "dbtPowerUser.runDbtGenDocs",
-                "title": "dbt Power User: Dbt docs generate",
+                "title": "dbt Power User: generate DBT docs",
                 "icon": {
-                    "light": "./media/run-light.svg",
-                    "dark": "./media/run-dark.svg"
+                    "light": "./media/docs_gen.svg",
+                    "dark": "./media/docs_gen_dark.svg"
                 }
-            },            
+            },   
+            {
+                "command": "dbtPowerUser.runDbtServeDocs",
+                "title": "dbt Power User: view DBT docs",
+                "icon": {
+                    "light": "./media/documents.svg",
+                    "dark": "./media/documents_dark.svg"
+                }
+            },                      
             {
                 "command": "dbtPowerUser.compileCurrentModel",
                 "title": "dbt Power User: Compile current model",
@@ -204,18 +213,34 @@
                 "command": "dbtPowerUser.showCompiledSQL",
                 "title": "dbt Power User: Show compiled SQL",
                 "icon": {
-                    "light": "./media/file-code_light.svg",
-                    "dark": "./media/file-code_dark.svg"
+                    "light": "./media/view_compiled.svg",
+                    "dark": "./media/view_compiled_dark.svg"
                 }
             },
             {
-                "command": "dbtPowerUser.runSQL",
-                "title": "dbt Power User: Run SQL",
+                "command": "dbtPowerUser.getCurrentTableFromCloud",
+                "title": "dbt Power User: get current table from cloud",
                 "icon": {
-                    "light": "./media/file-code_light.svg",
-                    "dark": "./media/file-code_dark.svg"
+                    "light": "./media/cloud.svg",
+                    "dark": "./media/cloud_dark.svg"
                 }
             },
+            {
+                "command": "dbtPowerUser.previewCurrentModel",
+                "title": "dbt Power User: preview current model using the compiled SQL",
+                "icon": {
+                    "light": "./media/preview_table.svg",
+                    "dark": "./media/preview_table_dark.svg"
+                }
+            },
+            {
+                "command": "dbtPowerUser.runSQLAsIs",
+                "title": "dbt Power User: run the SQL in the current window",
+                "icon": {
+                    "light": "./media/sql.svg",
+                    "dark": "./media/sql_dark.svg"
+                }
+            },        
             {
                 "command": "dbtPowerUser.openQueryRunner",
                 "title": "dbt Big Query Power User: Open QueryRunner",
@@ -244,29 +269,46 @@
         "menus": {
             "editor/title": [
                 {
-                    "command": "dbtPowerUser.runDbtGenDocs",
+                    "command": "dbtPowerUser.previewCurrentModel",
                     "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@-4"
-                },                
-                {
-                    "command": "dbtPowerUser.runCurrentModel",
-                    "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@-1"
-                },
-                {
-                    "command": "dbtPowerUser.openQueryRunner",
-                    "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@-2"
-                },
+                    "group": "navigation@-8"
+                },                                                          
                 {
                     "command": "dbtPowerUser.compileCurrentModel",
                     "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@0"
+                    "group": "navigation@-7"
                 },
                 {
                     "command": "dbtPowerUser.showCompiledSQL",
                     "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-6"
+                },
+                {
+                    "command": "dbtPowerUser.runSQLAsIs",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-5"
+                },                
+                {
+                    "command": "dbtPowerUser.runCurrentModel",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-4"
+                },
+                {
+                    "command": "dbtPowerUser.getCurrentTableFromCloud",
+                    "when": "resourceLangId == jinja-sql",
                     "group": "navigation@-3"
+                },
+
+
+                {
+                    "command": "dbtPowerUser.runDbtGenDocs",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-2"
+                },   
+                {
+                    "command": "dbtPowerUser.runDbtServeDocs",
+                    "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-1"
                 }
             ],
             "view/title": [

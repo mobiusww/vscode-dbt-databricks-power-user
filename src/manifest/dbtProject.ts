@@ -129,10 +129,6 @@ export class DBTProject implements Disposable {
     this.dbtProjectContainer.listModels(this.projectRoot);
   }
 
-  genDocs(){
-    this.dbtProjectContainer.genDocs(this.projectRoot);
-  }
-
 
 
   runModel(runModelParams: RunModelParams) {

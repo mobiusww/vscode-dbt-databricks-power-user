@@ -63,6 +63,19 @@ export class DBTCommandFactory {
       },
     };
   }
+  createDocServeCommand(projectRoot: Uri): DBTCommand {
+    return {
+      commandAsString: "dbt docs serve",
+      statusMessage: "Generating dbt docs...",
+      processExecutionParams: {
+        cwd: projectRoot.fsPath,
+        args: ["-c", this.dbtCommand([
+          "'docs'",
+          "'serve'"
+        ])],
+      },
+    };
+  }  
 
   createRunModelCommand(projectRoot: Uri, params: RunModelParams) {
     const { plusOperatorLeft, modelName, plusOperatorRight } = params;

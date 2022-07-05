@@ -23,6 +23,13 @@ export class RunModel {
       this.genDBTDocs();
     }
   }  
+  runDbtServeDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    // const a = projectu
+    if (fullPath !== undefined) {
+      this.serveDBTDocs();
+    }
+  }  
 
   compileModelOnActiveWindow(type?: RunModelType) {
     const fullPath = window.activeTextEditor?.document.uri;
@@ -76,7 +83,16 @@ export class RunModel {
       this.dbtProjectContainer.genDocs(dbtProject.projectRoot);
     }
   }
-
+  serveDBTDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
+      if (dbtProject === undefined) {
+        return;
+      }
+      this.dbtProjectContainer.serveDocs(dbtProject.projectRoot);
+    }
+  }
   compileDBTModel(modelPath: Uri, type?: RunModelType) {
     this.dbtProjectContainer.compileModel(modelPath, type);
   }

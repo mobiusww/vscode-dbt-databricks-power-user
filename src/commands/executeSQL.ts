@@ -5,8 +5,8 @@ import { DBTProjectContainer } from "../manifest/dbtProjectContainer";
 import { ManifestCacheChangedEvent } from "../manifest/event/manifestCacheChangedEvent";
 import { QueryView } from "../query_view";
 import { provideSingleton } from "../utils";
-
-
+import * as vscode from 'vscode';
+// import { RunModel } from "./runModel";
 
 
 @provideSingleton(ExecuteSQL)
@@ -45,7 +45,7 @@ export class ExecuteSQL {
       }
       fqn += `${node.schema}.${node.alias}`;
 
-      const sql = `SELECT * FROM ${fqn} LIMIT 10`;
+      const sql = `SELECT * FROM ${fqn} LIMIT 25`;
       
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, sql);
       this.queryView.createWebviewPanel(sql, data);
@@ -86,6 +86,51 @@ export class ExecuteSQL {
       }
     }
   }  
+  async previewCurrentModel() {
+    // todo compile first
+    // this.runModel.compileModelOnActiveWindow();
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      
+      const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
+      if (dbtProject === undefined) {
+        return;
+      }      
+      
+      let mysql = await this.dbtProjectContainer.previewSQL(fullPath);
+      if (mysql !== undefined) {
+        mysql += ' limit 25';
+        
+      const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, mysql);
+      
+      this.queryView.createWebviewPanel(mysql, data);
+      }
+    }
+  }    
+  async runSQLAsIs() {
+    // todo compile first
+    // this.runModel.compileModelOnActiveWindow();
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      
+      const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
+      if (dbtProject === undefined) {
+        return;
+      }      
+      let mysql = await vscode.workspace.openTextDocument(fullPath).then((document) => {
+        const text = document.getText();
+        return text;
+      });
+
+      if (mysql !== undefined) {
+        mysql += ' limit 25';
+        
+      const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, mysql);
+      
+      this.queryView.createWebviewPanel(mysql, data);
+      }
+    }
+  }    
 
   dispose() {
     this.disposables.forEach((disposable) => disposable.dispose());

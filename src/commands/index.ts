@@ -19,10 +19,13 @@ export class VSCodeCommands implements Disposable {
     this.disposables.push(
       commands.registerCommand("dbtPowerUser.runCurrentModel", () =>
         this.runModel.runModelOnActiveWindow()
-      ),
+      ),    
       commands.registerCommand("dbtPowerUser.runDbtGenDocs", () =>
         this.runModel.runDbtGenDocs()
-      ),      
+      ),  
+      commands.registerCommand("dbtPowerUser.runDbtServeDocs", () =>
+        this.runModel.runDbtServeDocs()
+      ),           
       commands.registerCommand("dbtPowerUser.compileCurrentModel", () =>
         this.runModel.compileModelOnActiveWindow()
       ),
@@ -47,9 +50,17 @@ export class VSCodeCommands implements Disposable {
       commands.registerCommand("dbtPowerUser.updateDBT", () =>
         this.updateDBT.updateDBTCommand()
       ),
-      commands.registerCommand("dbtPowerUser.runSQL", () =>
-        this.executeSQL.executeSQL_temp()
+      commands.registerCommand("dbtPowerUser.getCurrentTableFromCloud", () =>
+        this.executeSQL.executeSQL()
       ),
+      commands.registerCommand("dbtPowerUser.previewCurrentModel", () =>
+        this.executeSQL.previewCurrentModel()
+      ),  
+      commands.registerCommand("dbtPowerUser.runSQLAsIs", () =>
+        this.executeSQL.runSQLAsIs()
+      ),       
+      
+      
     );
   }
 

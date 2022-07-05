@@ -113,7 +113,11 @@ export class DBTClient implements Disposable {
       this.dbtCommandFactory.createDocGenCommand(projectUri)
     );
   }  
-
+  async serveDocs(projectUri: Uri): Promise<void> {
+    this.addCommandToQueue(
+      this.dbtCommandFactory.createDocServeCommand(projectUri)
+    );
+  }  
   async checkIfDBTIsInstalled(): Promise<void> {
     const checkDBTInstalledProcess = await this.executeCommand(
       this.dbtCommandFactory.createImportDBTCommand()
