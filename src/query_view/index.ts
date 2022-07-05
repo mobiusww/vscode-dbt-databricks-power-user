@@ -29,6 +29,17 @@ export class QueryView {
     return `<!DOCTYPE html>
   <html lang="en">
   <head>
+      <style>
+        .dataTables_info {
+        color: grey !important;
+        }
+        .dataTables_length {
+        color: grey !important;
+        }
+        .dataTables_filter {
+        color: grey !important;
+        }
+      </style>
       <meta charset="UTF-8">
       <meta http-equiv="Content-Security-Policy" content="default-src 'self';
             script-src vscode-resource: 'self' 'unsafe-inline' 'unsafe-eval' https:;
@@ -36,9 +47,10 @@ export class QueryView {
             img-src vscode-resource: 'self' 'unsafe-inline' https:;"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Query view</title>
-      <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"></link>
+      
       <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-      <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.css"/>
+      <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.12.1/datatables.min.js"></script>   
       <script>
       $(document).ready(function() {
         var data = ${JSON.stringify(data)};

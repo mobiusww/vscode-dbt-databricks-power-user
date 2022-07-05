@@ -1,6 +1,7 @@
 import { readFileSync, statSync } from "fs";
 import { parse } from "yaml";
 import * as path from "path";
+import * as vscode from 'vscode';
 import {
   SourceFileWatchers,
   SourceFileWatchersFactory,
@@ -128,6 +129,8 @@ export class DBTProject implements Disposable {
     this.dbtProjectContainer.listModels(this.projectRoot);
   }
 
+
+
   runModel(runModelParams: RunModelParams) {
     const runModelCommand = this.dbtCommandFactory.createRunModelCommand(
       this.projectRoot,
@@ -150,6 +153,12 @@ export class DBTProject implements Disposable {
 
   showCompiledSql(modelPath: Uri) {
     this.findModelInTargetfolder(modelPath, "compiled");
+  }
+  
+  async previewSQL(modelPath: Uri) {
+    return await this.showContentsOfModelInTargetfolder(modelPath, "compiled");
+    // let text = this.getCompiledSQLText(modelPath);
+    // console.log(`1111111 ${text}`);
   }
 
 
@@ -286,7 +295,33 @@ export class DBTProject implements Disposable {
       });
     }
   }
+  private async showContentsOfModelInTargetfolder(modelPath: Uri, type: string) {
+    let remaining = path.relative(this.projectRoot.path, modelPath.path);
+    remaining = remaining.split(path.sep).join('/');
+    const pattern = `${this.targetPath}/${type}/${this.projectName}/${remaining}`;
+    // console.log(`findModelInTargetfolder: looking for ${pattern}`);
+    const targetModels = await workspace.findFiles(
+      new RelativePattern(
+        this.projectRoot,
+        pattern
+      )
+    );
+   
+    if (targetModels.length > 0) {
+      const targetModel0 = targetModels[0];
 
+      const t = vscode.workspace.openTextDocument(targetModel0).then((document) => {
+        const text = document.getText();
+        return text;
+      });
+      return t;
+      // console.log(`findModelInTargetfolder: ${targetModel0}`);
+      // commands.executeCommand("vscode.open", targetModel0, {
+      //   preview: false,
+      // });
+    }
+    
+  }
   private findSourcePaths(projectConfig: any): string[] {
     return DBTProject.SOURCE_PATHS_VAR.reduce((prev: string[], current: string) => {
       if (projectConfig[current] !== undefined) {

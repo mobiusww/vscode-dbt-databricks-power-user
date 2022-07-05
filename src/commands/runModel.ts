@@ -14,6 +14,22 @@ export class RunModel {
       this.runDBTModel(fullPath, type);
     }
   }
+  
+
+  runDbtGenDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    // const a = projectu
+    if (fullPath !== undefined) {
+      this.genDBTDocs();
+    }
+  }  
+  runDbtServeDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    // const a = projectu
+    if (fullPath !== undefined) {
+      this.serveDBTDocs();
+    }
+  }  
 
   compileModelOnActiveWindow(type?: RunModelType) {
     const fullPath = window.activeTextEditor?.document.uri;
@@ -46,10 +62,37 @@ export class RunModel {
     }
   }
 
+  previewSQLOnActiveWindow() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      this.previewSQL(fullPath);
+    }
+  }  
+
   runDBTModel(modelPath: Uri, type?: RunModelType) {
     this.dbtProjectContainer.runModel(modelPath, type);
   }
 
+  genDBTDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
+      if (dbtProject === undefined) {
+        return;
+      }
+      this.dbtProjectContainer.genDocs(dbtProject.projectRoot);
+    }
+  }
+  serveDBTDocs() {
+    const fullPath = window.activeTextEditor?.document.uri;
+    if (fullPath !== undefined) {
+      const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
+      if (dbtProject === undefined) {
+        return;
+      }
+      this.dbtProjectContainer.serveDocs(dbtProject.projectRoot);
+    }
+  }
   compileDBTModel(modelPath: Uri, type?: RunModelType) {
     this.dbtProjectContainer.compileModel(modelPath, type);
   }
@@ -61,4 +104,7 @@ export class RunModel {
   showRunSQL(modelPath: Uri) {
     this.dbtProjectContainer.showRunSQL(modelPath);
   }
+  previewSQL(modelPath: Uri) {
+    this.dbtProjectContainer.previewSQL(modelPath);
+  }  
 }

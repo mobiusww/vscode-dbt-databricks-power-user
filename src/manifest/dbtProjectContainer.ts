@@ -77,10 +77,17 @@ export class DBTProjectContainer implements Disposable {
   listModels(projectUri: Uri) {
     this.dbtClient.listModels(projectUri);
   }
-
+  genDocs(projectUri: Uri) {
+    this.dbtClient.genDocs(projectUri);
+  }
+  serveDocs(projectUri: Uri) {
+    this.dbtClient.serveDocs(projectUri);
+  }  
   runModel(modelPath: Uri, type?: RunModelType) {
     this.findDBTProject(modelPath)?.runModel(this.createModelParams(modelPath, type));
   }
+
+  
 
   compileModel(modelPath: Uri, type?: RunModelType) {
     this.findDBTProject(modelPath)?.compileModel(this.createModelParams(modelPath, type));
@@ -92,6 +99,9 @@ export class DBTProjectContainer implements Disposable {
 
   showCompiledSQL(modelPath: Uri) {
     this.findDBTProject(modelPath)?.showCompiledSql(modelPath);
+  }
+  async previewSQL(modelPath: Uri) {
+    return await this.findDBTProject(modelPath)?.previewSQL(modelPath);
   }
 
   
