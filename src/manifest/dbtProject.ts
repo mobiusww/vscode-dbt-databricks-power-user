@@ -327,7 +327,7 @@ export class DBTProject implements Disposable {
       }else{
         file_toBeDeleted = targetModels_toBeDeleted[0].path;
       }
-      console.log(file_toBeDeleted);
+      // console.log(file_toBeDeleted);
       fs.unlinkSync(file_toBeDeleted);
       
 
@@ -352,7 +352,7 @@ export class DBTProject implements Disposable {
       if (targetModels.length === 0) {
         sleep();
         t += 1;  
-        console.log(t);
+        // console.log(t);
       } else {
 
         console.log(targetModels[0]);

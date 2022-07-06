@@ -91,8 +91,8 @@ export class ExecuteSQL {
 
 
     // todo compile first
-    const temp = await this.runModel.async_compileModelOnActiveWindow();
-    console.log(temp);
+    await this.runModel.async_compileModelOnActiveWindow();
+
 
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
