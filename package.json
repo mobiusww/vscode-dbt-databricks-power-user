@@ -1,9 +1,9 @@
 {
     "name": "vscode-dbt-bigquery-power-user",
-    "displayName": "dbt Big Query Power User",
-    "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
+    "displayName": "dbt Power User Plus",
+    "description": "This extension makes vscode seamlessly work with dbt and Databricks and BigQuery",
     "icon": "media/dbt.png",
-    "publisher": "butchland",
+    "publisher": "mobiusww",
     "license": "MIT",
     "homepage": "https://github.com/butchland/vscode-dbt-bigquery-power-user",
     "repository": {
@@ -33,7 +33,7 @@
     "contributes": {
         "configuration": [
             {
-                "title": "dbt Big Query Power User",
+                "title": "dbt Power User Plus",
                 "properties": {
                     "dbt.listModelsDisabled": {
                         "type": "boolean",
@@ -47,76 +47,8 @@
                         },
                         "default": [],
                         "description": "Add additonal params to the dbt run model command."
-                    },
-                    "dbt.bigquery.keyFilename": {
-                        "type": "string",
-                        "default": "",
-                        "description": "Full path to the a .json, .pem, or .p12 key downloaded from the Google Developers Console. If you provide a path to a JSON file, the projectId option is not necessary. NOTE: .pem and .p12 require you to specify the email option as well."
-                    },
-                    "dbt.bigquery.itemsPerPage": {
-                        "type": "number",
-                        "default": 50,
-                        "description": "Number of result rows per page"
-                    },
-                    "dbt.bigquery.projectId": {
-                        "type": "string",
-                        "default": "",
-                        "description": "(Optional) The project ID from the Google Developer's Console, e.g. 'grape-spaceship-123'. This is NOT needed if you are provide a key in JSON format"
-                    },
-                    "dbt.bigquery.useLegacySql": {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Specifies whether to use BigQuery's legacy SQL dialect for this query. The default value is false. If set to false, the query will use BigQuery's standard SQL: https://cloud.google.com/bigquery/sql-reference/"
-                    },
-                    "dbt.bigquery.location": {
-                        "type": "string",
-                        "default": "US",
-                        "description": "The geographic location of the job. Required except for US and EU. See details at https://cloud.google.com/bigquery/docs/dataset-locations#specifying_your_location."
-                    },
-                    "dbt.bigquery.maximumBytesBilled": {
-                        "type": "integer",
-                        "default": 1000000000000,
-                        "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
-                    },
-                    "dbt.bigquery.timeoutMs": {
-                        "type": "integer",
-                        "default": 10000,
-                        "description": "Query timeout in ms (default: 10000 ms)"
-                    },
-                    "dbt.bigquery.outputFormat": {
-                        "type": "string",
-                        "default": "json",
-                        "enum": [
-                            "json",
-                            "csv",
-                            "table"
-                        ],
-                        "description": "Controls the output format for query results."
-                    },
-                    "dbt.bigquery.prettyPrintJSON": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Pretty print JSON results."
-                    },
-                    "dbt.bigquery.runnerTheme": {
-                        "type": "string",
-                        "default": "dark",
-                        "enum": [
-                            "light",
-                            "dark"
-                        ],
-                        "description": "Controls the theme of the query runner."
-                    },
-                    "dbt.bigquery.limitCount": {
-                        "type": "number",
-                        "default": 10000,
-                        "description": "Limit results to number if limit clause enabled"
-                    },
-                    "dbt.bigquery.limitEnabled": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Automatically add a limit clause"
                     }
+
                 }
             }
         ],
@@ -124,9 +56,9 @@
             "activitybar": [
                 {
                     "id": "dbt_view",
-                    "title": "dbt Big Query Power User",
+                    "title": "DBT Power User",
                     "icon": "./media/dbt_icon.svg",
-                    "contextualTitle": "dbt Big Query Power User"
+                    "contextualTitle": "DBT Power User"
                 }
             ]
         },
@@ -240,31 +172,8 @@
                     "light": "./media/run_sql.svg",
                     "dark": "./media/run_sql_dark.svg"
                 }
-            },        
-            {
-                "command": "dbtPowerUser.openQueryRunner",
-                "title": "dbt Big Query Power User: Open QueryRunner",
-                "icon": {
-                    "light": "./media/dashboard_light.svg",
-                    "dark": "./media/dashboard_dark.svg"
-                }
-            },
-            {
-                "command": "dbtPowerUser.querySQLResult",
-                "title": "dbt Big Query Power User: Query SQL",
-                "icon": {
-                    "light": "./media/source_light.svg",
-                    "dark": "./media/source_dark.svg"
-                }
-            },
-            {
-                "command": "dbtPowerUser.querySQLDryRun",
-                "title": "dbt Big Query Power User: Dry Run SQL",
-                "icon": {
-                    "light": "./media/source_light.svg",
-                    "dark": "./media/source_dark.svg"
-                }
-            }
+            }        
+           
         ],
         "menus": {
             "editor/title": [

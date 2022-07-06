@@ -28,9 +28,6 @@ import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 import { DBTTerminal } from "../dbt_client/dbtTerminal";
 import { syncBuiltinESMExports } from "module";
 
-// import {
-//   runAsQueryText,
-// } from "../bigquery";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
   static DBT_MODULES = ["dbt_modules", "dbt_packages"];
