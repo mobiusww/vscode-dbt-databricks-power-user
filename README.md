@@ -11,10 +11,10 @@ In addition to the [existing functions](https://github.com/innoverio/vscode-dbt-
 * <img src="media/list_models_dark.svg" alt="Preview Current Model" height="20"/> **List models** - runs 'dbt list' to lists resources in your dbt project. It updates the model nodes tree when your update your model. A `dbt.listModelsDisabled` flag can be set in the extension setup to enable/disable automatic listing of models when files change. If auto-list is disabled (which I personally prefer), this button here can be handy.
 * <img src="media/preview_table_dark.svg" alt="Preview Current Model" height="20"/> **Preview Current Model** - uses the compiled SQL to preview the table without materializing it on the cloud. Note: this operation triggers a DBT re-compiling first. If you don't need to recompile, you can user 'Show Compiled' and 'Run SQL As-is'
 * <img src="media/view_compiled_dark.svg" alt="Show Compiled" height="20"/> **Show Compiled** - opens the compiled sql version of the model (inherited from Butchland's work)
-* <img src="media/run_sql_dark.svg" alt="Run SQL As-is" height="20"/> **Run SQL As-Is** - run the 'as-is' (i.e. even the unsaved code) SQL from current active window. For example, it can be used on the compiled code or be used like a query editor, but very likely it won't work on the model window as it doesn't compile codes like '`{{ ref('example_model') }}`'.
-* <img src="media/cloud_dark.svg" alt="Get Current Model from Cloud" height="20"/> **Get Current Model from Cloud** - fetch the data from the materialized table/view from the cloud using `'SELECT * FROM example_model_table LIMIT 25'` query
-* <img src="media/docs_gen_dark.svg" alt="Generate DBT Docs" height="20"/> **Generate DBT Docs** - generate the DBT documents
-* <img src="media/documents_dark.svg" alt="View DBT Docs" height="20"/> **View DBT Docs** - serve and view the generated DBT documents in a web browser.
+* <img src="media/run_sql_dark.svg" alt="Run SQL As-is" height="20"/> **Run SQL As-Is** - runs the 'as-is' (i.e. even the unsaved code) SQL from current active window. For example, it can be used on the compiled code or be used like a query editor, but very likely it won't work on the model window as it doesn't compile codes like '`{{ ref('example_model') }}`'.
+* <img src="media/cloud_dark.svg" alt="Get Current Model from Cloud" height="20"/> **Get Current Model from Cloud** - fetches the data from the materialized table/view from the cloud using `'SELECT * FROM example_model_table LIMIT 25'` query
+* <img src="media/docs_gen_dark.svg" alt="Generate DBT Docs" height="20"/> **Generate DBT Docs** - generates the DBT documents
+* <img src="media/documents_dark.svg" alt="View DBT Docs" height="20"/> **View DBT Docs** - serves and allows viewing the generated DBT documents in a web browser.
 
 
 
