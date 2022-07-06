@@ -47,8 +47,8 @@ export abstract class Node {
   key: string;
   url: string;
   iconPath: IconPath = {
-    light: path.join(path.resolve(__dirname), "../media/model_light.svg"),
-    dark: path.join(path.resolve(__dirname), "../media/model_dark.svg"),
+    light: path.join(path.resolve(__dirname), "../media/model_light.png"),
+    dark: path.join(path.resolve(__dirname), "../media/model_dark.png"),
   };
   displayInModelTree: boolean = true;
 
@@ -74,8 +74,8 @@ export class Exposure extends Node {
 export class Snapshot extends Node {}
 export class Source extends Node {
   iconPath = {
-    light: path.join(path.resolve(__dirname), "../media/source_light.svg"),
-    dark: path.join(path.resolve(__dirname), "../media/source_dark.svg"),
+    light: path.join(path.resolve(__dirname), "../media/source_light.png"),
+    dark: path.join(path.resolve(__dirname), "../media/source_dark.png"),
   };
 }
 
