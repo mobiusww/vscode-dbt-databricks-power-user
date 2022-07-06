@@ -1,19 +1,19 @@
 {
     "name": "vscode-dbt-bigquery-power-user",
-    "displayName": "dbt Big Query Power User",
-    "description": "This extension makes vscode seamlessly work with dbt and BigQuery",
-    "icon": "media/dbt.png",
-    "publisher": "butchland",
+    "displayName": "dbt Databricks Power User",
+    "description": "This extension makes vscode work with dbt and Databricks (and other data platform like BigQuery)",
+    "icon": "media/dbt-databricks-logos.png",
+    "publisher": "mobiusww",
     "license": "MIT",
-    "homepage": "https://github.com/butchland/vscode-dbt-bigquery-power-user",
+    "homepage": "https://github.com/mobiusww/vscode-dbt-databricks-power-user",
     "repository": {
         "type": "git",
-        "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user.git"
+        "url": "https://github.com/mobiusww/vscode-dbt-databricks-power-user.git"
     },
     "bugs": {
-        "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user/issues"
+        "url": "https://github.com/mobiusww/vscode-dbt-databricks-power-user/issues"
     },
-    "version": "0.5.23",
+    "version": "0.0.1",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -22,6 +22,7 @@
     ],
     "keywords": [
         "dbt",
+        "databricks",
         "sql",
         "jinja-sql",
         "bigquery"
@@ -33,7 +34,7 @@
     "contributes": {
         "configuration": [
             {
-                "title": "dbt Big Query Power User",
+                "title": "dbt Databricks Power User",
                 "properties": {
                     "dbt.listModelsDisabled": {
                         "type": "boolean",
@@ -46,77 +47,9 @@
                             "type": "string"
                         },
                         "default": [],
-                        "description": "Add additonal params to the dbt run model command."
-                    },
-                    "dbt.bigquery.keyFilename": {
-                        "type": "string",
-                        "default": "",
-                        "description": "Full path to the a .json, .pem, or .p12 key downloaded from the Google Developers Console. If you provide a path to a JSON file, the projectId option is not necessary. NOTE: .pem and .p12 require you to specify the email option as well."
-                    },
-                    "dbt.bigquery.itemsPerPage": {
-                        "type": "number",
-                        "default": 50,
-                        "description": "Number of result rows per page"
-                    },
-                    "dbt.bigquery.projectId": {
-                        "type": "string",
-                        "default": "",
-                        "description": "(Optional) The project ID from the Google Developer's Console, e.g. 'grape-spaceship-123'. This is NOT needed if you are provide a key in JSON format"
-                    },
-                    "dbt.bigquery.useLegacySql": {
-                        "type": "boolean",
-                        "default": false,
-                        "description": "Specifies whether to use BigQuery's legacy SQL dialect for this query. The default value is false. If set to false, the query will use BigQuery's standard SQL: https://cloud.google.com/bigquery/sql-reference/"
-                    },
-                    "dbt.bigquery.location": {
-                        "type": "string",
-                        "default": "US",
-                        "description": "The geographic location of the job. Required except for US and EU. See details at https://cloud.google.com/bigquery/docs/dataset-locations#specifying_your_location."
-                    },
-                    "dbt.bigquery.maximumBytesBilled": {
-                        "type": "integer",
-                        "default": 1000000000000,
-                        "description": "Queries that will have bytes billed beyond this limit will fail (without incurring a charge). If unspecified, this will be set to your project default."
-                    },
-                    "dbt.bigquery.timeoutMs": {
-                        "type": "integer",
-                        "default": 10000,
-                        "description": "Query timeout in ms (default: 10000 ms)"
-                    },
-                    "dbt.bigquery.outputFormat": {
-                        "type": "string",
-                        "default": "json",
-                        "enum": [
-                            "json",
-                            "csv",
-                            "table"
-                        ],
-                        "description": "Controls the output format for query results."
-                    },
-                    "dbt.bigquery.prettyPrintJSON": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Pretty print JSON results."
-                    },
-                    "dbt.bigquery.runnerTheme": {
-                        "type": "string",
-                        "default": "dark",
-                        "enum": [
-                            "light",
-                            "dark"
-                        ],
-                        "description": "Controls the theme of the query runner."
-                    },
-                    "dbt.bigquery.limitCount": {
-                        "type": "number",
-                        "default": 10000,
-                        "description": "Limit results to number if limit clause enabled"
-                    },
-                    "dbt.bigquery.limitEnabled": {
-                        "type": "boolean",
-                        "default": true,
-                        "description": "Automatically add a limit clause"
+                        "description": "Add additional params to the dbt run model command."
                     }
+
                 }
             }
         ],
@@ -124,9 +57,9 @@
             "activitybar": [
                 {
                     "id": "dbt_view",
-                    "title": "dbt Big Query Power User",
+                    "title": "DBT Power User",
                     "icon": "./media/dbt_icon.svg",
-                    "contextualTitle": "dbt Big Query Power User"
+                    "contextualTitle": "dbt Databricks Power User"
                 }
             ]
         },
@@ -143,7 +76,14 @@
             ]
         },
         "commands": [
-            
+            {
+                "command": "dbtPowerUser.runManualListModel",
+                "title": "dbt Power User: list models to update the model nodes tree",
+                "icon": {
+                    "light": "./media/list_models.svg",
+                    "dark": "./media/list_models_dark.svg"
+                }
+            },
             {
                 "command": "dbtPowerUser.runCurrentModel",
                 "title": "dbt Power User: Run current model",
@@ -235,49 +175,31 @@
             },
             {
                 "command": "dbtPowerUser.runSQLAsIs",
-                "title": "dbt Power User: run the SQL in the current window",
+                "title": "dbt Power User: run the SQL as-is in the current window",
                 "icon": {
                     "light": "./media/run_sql.svg",
                     "dark": "./media/run_sql_dark.svg"
                 }
-            },        
-            {
-                "command": "dbtPowerUser.openQueryRunner",
-                "title": "dbt Big Query Power User: Open QueryRunner",
-                "icon": {
-                    "light": "./media/dashboard_light.svg",
-                    "dark": "./media/dashboard_dark.svg"
-                }
-            },
-            {
-                "command": "dbtPowerUser.querySQLResult",
-                "title": "dbt Big Query Power User: Query SQL",
-                "icon": {
-                    "light": "./media/source_light.svg",
-                    "dark": "./media/source_dark.svg"
-                }
-            },
-            {
-                "command": "dbtPowerUser.querySQLDryRun",
-                "title": "dbt Big Query Power User: Dry Run SQL",
-                "icon": {
-                    "light": "./media/source_light.svg",
-                    "dark": "./media/source_dark.svg"
-                }
-            }
+            }        
+           
         ],
         "menus": {
             "editor/title": [
                 {
-                    "command": "dbtPowerUser.compileCurrentModel",
+                    "command": "dbtPowerUser.runManualListModel",
                     "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@-8"
-                },                
+                    "group": "navigation@-9"
+                },                   
                 {
                     "command": "dbtPowerUser.previewCurrentModel",
                     "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-8"
+                },                 
+                {
+                    "command": "dbtPowerUser.compileCurrentModel",
+                    "when": "resourceLangId == jinja-sql",
                     "group": "navigation@-7"
-                },                                                          
+                },                                                                         
                 {
                     "command": "dbtPowerUser.showCompiledSQL",
                     "when": "resourceLangId == jinja-sql",

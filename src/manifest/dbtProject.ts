@@ -28,9 +28,6 @@ import { ManifestCacheChangedEvent } from "./event/manifestCacheChangedEvent";
 import { DBTTerminal } from "../dbt_client/dbtTerminal";
 import { syncBuiltinESMExports } from "module";
 
-// import {
-//   runAsQueryText,
-// } from "../bigquery";
 export class DBTProject implements Disposable {
   static DBT_PROJECT_FILE = "dbt_project.yml";
   static DBT_MODULES = ["dbt_modules", "dbt_packages"];
@@ -370,8 +367,8 @@ export class DBTProject implements Disposable {
     if (targetModels.length > 0) {
       const targetModel0 = targetModels[0];
       this.terminal.log(` `);
-      this.terminal.log(`Note: this operation doesn't trigger a DBT re-compiled, you might want to run 'Compile Current Model' first`);
-      this.terminal.log(`Fetching the compiled SQL from '${targetModel0}'...`);
+      this.terminal.log(`> Note: this operation triggers a DBT re-compiling first. If you don't need to recompile, you can user 'Show Compiled SQL' and 'Run SQL As-is'`);
+      this.terminal.log(`> Fetching the compiled SQL from '${targetModel0.path}'...`);
       
       const t = vscode.workspace.openTextDocument(targetModel0).then((document) => {
         const text = document.getText();

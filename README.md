@@ -1,32 +1,40 @@
-# vscode-dbt-bigquery-power-user
+# vscode-dbt-databricks-power-user
 
 
 
-This extension makes vscode seamlessly work with [dbt](https://www.getdbt.com/) and Biq Query
-This extension is a fork of and extensively based on the [vscode-dbt-power-user](https://github.com/innoverio/vscode-dbt-power-user) extension made by Innoverio and adds
-a *preview sql* command that compiles (if not updated) the model and runs the compiled sql
-on BigQuery. 
-The Big Query integration uses code based on the [vscode-big-query](https://github.com/google/vscode-bigquery) extension but has been extensively modified. 
+This extension makes vscode work with [dbt](https://www.getdbt.com/) and [Databricks](https://databricks.com/) (It should also work with other data platforms like `BiqQuery`, but I haven't got chance to test other platforms, so let me know how you go if you have tried :) ) This extension is a fork on the [vscode-dbt-power-user](https://github.com/innoverio/vscode-dbt-power-user) extension made by Innoverio, 
+and the [vscode-dbt-bigquery-power-user](https://github.com/butchland/vscode-dbt-bigquery-power-user) made by Butchland. 
 
-The vscode-dbt-bigquery-power-user extension is a drop-in replacement for vscode-dbt-power-user and
-is incompatible with concurrent usage (as they use the same config and registered commands). 
+In addition to the [existing functions](https://github.com/innoverio/vscode-dbt-power-user/blob/master/README.md) (e.g. <img src="media/build_dark.svg" alt="Compile Current Model" height="20"/> **Compile Current Model**, <img src="media/run-dark.svg" alt="Run Current Model" height="20"/> **Run Current Model**, and more) of the `vscode-dbt-power-user`, the following seven functions have been added via the buttons on the active windows (See below for the added functions/buttons).
 
-On the other hand, you can still install the [vscode-bigquery](https://github.com/google/vscode-bigquery) extension (and use the same config) which will allow you to run BigQuery sql queries on compiled dbt sql files.
 
-The preview sql extension was forked and extensively modified from the [vscode-query-runner](https://github.com/tadyjp/vscode-query-runner) project
-which hasn't been updated in three years.
+* <img src="media/list_models_dark.svg" alt="Preview Current Model" height="20"/> **List models** - runs 'dbt list' to lists resources in your dbt project. It updates the model nodes tree when your update your model. A `dbt.listModelsDisabled` flag can be set in the extension setup to enable/disable automatic listing of models when files change. If auto-list is disabled (which I personally prefer), this button here can be handy.
+* <img src="media/preview_table_dark.svg" alt="Preview Current Model" height="20"/> **Preview Current Model** - uses the compiled SQL to preview the table without materializing it on the cloud. Note: this operation triggers a DBT re-compiling first. If you don't need to recompile, you can user 'Show Compiled' and 'Run SQL As-is'
+* <img src="media/view_compiled_dark.svg" alt="Show Compiled" height="20"/> **Show Compiled** - opens the compiled sql version of the model (inherited from Butchland's work)
+* <img src="media/run_sql_dark.svg" alt="Run SQL As-is" height="20"/> **Run SQL As-Is** - run the 'as-is' (i.e. even the unsaved code) SQL from current active window. For example, it can be used on the compiled code or be used like a query editor, but very likely it won't work on the model window as it doesn't compile codes like '`{{ ref('example_model') }}`'.
+* <img src="media/cloud_dark.svg" alt="Get Current Model from Cloud" height="20"/> **Get Current Model from Cloud** - fetch the data from the materialized table/view from the cloud using `'SELECT * FROM example_model_table LIMIT 25'` query
+* <img src="media/docs_gen_dark.svg" alt="Generate DBT Docs" height="20"/> **Generate DBT Docs** - generate the DBT documents
+* <img src="media/documents_dark.svg" alt="View DBT Docs" height="20"/> **View DBT Docs** - serve and view the generated DBT documents in a web browser.
 
-See below for a look of the added Preview SQL pane.
 
-![Preview SQL example](images/query-runner-screenshot.png)
 
-The highlights of this extension are:
-* A **Show Compiled SQL** menu icon that opens the compiled sql version of your models
-* An **Open Query Runner** menu icon that runs the compiled sql and displays the results in another panel
-* The **Query Runner** panel that displays the results of the query. 
-   - The **Rerun Query** button which allows you to update the model in your original panel and rerun the query (including the compilation) as well as the **Results navigation** buttons to see the next/prev page of results. 
-   - The **Download** buttons which allow to display the results  (with a choice of JSON, text, or csv formats)  as well as download the data into the `logs/results` folder of the dbt-project.
-   - (**new in version 0.5.20**) An automatic limit clause that can be configured to default to _true_ or _false_ and the default limit amount can
-   also be changed (default value: 10000). Unchecking the checkbox and rerunning the query will run the query without the limit clause. _(Note: this limit does not apply to the download buttons)_
-* **Also fixed for in 0.5.20**: Checking, installing, and upgrading the dbt package now works with the latest versions of dbt. 
-* **Fixed in 0.5.21**: Remove ambiguity in looking up compiled/run target sql files from models/analysis sql file
+![Preview SQL example](media/example_button_list.png)
+
+
+The `vscode-dbt-databricks-power-user` extension is a drop-in replacement for `vscode-dbt-power-user` and  uses the same config. 
+
+
+## Troubleshoot when the buttons are not shown
+
+
+You should associate your .sql files with the jinja-sql language by configuring in Preferences > Settings
+
+![Associations](./media/associations.png)
+
+or add the following in settings.json:
+
+```
+    "files.associations": {
+        "*.sql": "jinja-sql"
+    },
+```

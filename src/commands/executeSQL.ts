@@ -49,7 +49,7 @@ export class ExecuteSQL {
 
       const sql = `SELECT * FROM ${fqn} LIMIT 25`;
       this.terminal.log(` `);
-      this.terminal.log(`Set the SQL to '${sql}'`);
+      this.terminal.log(`> Set the SQL to '${sql}'`);
       // this.terminal.log(`Note: this operation will only work if the table/view has been created`);
 
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, sql);
@@ -133,7 +133,7 @@ export class ExecuteSQL {
       }     
       
       this.terminal.log(` `);
-      this.terminal.log(`Fetching the 'as-is' (i.e. even the unsaved code) SQL from current active window ... `);
+      this.terminal.log(`> Fetching the 'as-is' (i.e. even the unsaved code) SQL from current active window ... `);
 
       let mysql = await vscode.workspace.openTextDocument(fullPath).then((document) => {
         const text = document.getText();

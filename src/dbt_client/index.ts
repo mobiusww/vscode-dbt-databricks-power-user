@@ -108,6 +108,11 @@ export class DBTClient implements Disposable {
       this.dbtCommandFactory.createListCommand(projectUri)
     );
   }
+  async manualListModel(projectUri: Uri): Promise<void> {
+    this.addCommandToQueue(
+      this.dbtCommandFactory.createListCommand(projectUri)
+    );
+  }   
   async genDocs(projectUri: Uri): Promise<void> {
     this.addCommandToQueue(
       this.dbtCommandFactory.createDocGenCommand(projectUri)
