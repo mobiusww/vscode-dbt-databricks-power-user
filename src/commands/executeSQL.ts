@@ -7,14 +7,14 @@ import { QueryView } from "../query_view";
 import { provideSingleton } from "../utils";
 import * as vscode from 'vscode';
 // import { RunModel } from "./runModel";
-
+import { DBTTerminal } from "../dbt_client/dbtTerminal";
 
 @provideSingleton(ExecuteSQL)
 export class ExecuteSQL {
   private disposables: Disposable[] = [];
   private modelToFQNMap: Map<string, NodeMetaMap> = new Map();
 
-  constructor(private dbtProjectContainer: DBTProjectContainer, private queryView: QueryView) {
+  constructor(private dbtProjectContainer: DBTProjectContainer, private queryView: QueryView, private terminal: DBTTerminal ) {
     this.disposables.push(
       dbtProjectContainer.onManifestChanged((event) =>
         this.onManifestCacheChanged(event)
@@ -46,7 +46,10 @@ export class ExecuteSQL {
       fqn += `${node.schema}.${node.alias}`;
 
       const sql = `SELECT * FROM ${fqn} LIMIT 25`;
-      
+      this.terminal.log(` `);
+      this.terminal.log(`Set the SQL to '${sql}'`);
+      // this.terminal.log(`Note: this operation will only work if the table/view has been created`);
+
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, sql);
       this.queryView.createWebviewPanel(sql, data);
     }
@@ -89,6 +92,7 @@ export class ExecuteSQL {
   async previewCurrentModel() {
     // todo compile first
     // this.runModel.compileModelOnActiveWindow();
+    this.terminal.log(` `);
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
       
@@ -104,6 +108,8 @@ export class ExecuteSQL {
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, mysql);
       
       this.queryView.createWebviewPanel(mysql, data);
+      }else{
+        this.terminal.log(`Can't find the compiled SQL`);
       }
     }
   }    
@@ -116,7 +122,11 @@ export class ExecuteSQL {
       const dbtProject = this.dbtProjectContainer.findDBTProject(fullPath);
       if (dbtProject === undefined) {
         return;
-      }      
+      }     
+      
+      this.terminal.log(` `);
+      this.terminal.log(`Fetching the 'as-is' (i.e. even the unsaved code) SQL from current active window ... `);
+
       let mysql = await vscode.workspace.openTextDocument(fullPath).then((document) => {
         const text = document.getText();
         return text;

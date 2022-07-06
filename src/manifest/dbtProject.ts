@@ -157,8 +157,6 @@ export class DBTProject implements Disposable {
   
   async previewSQL(modelPath: Uri) {
     return await this.showContentsOfModelInTargetfolder(modelPath, "compiled");
-    // let text = this.getCompiledSQLText(modelPath);
-    // console.log(`1111111 ${text}`);
   }
 
 
@@ -309,7 +307,10 @@ export class DBTProject implements Disposable {
    
     if (targetModels.length > 0) {
       const targetModel0 = targetModels[0];
-
+      this.terminal.log(` `);
+      this.terminal.log(`Note: this operation doesn't trigger a DBT re-compiled, you might want to run 'Compile Current Model' first`);
+      this.terminal.log(`Fetching the compiled SQL from '${targetModel0}'...`);
+      
       const t = vscode.workspace.openTextDocument(targetModel0).then((document) => {
         const text = document.getText();
         return text;

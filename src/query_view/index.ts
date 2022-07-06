@@ -56,7 +56,8 @@ export class QueryView {
         var data = ${JSON.stringify(data)};
         $('#data').DataTable( {
           data,
-          columns: ${JSON.stringify(columns)}
+          columns: ${JSON.stringify(columns)},
+          "bSort": false
         });
       });
       </script>
