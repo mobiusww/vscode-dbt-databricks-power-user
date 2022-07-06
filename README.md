@@ -2,7 +2,7 @@
 
 
 
-This extension makes vscode work with [dbt](https://www.getdbt.com/) and [Databricks](https://databricks.com/) (It should also work with other providers like `BiqQuery`, but I haven't got chance to test other providers, so let me know how you go if you have tried :) ) This extension is a fork on the [vscode-dbt-power-user](https://github.com/innoverio/vscode-dbt-power-user) extension made by Innoverio, 
+This extension makes vscode work with [dbt](https://www.getdbt.com/) and [Databricks](https://databricks.com/) (It should also work with other data platforms like `BiqQuery`, but I haven't got chance to test other platforms, so let me know how you go if you have tried :) ) This extension is a fork on the [vscode-dbt-power-user](https://github.com/innoverio/vscode-dbt-power-user) extension made by Innoverio, 
 and the [vscode-dbt-bigquery-power-user](https://github.com/butchland/vscode-dbt-bigquery-power-user) made by Butchland. 
 
 In addition to the [existing functions](https://github.com/innoverio/vscode-dbt-power-user/blob/master/README.md) (e.g. <img src="media/build_dark.svg" alt="Compile Current Model" height="20"/> **Compile Current Model**, <img src="media/run-dark.svg" alt="Run Current Model" height="20"/> **Run Current Model**) of the `vscode-dbt-power-user`, the following seven functions have been added via the buttons on the active windows (See below for the added functions/buttons).

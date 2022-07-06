@@ -1,8 +1,8 @@
 {
     "name": "vscode-dbt-bigquery-power-user",
     "displayName": "dbt Databricks Power User",
-    "description": "This extension makes vscode work with dbt and Databricks (and other provider like BigQuery)",
-    "icon": "media/dbt.png",
+    "description": "This extension makes vscode work with dbt and Databricks (and other data platform like BigQuery)",
+    "icon": "media/dbt-databricks-logos.png",
     "publisher": "mobiusww",
     "license": "MIT",
     "homepage": "https://github.com/mobiusww/vscode-dbt-databricks-power-user",
@@ -22,9 +22,10 @@
     ],
     "keywords": [
         "dbt",
+        "databricks",
         "sql",
         "jinja-sql",
-        "databricks"
+        "bigquery"
     ],
     "activationEvents": [
         "workspaceContains:**/dbt_project.yml"
