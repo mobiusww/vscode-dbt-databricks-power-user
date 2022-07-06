@@ -237,8 +237,8 @@
                 "command": "dbtPowerUser.runSQLAsIs",
                 "title": "dbt Power User: run the SQL in the current window",
                 "icon": {
-                    "light": "./media/sql.svg",
-                    "dark": "./media/sql_dark.svg"
+                    "light": "./media/run_sql.svg",
+                    "dark": "./media/run_sql_dark.svg"
                 }
             },        
             {
@@ -269,15 +269,15 @@
         "menus": {
             "editor/title": [
                 {
-                    "command": "dbtPowerUser.previewCurrentModel",
-                    "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@-8"
-                },                                                          
-                {
                     "command": "dbtPowerUser.compileCurrentModel",
                     "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-8"
+                },                
+                {
+                    "command": "dbtPowerUser.previewCurrentModel",
+                    "when": "resourceLangId == jinja-sql",
                     "group": "navigation@-7"
-                },
+                },                                                          
                 {
                     "command": "dbtPowerUser.showCompiledSQL",
                     "when": "resourceLangId == jinja-sql",
