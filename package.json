@@ -80,8 +80,8 @@
                 "command": "dbtPowerUser.runManualListModel",
                 "title": "dbt Power User: list models to update the model nodes tree",
                 "icon": {
-                    "light": "./media/list_models.svg",
-                    "dark": "./media/list_models_dark.svg"
+                    "light": "./media/list_models.png",
+                    "dark": "./media/list_models_dark.png"
                 }
             },
             {
@@ -96,16 +96,16 @@
                 "command": "dbtPowerUser.runDbtGenDocs",
                 "title": "dbt Power User: generate DBT docs",
                 "icon": {
-                    "light": "./media/docs_gen.svg",
-                    "dark": "./media/docs_gen_dark.svg"
+                    "light": "./media/docs_gen.png",
+                    "dark": "./media/docs_gen_dark.png"
                 }
             },   
             {
                 "command": "dbtPowerUser.runDbtServeDocs",
                 "title": "dbt Power User: view DBT docs",
                 "icon": {
-                    "light": "./media/documents.svg",
-                    "dark": "./media/documents_dark.svg"
+                    "light": "./media/documents.png",
+                    "dark": "./media/documents_dark.png"
                 }
             },                      
             {
@@ -153,32 +153,32 @@
                 "command": "dbtPowerUser.showCompiledSQL",
                 "title": "dbt Power User: Show compiled SQL",
                 "icon": {
-                    "light": "./media/view_compiled.svg",
-                    "dark": "./media/view_compiled_dark.svg"
+                    "light": "./media/view_compiled.png",
+                    "dark": "./media/view_compiled_dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.getCurrentTableFromCloud",
                 "title": "dbt Power User: get current table from cloud",
                 "icon": {
-                    "light": "./media/cloud.svg",
-                    "dark": "./media/cloud_dark.svg"
+                    "light": "./media/cloud.png",
+                    "dark": "./media/cloud_dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.previewCurrentModel",
                 "title": "dbt Power User: preview current model using the compiled SQL",
                 "icon": {
-                    "light": "./media/preview_table.svg",
-                    "dark": "./media/preview_table_dark.svg"
+                    "light": "./media/preview_table.png",
+                    "dark": "./media/preview_table_dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.runSQLAsIs",
                 "title": "dbt Power User: run the SQL as-is in the current window",
                 "icon": {
-                    "light": "./media/run_sql.svg",
-                    "dark": "./media/run_sql_dark.svg"
+                    "light": "./media/run_sql.png",
+                    "dark": "./media/run_sql_dark.png"
                 }
             }        
            

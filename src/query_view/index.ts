@@ -39,6 +39,12 @@ export class QueryView {
         .dataTables_filter {
         color: grey !important;
         }
+        input, select, textarea{
+          color: grey;
+        }
+        textarea:focus, input:focus {
+          color: grey;
+        }
       </style>
       <meta charset="UTF-8">
       <meta http-equiv="Content-Security-Policy" content="default-src 'self';
@@ -57,7 +63,8 @@ export class QueryView {
         $('#data').DataTable( {
           data,
           columns: ${JSON.stringify(columns)},
-          "bSort": false
+          "bSort": false,
+          "pageLength": 25
         });
       });
       </script>
