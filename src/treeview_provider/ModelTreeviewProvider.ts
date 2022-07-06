@@ -157,8 +157,8 @@ class DashboardTreeItem extends NodeTreeItem {
   collapsibleState = TreeItemCollapsibleState.None;
 
   iconPath = {
-    light: path.join(path.resolve(__dirname), "../media/dashboard_light.svg"),
-    dark: path.join(path.resolve(__dirname), "../media/dashboard_dark.svg"),
+    light: path.join(path.resolve(__dirname), "../media/dashboard_light.png"),
+    dark: path.join(path.resolve(__dirname), "../media/dashboard_dark.png"),
   };
 
   contextValue = "dashboard";

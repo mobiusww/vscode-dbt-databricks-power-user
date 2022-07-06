@@ -1,8 +1,8 @@
 {
-    "name": "vscode-dbt-bigquery-power-user",
+    "name": "vscode-dbt-databricks-power-user",
     "displayName": "dbt Databricks Power User",
-    "description": "This extension makes vscode work with dbt and Databricks (and other data platform like BigQuery)",
-    "icon": "media/dbt-databricks-logos.png",
+    "description": "This extension makes vscode work with dbt and Databricks (and other data platforms like BigQuery)",
+    "icon": "media/dbt-databricks-logos_transparent.png",
     "publisher": "mobiusww",
     "license": "MIT",
     "homepage": "https://github.com/mobiusww/vscode-dbt-databricks-power-user",
@@ -57,8 +57,8 @@
             "activitybar": [
                 {
                     "id": "dbt_view",
-                    "title": "DBT Power User",
-                    "icon": "./media/dbt_icon.svg",
+                    "title": "DBT Databricks Power User",
+                    "icon": "./media/dbt-databricks-logos_transparent.png",
                     "contextualTitle": "dbt Databricks Power User"
                 }
             ]
@@ -88,8 +88,8 @@
                 "command": "dbtPowerUser.runCurrentModel",
                 "title": "dbt Power User: Run current model",
                 "icon": {
-                    "light": "./media/run-light.svg",
-                    "dark": "./media/run-dark.svg"
+                    "light": "./media/run-light.png",
+                    "dark": "./media/run-dark.png"
                 }
             },
             {
@@ -112,40 +112,40 @@
                 "command": "dbtPowerUser.compileCurrentModel",
                 "title": "dbt Power User: Compile current model",
                 "icon": {
-                    "light": "./media/build_light.svg",
-                    "dark": "./media/build_dark.svg"
+                    "light": "./media/build_light.png",
+                    "dark": "./media/build_dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.runChildrenModels",
                 "title": "dbt Power User: Run children models",
                 "icon": {
-                    "light": "./media/run-light.svg",
-                    "dark": "./media/run-dark.svg"
+                    "light": "./media/run-light.png",
+                    "dark": "./media/run-dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.runParentModels",
                 "title": "dbt Power User: Run parent models",
                 "icon": {
-                    "light": "./media/run-light.svg",
-                    "dark": "./media/run-dark.svg"
+                    "light": "./media/run-light.png",
+                    "dark": "./media/run-dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.showRunSQL",
                 "title": "dbt Power User: Show run SQL",
                 "icon": {
-                    "light": "./media/file-code_light.svg",
-                    "dark": "./media/file-code_dark.svg"
+                    "light": "./media/file-code_light.png",
+                    "dark": "./media/file-code_dark.png"
                 }
             },
             {
                 "command": "dbtPowerUser.previewSQL",
                 "title": "dbt Power User: Preview SQL",
                 "icon": {
-                    "light": "./media/file-code_light.svg",
-                    "dark": "./media/file-code_dark.svg"
+                    "light": "./media/file-code_light.png",
+                    "dark": "./media/file-code_dark.png"
                 }
             },
             
