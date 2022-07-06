@@ -127,17 +127,17 @@ export class DBTCommandFactory {
     return {
       commandAsString: "pip install dbt-core dbt-bigquery dbt-postgres dbt-redshift dbt-snowflake",
       statusMessage: "Installing dbt...",
-      processExecutionParams: { args: ["-m", "pip", "install", "dbt-core", "dbt-bigquery", "dbt-postgres", "dbt-redshift", "dbt-snowflake"] },
+      processExecutionParams: { args: ["-m", "pip", "install", "dbt-core", "dbt-bigquery", "dbt-postgres", "dbt-redshift", "dbt-snowflake", "dbt-databricks"] },
       focus: true,
     };
   }
 
   createUpdateDBTCommand() {
     return {
-      commandAsString: "pip install --upgrade dbt-core dbt-bigquery dbt-postgres dbt-redshift dbt-snowflake",
+      commandAsString: "pip install --upgrade dbt-core dbt-bigquery dbt-postgres dbt-redshift dbt-snowflake dbt-databricks",
       statusMessage: "Updating dbt...",
       processExecutionParams: {
-        args: ["-m", "pip", "install",  "dbt-core", "dbt-bigquery", "dbt-postgres", "dbt-redshift", "dbt-snowflake", "--upgrade"],
+        args: ["-m", "pip", "install",  "dbt-core", "dbt-bigquery", "dbt-postgres", "dbt-redshift", "dbt-snowflake", "dbt-databricks", "--upgrade"],
       },
       focus: true,
     };
