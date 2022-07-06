@@ -310,7 +310,59 @@ export class DBTProject implements Disposable {
     remaining = remaining.split(path.sep).join('/');
     const pattern = `${this.targetPath}/${type}/${this.projectName}/${remaining}`;
     // console.log(`findModelInTargetfolder: looking for ${pattern}`);
-    const targetModels = await workspace.findFiles(
+
+    let targetModels_toBeDeleted = await workspace.findFiles(
+      new RelativePattern(
+        this.projectRoot,
+        pattern
+      )
+    );
+
+    if (targetModels_toBeDeleted.length > 0){
+      var fs = require('fs');
+      var file_toBeDeleted;
+
+      if (targetModels_toBeDeleted[0].path[0] === "/"){
+        file_toBeDeleted = targetModels_toBeDeleted[0].path.substring(1).replace(/\//g, '\\');
+      }else{
+        file_toBeDeleted = targetModels_toBeDeleted[0].path;
+      }
+      console.log(file_toBeDeleted);
+      fs.unlinkSync(file_toBeDeleted);
+      
+
+    }
+
+    
+    const snooze = (ms:number) => new Promise(resolve => setTimeout(resolve, ms));
+    const sleep = async() => {
+      await snooze(1000); // snooze 1 sec
+    };
+    
+    const MAX_TRIES = 2500;
+    let t = 0;
+     
+    while (t < MAX_TRIES) {
+      let targetModels = await workspace.findFiles(
+        new RelativePattern(
+          this.projectRoot,
+          pattern
+        )
+      );
+      if (targetModels.length === 0) {
+        sleep();
+        t += 1;  
+        console.log(t);
+      } else {
+
+        console.log(targetModels[0]);
+        t = MAX_TRIES;
+      }
+	  
+	 }
+
+    
+    let targetModels = await workspace.findFiles(
       new RelativePattern(
         this.projectRoot,
         pattern
