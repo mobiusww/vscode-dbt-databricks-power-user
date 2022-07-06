@@ -75,7 +75,14 @@
             ]
         },
         "commands": [
-            
+            {
+                "command": "dbtPowerUser.runManualListModel",
+                "title": "dbt Power User: list models to update the model nodes tree",
+                "icon": {
+                    "light": "./media/list_models.svg",
+                    "dark": "./media/list_models_dark.svg"
+                }
+            },
             {
                 "command": "dbtPowerUser.runCurrentModel",
                 "title": "dbt Power User: Run current model",
@@ -167,7 +174,7 @@
             },
             {
                 "command": "dbtPowerUser.runSQLAsIs",
-                "title": "dbt Power User: run the SQL in the current window",
+                "title": "dbt Power User: run the SQL as-is in the current window",
                 "icon": {
                     "light": "./media/run_sql.svg",
                     "dark": "./media/run_sql_dark.svg"
@@ -178,15 +185,20 @@
         "menus": {
             "editor/title": [
                 {
-                    "command": "dbtPowerUser.compileCurrentModel",
+                    "command": "dbtPowerUser.runManualListModel",
                     "when": "resourceLangId == jinja-sql",
-                    "group": "navigation@-8"
-                },                
+                    "group": "navigation@-9"
+                },                   
                 {
                     "command": "dbtPowerUser.previewCurrentModel",
                     "when": "resourceLangId == jinja-sql",
+                    "group": "navigation@-8"
+                },                 
+                {
+                    "command": "dbtPowerUser.compileCurrentModel",
+                    "when": "resourceLangId == jinja-sql",
                     "group": "navigation@-7"
-                },                                                          
+                },                                                                         
                 {
                     "command": "dbtPowerUser.showCompiledSQL",
                     "when": "resourceLangId == jinja-sql",

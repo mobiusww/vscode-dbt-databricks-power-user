@@ -23,6 +23,9 @@ export class VSCodeCommands implements Disposable {
       commands.registerCommand("dbtPowerUser.runDbtGenDocs", () =>
         this.runModel.runDbtGenDocs()
       ),  
+      commands.registerCommand("dbtPowerUser.runManualListModel", () =>
+        this.runModel.runManualListModel()
+      ), 
       commands.registerCommand("dbtPowerUser.runDbtServeDocs", () =>
         this.runModel.runDbtServeDocs()
       ),           
