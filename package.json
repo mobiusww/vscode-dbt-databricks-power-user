@@ -1,19 +1,19 @@
 {
     "name": "vscode-dbt-bigquery-power-user",
-    "displayName": "dbt Power User Plus",
-    "description": "This extension makes vscode seamlessly work with dbt and Databricks and BigQuery",
+    "displayName": "dbt Databricks Power User",
+    "description": "This extension makes vscode work with dbt and Databricks (and other provider like BigQuery)",
     "icon": "media/dbt.png",
     "publisher": "mobiusww",
     "license": "MIT",
-    "homepage": "https://github.com/butchland/vscode-dbt-bigquery-power-user",
+    "homepage": "https://github.com/mobiusww/vscode-dbt-databricks-power-user",
     "repository": {
         "type": "git",
-        "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user.git"
+        "url": "https://github.com/mobiusww/vscode-dbt-databricks-power-user.git"
     },
     "bugs": {
-        "url": "https://github.com/butchland/vscode-dbt-bigquery-power-user/issues"
+        "url": "https://github.com/mobiusww/vscode-dbt-databricks-power-user/issues"
     },
-    "version": "0.5.23",
+    "version": "0.0.1",
     "engines": {
         "vscode": "^1.52.0"
     },
@@ -24,7 +24,7 @@
         "dbt",
         "sql",
         "jinja-sql",
-        "bigquery"
+        "databricks"
     ],
     "activationEvents": [
         "workspaceContains:**/dbt_project.yml"
@@ -33,7 +33,7 @@
     "contributes": {
         "configuration": [
             {
-                "title": "dbt Power User Plus",
+                "title": "dbt Databricks Power User",
                 "properties": {
                     "dbt.listModelsDisabled": {
                         "type": "boolean",
@@ -46,7 +46,7 @@
                             "type": "string"
                         },
                         "default": [],
-                        "description": "Add additonal params to the dbt run model command."
+                        "description": "Add additional params to the dbt run model command."
                     }
 
                 }
@@ -58,7 +58,7 @@
                     "id": "dbt_view",
                     "title": "DBT Power User",
                     "icon": "./media/dbt_icon.svg",
-                    "contextualTitle": "DBT Power User"
+                    "contextualTitle": "dbt Databricks Power User"
                 }
             ]
         },
