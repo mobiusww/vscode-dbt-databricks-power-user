@@ -9,7 +9,7 @@ In addition to the [existing functions](https://github.com/innoverio/vscode-dbt-
 
 
 
-* <img src="media/preview_table.svg" alt="Preview Current Model" height="20"/> **Preview Current Model** - uses the compiled SQL to preview the table without materializing it on the cloud. Note: this operation doesn't trigger a DBT re-compiling, you might want to run 'Compile Current Model' first
+* <img src="media/preview_table.svg" alt="Preview Current Model" height="20"/> **Preview Current Model** - uses the compiled SQL to preview the table without materializing it on the cloud. Note: this operation triggers a DBT re-compiling first. If you don't need to recompile, you can user 'Show Compiled' and 'Run SQL As-is'
 * <img src="media/view_compiled.svg" alt="Show Compiled" height="20"/> **Show Compiled** - opens the compiled sql version of the model (inherited from Butchland's work)
 * <img src="media/run_sql.svg" alt="Run SQL As-is" height="20"/> **Run SQL As-Is** - run the 'as-is' (i.e. even the unsaved code) SQL from current active window. For example, it can be used on the compiled code or be used like a query editor, but very likely it won't work on the model window as it doesn't compile codes like '`{{ ref('example_model') }}`'.
 *  <img src="media/cloud.svg" alt="Get Current Model from Cloud" height="20"/> **Get Current Model from Cloud** - fetch the data from the materialized table/view from the cloud using `'SELECT * FROM example_model_table LIMIT 25'` query
