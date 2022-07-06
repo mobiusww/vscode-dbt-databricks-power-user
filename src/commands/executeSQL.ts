@@ -6,7 +6,9 @@ import { ManifestCacheChangedEvent } from "../manifest/event/manifestCacheChange
 import { QueryView } from "../query_view";
 import { provideSingleton } from "../utils";
 import * as vscode from 'vscode';
-// import { RunModel } from "./runModel";
+import { RunModel } from "./runModel";
+
+
 import { DBTTerminal } from "../dbt_client/dbtTerminal";
 
 @provideSingleton(ExecuteSQL)
@@ -14,7 +16,7 @@ export class ExecuteSQL {
   private disposables: Disposable[] = [];
   private modelToFQNMap: Map<string, NodeMetaMap> = new Map();
 
-  constructor(private dbtProjectContainer: DBTProjectContainer, private queryView: QueryView, private terminal: DBTTerminal ) {
+  constructor(private dbtProjectContainer: DBTProjectContainer, private queryView: QueryView, private terminal: DBTTerminal, private runModel: RunModel,) {
     this.disposables.push(
       dbtProjectContainer.onManifestChanged((event) =>
         this.onManifestCacheChanged(event)
@@ -90,9 +92,13 @@ export class ExecuteSQL {
     }
   }  
   async previewCurrentModel() {
+
+
+
     // todo compile first
-    // this.runModel.compileModelOnActiveWindow();
-    this.terminal.log(` `);
+    await this.runModel.async_compileModelOnActiveWindow();
+
+
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
       
@@ -100,6 +106,10 @@ export class ExecuteSQL {
       if (dbtProject === undefined) {
         return;
       }      
+
+
+
+
       
       let mysql = await this.dbtProjectContainer.previewSQL(fullPath);
       if (mysql !== undefined) {
@@ -114,8 +124,6 @@ export class ExecuteSQL {
     }
   }    
   async runSQLAsIs() {
-    // todo compile first
-    // this.runModel.compileModelOnActiveWindow();
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
       
