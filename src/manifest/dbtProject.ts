@@ -315,15 +315,26 @@ export class DBTProject implements Disposable {
 
     if (targetModels_toBeDeleted.length > 0){
       var fs = require('fs');
-      var file_toBeDeleted;
 
-      if (targetModels_toBeDeleted[0].path[0] === "/"){
-        file_toBeDeleted = targetModels_toBeDeleted[0].path.substring(1).replace(/\//g, '\\');
-      }else{
-        file_toBeDeleted = targetModels_toBeDeleted[0].path;
+
+      try {
+        fs.unlinkSync(targetModels_toBeDeleted[0].path);
+      } 
+      catch (error) {
+        fs.unlinkSync(targetModels_toBeDeleted[0].path.substring(1).replace(/\//g, '\\'));
       }
+
+      
+
+      // var file_toBeDeleted;
+
+      // if (targetModels_toBeDeleted[0].path[0] === "/"){
+      //   file_toBeDeleted = targetModels_toBeDeleted[0].path.substring(1).replace(/\//g, '\\');
+      // }else{
+      //   file_toBeDeleted = targetModels_toBeDeleted[0].path;
+      // }
       // console.log(file_toBeDeleted);
-      fs.unlinkSync(file_toBeDeleted);
+      
       
 
     }

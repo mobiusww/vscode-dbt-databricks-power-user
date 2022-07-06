@@ -13,7 +13,7 @@
     "bugs": {
         "url": "https://github.com/mobiusww/vscode-dbt-databricks-power-user/issues"
     },
-    "version": "0.0.1",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.52.0"
     },
