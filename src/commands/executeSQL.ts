@@ -123,7 +123,11 @@ export class ExecuteSQL {
       }
     }
   }    
+  
   async runSQLAsIs() {
+    
+
+
     const fullPath = window.activeTextEditor?.document.uri;
     if (fullPath !== undefined) {
       
@@ -131,9 +135,10 @@ export class ExecuteSQL {
       if (dbtProject === undefined) {
         return;
       }     
-      
+      var dateString = new Date().toLocaleTimeString();
+
       this.terminal.log(` `);
-      this.terminal.log(`> Fetching the 'as-is' (i.e. even the unsaved code) SQL from current active window ... `);
+      this.terminal.log(`>${new Date().toLocaleTimeString()}  Fetching the 'as-is' (i.e. even the unsaved code) SQL from current active window ... `);
 
       let mysql = await vscode.workspace.openTextDocument(fullPath).then((document) => {
         const text = document.getText();
@@ -144,8 +149,15 @@ export class ExecuteSQL {
         mysql += ' limit 25';
         
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, mysql);
+      dateString = new Date().toLocaleTimeString();
+      if (data.length>0 ){
+        this.terminal.log( dateString + `> SQL query finished`);
+        this.queryView.createWebviewPanel(mysql, data);
+      }else{
+        this.terminal.log( dateString + `> No data returned`);
+      }
+
       
-      this.queryView.createWebviewPanel(mysql, data);
       }
     }
   }    
