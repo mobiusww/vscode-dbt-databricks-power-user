@@ -1,4 +1,5 @@
 import { fluentProvide } from "inversify-binding-decorators";
+import { DBTTerminal } from "./dbt_client/dbtTerminal";
 import {
   TextDocument,
   Range,
@@ -92,3 +93,45 @@ export const setupWatcherHandler: (
 export const provideSingleton = (identifier: any) => {
   return fluentProvide(identifier).inSingletonScope().done();
 };
+
+
+export class Greeter {
+  greeting: string;
+
+  constructor(message: string) {
+    this.greeting = message;
+  }
+
+  greet() {
+    return "Hello, " + this.greeting;
+  }
+}
+
+export class TimeLogger {
+
+  terminal: DBTTerminal;
+  timestamp_tic: Date | undefined;
+
+
+  constructor(terminal: DBTTerminal) {
+    this.terminal = terminal;
+  }
+
+
+  f_tic(msg: string) {
+    this.timestamp_tic = new Date();
+    this.terminal.log(' ');
+    this.terminal.log(`> ${this.timestamp_tic.toLocaleTimeString()} - ` + msg);
+  }
+
+  f_toc(msg: string) {
+    const timestamp_toc = new Date();
+    if (this.timestamp_tic !== undefined) {
+      var timeLapse =  Math.round((timestamp_toc.getTime()/1000 - this.timestamp_tic.getTime()/1000)*100)/100;
+      
+      this.terminal.log(`> ${timestamp_toc.toLocaleTimeString()} - Done in ${timeLapse} seconds`);
+      this.terminal.log(`> ` + msg);
+    }
+  }
+}
+// let greeter = new Greeter("world");
