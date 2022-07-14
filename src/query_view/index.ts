@@ -7,7 +7,7 @@ export class QueryView {
   createWebviewPanel(sql: string, data: any) {
     const panel = vscode.window.createWebviewPanel(
       'dbtPowerUser.queryView',
-      'Execute query',
+      'Table',
       vscode.ViewColumn.One,
       {
         // Enable scripts in the webview

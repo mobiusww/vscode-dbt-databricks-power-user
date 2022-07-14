@@ -55,7 +55,7 @@ export class ExecuteSQL {
 
       const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, sql);
       if (data.length > 0) {
-        timeLogger.f_toc(`Printing results to a new Execute Query window...`);
+        timeLogger.f_toc(`Printing results to a new Table window...`);
         this.queryView.createWebviewPanel(sql, data);
       }
       else {
@@ -95,7 +95,7 @@ export class ExecuteSQL {
 
         const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, mysql);
         if (data.length > 0) {
-          timeLogger.f_toc(`Printing results to a new Execute Query window...`);
+          timeLogger.f_toc(`Printing results to a new Table window...`);
           this.queryView.createWebviewPanel(mysql, data);
         }
         else {
@@ -128,7 +128,7 @@ export class ExecuteSQL {
         mysql += ' limit 25';
         const data = await this.dbtProjectContainer.executeSQL(dbtProject.projectRoot, mysql);
         if (data.length > 0) {
-          timeLogger.f_toc(`Printing results to a new Execute Query window...`);
+          timeLogger.f_toc(`Printing results to a new Table window...`);
           this.queryView.createWebviewPanel(mysql, data);
         }
         else {
